@@ -99,20 +99,18 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
 
-  environment.systemPackages = with pkgs; [
-    vim
-    git
-    vscode
-  ];
-
-  programs.vscode = {
-    enable = true;
+environment.systemPackages = with pkgs; [
+  vim
+  git
+  (vscode-with-extensions.override {
+    vscode = vscode;
     extensions = with pkgs.vscode-extensions; [
       dracula-theme.theme-dracula
-      bbenoist.nix
+      bbenoist.Nix
       esbenp.prettier-vscode
     ];
-  };
+  })
+];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

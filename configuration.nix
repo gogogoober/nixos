@@ -98,21 +98,20 @@
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
+
   environment.systemPackages = with pkgs; [
-	vim
-	git
-  vscode
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
+    vim
+    git
+    vscode
   ];
 
   programs.vscode = {
     enable = true;
-    extensions = with pkgs.vscode-extensions {
+    extensions = with pkgs.vscode-extensions; [
       dracula-theme.theme-dracula
       bbenoist.nix
       esbenp.prettier-vscode
-    };
+    ];
   };
 
   # Some programs need SUID wrappers, can be configured further or are

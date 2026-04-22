@@ -17,7 +17,7 @@
       makePkgsUnstable = system: import nixpkgs-unstable { inherit system; };
     in {
       # Generic Nix Flake outputs for the supported systems
-      packages.x86_64-linux = import ./packages { pkgs = makePkgs "x86_64-linux"; };
+      # packages.x86_64-linux = import ./packages { pkgs = makePkgs "x86_64-linux"; };
 
       devShells.x86_64-linux.default = let
         pkgs = makePkgs "x86_64-linux";

@@ -106,6 +106,15 @@
   #  wget
   ];
 
+  programs.vscode = {
+    enable = true;
+    extensions = with pkgs.vscode-extensions {
+      dracula-theme.theme-dracula
+      bbenoist.nix
+      esbenp.prettier-vscode
+    };
+  };
+
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;

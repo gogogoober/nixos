@@ -4,10 +4,3 @@ result-*
 
 # Ignore automatically generated direnv output
 .direnv
-
-hosts/
-libs/
-modules/
-overlays/
-packages/
-users/

@@ -102,6 +102,7 @@
 environment.systemPackages = with pkgs; [
   vim
   git
+  claude-code
   vscode
 ];
 

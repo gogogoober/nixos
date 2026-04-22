@@ -3,39 +3,68 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixos-25.05";
-    nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
+
+    flake-parts.url = "github:hercules-ci/flake-parts";
+
     home-manager = {
       url = "github:nix-community/home-manager/release-25.05";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    disko = {
+      url = "github:nix-community/disko";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    hyprland.url = "github:hyprwm/Hyprland";
   };
 
-  outputs = inputs@{ self, nixpkgs, nixpkgs-unstable, ... }:
-    let
-      system = "x86_64-linux";
+  outputs = inputs@{ self, nixpkgs, flake-parts, home-manager, ... }:
+    flake-parts.lib.mkFlake { inherit inputs; } {
+      systems = [ "x86_64-linux" ];
 
-      makePkgs = systemArg: import nixpkgs {
-        system = systemArg;
-        config = { allowUnfree = true; };
+      perSystem = { pkgs, ... }: {
+        packages = import ./packages { inherit pkgs; };
+
+        formatter = pkgs.nixpkgs-fmt;
+
+        devShells.default = pkgs.mkShell {
+          packages = with pkgs; [ nixpkgs-fmt nil git ];
+        };
       };
 
-      makePkgsUnstable = systemArg: import nixpkgs-unstable {
-        system = systemArg;
-        config = { allowUnfree = true; };
-      };
+      flake = {
+        nixosConfigurations = {
+          dell-old = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = { inherit inputs; };
+            modules = [
+              ./hosts/dell-old
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = { inherit inputs; };
+                home-manager.users.hugo = import ./home/hugo;
+              }
+            ];
+          };
 
-      pkgs = makePkgs system;
-    in {
-      devShells.${system}.default = pkgs.mkShell {
-        buildInputs = with pkgs; [ nixpkgs-fmt git ];
-      };
-
-      formatter.${system} = pkgs.nixpkgs-fmt;
-
-      nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-        inherit system;
-        modules = [ ./configuration.nix ];
-        pkgs = pkgs;
+          surface-go-3 = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = { inherit inputs; };
+            modules = [
+              ./hosts/surface-go-3
+              home-manager.nixosModules.home-manager
+              {
+                home-manager.useGlobalPkgs = true;
+                home-manager.useUserPackages = true;
+                home-manager.extraSpecialArgs = { inherit inputs; };
+                home-manager.users.hugo = import ./home/hugo;
+              }
+            ];
+          };
+        };
       };
     };
 }

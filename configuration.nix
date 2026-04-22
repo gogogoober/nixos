@@ -103,6 +103,7 @@ environment.systemPackages = with pkgs; [
   vim
   git
   vscode
+  vscode.bbenoist.Nix
 ];
 
   # Some programs need SUID wrappers, can be configured further or are

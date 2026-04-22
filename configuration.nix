@@ -102,14 +102,7 @@
 environment.systemPackages = with pkgs; [
   vim
   git
-  (vscode-with-extensions.override {
-    vscode = vscode;
-    extensions = with pkgs.vscode-extensions; [
-      dracula-theme.theme-dracula
-      bbenoist.Nix
-      esbenp.prettier-vscode
-    ];
-  })
+  vscode
 ];
 
   # Some programs need SUID wrappers, can be configured further or are

@@ -47,7 +47,7 @@ in
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
           # Theme
-          dracula-theme.theme-dracula
+          enkia.tokyo-night
 
           # Formatters
           esbenp.prettier-vscode
@@ -71,7 +71,7 @@ in
 
         userSettings = {
           # Appearance
-          "workbench.colorTheme" = "Dracula";
+          "workbench.colorTheme" = "Tokyo Night";
           "editor.fontFamily" = "'JetBrainsMono Nerd Font', monospace";
           "editor.fontSize" = 13;
           "editor.fontLigatures" = true;

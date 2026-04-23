@@ -26,6 +26,10 @@ in {
   config = mkIf cfg.enable {
     gtk = {
       enable = true;
+      iconTheme = {
+        name = "Marwaita-Dark";
+        package = pkgs.marwaita-icons;
+      };
     };
 
     home.pointerCursor = {
@@ -48,6 +52,7 @@ in {
     dconf.settings = {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
+        icon-theme = "Marwaita-Dark";
       };
 
       "org/gnome/desktop/sound" = {

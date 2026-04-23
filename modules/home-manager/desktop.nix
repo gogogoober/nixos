@@ -83,6 +83,12 @@ in {
         stacked-tiling-mode-enabled = true;
       };
 
+      # Free up Alt+Esc (default: cycle-windows) for TTS.
+      "org/gnome/desktop/wm/keybindings" = {
+        cycle-windows = [ ];
+        cycle-windows-backward = [ ];
+      };
+
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
@@ -91,7 +97,7 @@ in {
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection" = {
         name = "Speak selection";
-        binding = "<Primary>Escape";
+        binding = "<Alt>Escape";
         command = "speak-selection";
       };
     };

@@ -84,6 +84,45 @@ in {
           "mako"   # notification daemon
         ];
 
+        general = {
+          gaps_in = 2;
+          gaps_out = 0;
+          border_size = 1;
+          "col.active_border" = "rgba(ccccffff)";
+          "col.inactive_border" = "rgba(595959aa)";
+          resize_on_border = true;
+          allow_tearing = false;
+          layout = "dwindle";
+        };
+
+        decoration = {
+          rounding = 4;
+          shadow = {
+            enabled = true;
+            range = 2;
+            render_power = 3;
+            color = "rgba(1a1a1aee)";
+          };
+          blur = {
+            enabled = true;
+            size = 3;
+            passes = 1;
+            vibrancy = 0.1696;
+          };
+        };
+
+        # Smart gaps: drop borders/rounding/gaps when a workspace has a single
+        # tiled window (w[tv1]) or is fullscreen (f[1]).
+        workspace = [
+          "w[tv1], gapsout:0, gapsin:0"
+          "f[1], gapsout:0, gapsin:0"
+        ];
+
+        windowrule = [
+          "border_size 0, rounding 0, match:float 0, match:workspace w[tv1]"
+          "border_size 0, rounding 0, match:float 0, match:workspace f[1]"
+        ];
+
         bindd = [
           "$mod,       T,      Open terminal,         exec, kitty"
           "$mod,       B,      Open browser,          exec, firefox"

@@ -24,6 +24,7 @@ if [ "${1:-}" = "--run" ]; then
 
   echo "$$" > "$LOCK_FILE"
 
+  # shellcheck disable=SC2329  # invoked via trap
   cleanup_run() {
     # Only remove the file if it still points at us — a later invocation
     # may have already overwritten it.

@@ -1,4 +1,4 @@
-# Shell configuration: zsh, starship prompt, direnv, aliases
+# Shell configuration: zsh, starship prompt, aliases
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -18,50 +18,15 @@ in {
         ignoreAllDups = true;
       };
       shellAliases = {
-        ls = "eza --icons";
-        ll = "eza -la --icons";
-        lt = "eza --tree --icons";
+        ll = "eza -la";
+        tree = "eza --tree";
         cat = "bat";
-        g = "git";
-        gs = "git status";
-        gd = "git diff";
-        gc = "git commit";
-        gp = "git push";
-        gl = "git log --oneline --graph";
-        dc = "docker compose";
-        nr = "sudo nixos-rebuild switch --flake .";
-        nf = "nix flake update";
+        cd = "z";
       };
     };
 
     programs.starship = {
       enable = true;
-      settings = {
-        add_newline = true;
-        character = {
-          success_symbol = "[➜](bold green)";
-          error_symbol = "[✗](bold red)";
-        };
-        nix_shell.symbol = " ";
-        golang.symbol = " ";
-        rust.symbol = " ";
-        nodejs.symbol = " ";
-      };
-    };
-
-    programs.direnv = {
-      enable = true;
-      nix-direnv.enable = true;
-    };
-
-    programs.fzf = {
-      enable = true;
-      enableZshIntegration = true;
-    };
-
-    programs.zoxide = {
-      enable = true;
-      enableZshIntegration = true;
     };
   };
 }

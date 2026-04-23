@@ -1,4 +1,4 @@
-# Common home config: base packages, XDG dirs
+# Common home config: git, gh, CLI tools, XDG
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,18 +9,28 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = with pkgs; [
-      ripgrep
-      fd
-      bat
-      eza
-      fzf
-      tree
-      tldr
-      du-dust
-    ];
+    home.stateVersion = "25.05";
 
-    xdg.enable = true;
+    programs.git = {
+      enable = true;
+      userName = "Hugo";
+      userEmail = "juicebox.salinas@gmail.com";
+    };
+
+    programs.gh.enable = true;
+
+    programs.zoxide = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    programs.fzf = {
+      enable = true;
+      enableZshIntegration = true;
+    };
+
+    programs.bat.enable = true;
+    programs.eza.enable = true;
 
     programs.home-manager.enable = true;
   };

@@ -1,4 +1,6 @@
-# Editor configuration: vscode with language extensions
+# Editor configuration: neovim (LazyVim), vscode
+# LazyVim is bootstrapped manually by cloning the starter into ~/.config/nvim on first run.
+# Declarative LazyVim management is deferred.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,50 +11,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    programs.vscode = {
+    programs.neovim = {
       enable = true;
-      extensions = with pkgs.vscode-extensions; [
-        # General
-        vscodevim.vim
-        esbenp.prettier-vscode
-        dbaeumer.vscode-eslint
-        eamodio.gitlens
-        mkhl.direnv
-
-        # Go
-        golang.go
-
-        # Rust
-        rust-lang.rust-analyzer
-
-        # TypeScript / JavaScript
-        bradlc.vscode-tailwindcss
-
-        # Nix
-        jnoortheen.nix-ide
-      ];
-      userSettings = {
-        "editor.fontFamily" = "'JetBrains Mono', 'Fira Code', monospace";
-        "editor.fontLigatures" = true;
-        "editor.fontSize" = 14;
-        "editor.formatOnSave" = true;
-        "editor.minimap.enabled" = false;
-        "editor.tabSize" = 2;
-        "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-        "nix.enableLanguageServer" = true;
-        "nix.serverPath" = "nil";
-        "nix.serverSettings"."nil"."formatting"."command" = [ "nixpkgs-fmt" ];
-      };
+      defaultEditor = true;
     };
 
-    programs.git = {
+    programs.vscode = {
       enable = true;
-      userName = "Hugo";
-      extraConfig = {
-        init.defaultBranch = "main";
-        push.autoSetupRemote = true;
-        pull.rebase = true;
-      };
+      package = pkgs.vscode-fhs;
     };
   };
 }

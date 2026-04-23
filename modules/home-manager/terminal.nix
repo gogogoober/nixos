@@ -1,4 +1,4 @@
-# Terminal configuration: terminal emulator
+# Terminal configuration: kitty
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,18 +9,13 @@ in {
   };
 
   config = mkIf cfg.enable {
-    programs.alacritty = {
+    programs.kitty = {
       enable = true;
-      settings = {
-        font = {
-          normal.family = "JetBrainsMono Nerd Font";
-          size = 12.0;
-        };
-        window = {
-          padding = { x = 8; y = 8; };
-          opacity = 0.95;
-        };
+      font = {
+        name = "JetBrainsMono Nerd Font";
+        size = 12;
       };
+      # Theming placeholder - add catppuccin or similar here
     };
   };
 }

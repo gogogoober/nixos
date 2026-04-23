@@ -1,4 +1,4 @@
-# GNOME desktop environment: GDM, GNOME shell, exclude bloat
+# GNOME desktop environment: GDM, GNOME shell, Forge tiling, AppIndicator
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -14,23 +14,25 @@ in {
     services.xserver.desktopManager.gnome.enable = true;
 
     # Remove GNOME bloat
-    environment.gnome.excludePackages = with pkgs; [
-      epiphany        # web browser
-      geary           # email
-      gnome-music
+    services.gnome.excludePackages = with pkgs; [
       gnome-tour
-      gnome-contacts
+      epiphany
+      geary
+      gnome-music
       gnome-maps
       gnome-weather
-      totem           # video player
-      yelp            # help viewer
-      simple-scan
+      totem
     ];
 
-    # Useful GNOME extras
+    # Tweaks, dconf editor, and shell extensions
     environment.systemPackages = with pkgs; [
       gnome-tweaks
-      gnome-extension-manager
+      dconf-editor
+      gnomeExtensions.forge
+      gnomeExtensions.appindicator
     ];
+
+    # AppIndicator tray icon support
+    services.udev.packages = [ pkgs.gnome-settings-daemon ];
   };
 }

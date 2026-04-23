@@ -1,4 +1,4 @@
-# Gaming: Steam, gamepad drivers, performance tweaks
+# Gaming: Steam, gamemode, mangohud, protontricks
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,6 +9,12 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Gaming config goes here
+    programs.steam.enable = true;
+    programs.gamemode.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      mangohud
+      protontricks
+    ];
   };
 }

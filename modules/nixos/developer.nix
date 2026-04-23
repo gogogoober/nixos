@@ -1,4 +1,5 @@
 # Developer tools: docker, language runtimes, dev utilities
+# Docker group membership is a user mutation - set in the host file, not here.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,37 +10,19 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Docker
     virtualisation.docker.enable = true;
-    users.extraGroups.docker.members = [ "hugo" ];
-
-    # Nix tooling
-    programs.direnv.enable = true;
 
     environment.systemPackages = with pkgs; [
-      # Version control
-      git
+      docker-compose
+      lazygit
       gh
-
-      # Language runtimes & toolchains
-      go
-      rustup
-      nodejs_22
-      corepack_22   # enables pnpm/yarn without global install
-      typescript
-
-      # Build tools
       gcc
       gnumake
-      pkg-config
-      openssl
-
-      # Dev utilities
+      python3
+      nodejs_20
+      pnpm
       claude-code
-      jq
-      yq-go
-      httpie
-      docker-compose
+      vscode
     ];
   };
 }

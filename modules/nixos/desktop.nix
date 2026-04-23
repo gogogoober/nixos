@@ -1,4 +1,4 @@
-# Shared graphical stack: pipewire, fonts, xdg portals, bluetooth, printing
+# Shared graphical stack: pipewire, fonts, xdg portals, printing, bluetooth
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,7 +9,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Audio via pipewire
+    # Audio - full pipewire stack
     services.pulseaudio.enable = false;
     security.rtkit.enable = true;
     services.pipewire = {
@@ -17,33 +17,45 @@ in {
       alsa.enable = true;
       alsa.support32Bit = true;
       pulse.enable = true;
+      jack.enable = true;
     };
 
-    # Bluetooth
-    hardware.bluetooth.enable = true;
-    hardware.bluetooth.powerOnBoot = true;
-
-    # Printing
-    services.printing.enable = true;
+    # XDG portals
+    xdg.portal = {
+      enable = true;
+      extraPortals = [ pkgs.xdg-desktop-portal-gtk ];
+    };
 
     # Fonts
     fonts.packages = with pkgs; [
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-emoji
-      fira-code
-      fira-code-symbols
+      liberation_ttf
       jetbrains-mono
       (nerdfonts.override { fonts = [ "FiraCode" "JetBrainsMono" ]; })
     ];
 
-    # XDG portals (base - compositors add their own)
-    xdg.portal.enable = true;
-
-    # X11 keymap
-    services.xserver.xkb = {
-      layout = "us";
-      variant = "";
+    # Printing + network scanner discovery
+    services.printing.enable = true;
+    services.avahi = {
+      enable = true;
+      nssmdns4 = true;
+      openFirewall = true;
     };
+
+    # Bluetooth
+    hardware.bluetooth.enable = true;
+    hardware.bluetooth.powerOnBoot = true;
+    services.blueman.enable = true;
+
+    # GUI utilities
+    environment.systemPackages = with pkgs; [
+      firefox
+      pavucontrol
+      networkmanagerapplet
+      brightnessctl
+      playerctl
+    ];
   };
 }

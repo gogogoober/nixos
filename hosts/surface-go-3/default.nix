@@ -1,4 +1,4 @@
-# Surface Go - host configuration
+# Surface Go 3 - host configuration
 { config, lib, pkgs, inputs, ... }:
 
 {
@@ -14,10 +14,12 @@
   modules = {
     common.enable = true;
     desktop.enable = true;
-    gnome.enable = false;
-    hyprland.enable = true;
+    gnome.enable = true;
+    hyprland.enable = false;
     touchscreen.enable = true;
     developer.enable = true;
+    tts.enable = true;
+    stt.enable = true;
     gaming.enable = false;
   };
 
@@ -25,7 +27,7 @@
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "wheel" "networkmanager" "video" "input" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" ];
     shell = pkgs.zsh;
   };
 

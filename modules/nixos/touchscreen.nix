@@ -1,4 +1,6 @@
-# Touchscreen hardware layer: udev rules, iio-sensor-proxy, palm rejection
+# Touchscreen hardware layer: iio sensors, libwacom pen support
+# Compositor-specific touch gestures live in the GNOME or Hyprland module, not here.
+# This module is hardware-layer only.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,6 +11,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Touchscreen config goes here
+    hardware.sensor.iio.enable = true;
+    services.udev.packages = [ pkgs.libwacom ];
   };
 }

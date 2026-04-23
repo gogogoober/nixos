@@ -18,14 +18,16 @@
     hyprland.enable = false;
     touchscreen.enable = false;
     developer.enable = true;
-    gaming.enable = false;
+    tts.enable = true;
+    stt.enable = true;
+    gaming.enable = true;
   };
 
   # User account
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "wheel" "networkmanager" "video" "input" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" ];
     shell = pkgs.zsh;
   };
 

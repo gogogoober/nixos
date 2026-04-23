@@ -8,7 +8,6 @@
 
   home.username = "hugo";
   home.homeDirectory = "/home/hugo";
-  home.stateVersion = "25.05";
 
   # Module enable flags
   modules = {

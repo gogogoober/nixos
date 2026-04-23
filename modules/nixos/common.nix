@@ -1,4 +1,4 @@
-# Common system configuration: locale, timezone, nix settings, bootloader, networking, base packages
+# Common system configuration: locale, timezone, nix settings, networking, SSH, firewall, base CLI
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,12 +9,7 @@ in {
   };
 
   config = mkIf cfg.enable {
-    boot.loader.systemd-boot.enable = true;
-    boot.loader.efi.canTouchEfiVariables = true;
-
-    networking.networkmanager.enable = true;
-
-    time.timeZone = "America/New_York";
+    time.timeZone = "America/Chicago";
 
     i18n.defaultLocale = "en_US.UTF-8";
     i18n.extraLocaleSettings = {
@@ -29,18 +24,59 @@ in {
       LC_TIME = "en_US.UTF-8";
     };
 
-    nix.settings.experimental-features = [ "nix-command" "flakes" ];
+    nix.settings = {
+      experimental-features = [ "nix-command" "flakes" ];
+      auto-optimise-store = true;
+      trusted-users = [ "root" "@wheel" ];
+    };
+
+    nix.gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 30d";
+    };
+
     nixpkgs.config.allowUnfree = true;
+
+    networking.networkmanager.enable = true;
+
+    services.openssh = {
+      enable = true;
+      settings = {
+        PasswordAuthentication = false;
+        PermitRootLogin = "no";
+      };
+    };
+
+    networking.firewall.enable = true;
 
     programs.zsh.enable = true;
 
+    programs.nix-ld = {
+      enable = true;
+      libraries = with pkgs; [
+        stdenv.cc.cc.lib
+        zlib
+        openssl
+      ];
+    };
+
     environment.systemPackages = with pkgs; [
-      vim
       git
-      curl
+      vim
       wget
+      curl
       htop
+      tree
       unzip
+      file
+      ripgrep
+      fd
+      bat
+      eza
+      fzf
+      zoxide
+      jq
     ];
   };
 }

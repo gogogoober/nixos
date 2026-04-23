@@ -1,4 +1,4 @@
-# Home desktop configuration: GTK theming, cursor, app defaults
+# Home desktop configuration: GTK dark mode, cursor, GNOME Forge dconf, Firefox default
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -11,13 +11,22 @@ in {
   config = mkIf cfg.enable {
     gtk = {
       enable = true;
-      theme = {
-        name = "adw-gtk3-dark";
-        package = pkgs.adw-gtk3;
-      };
-      iconTheme = {
-        name = "Papirus-Dark";
-        package = pkgs.papirus-icon-theme;
+    };
+
+    home.pointerCursor = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 24;
+      gtk.enable = true;
+    };
+
+    # Firefox as default browser
+    xdg.mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "text/html" = "firefox.desktop";
+        "x-scheme-handler/http" = "firefox.desktop";
+        "x-scheme-handler/https" = "firefox.desktop";
       };
     };
 
@@ -25,13 +34,20 @@ in {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
       };
-    };
 
-    home.packages = with pkgs; [
-      firefox
-      nautilus
-      loupe       # image viewer
-      papers      # pdf viewer
-    ];
+      "org/gnome/shell" = {
+        enabled-extensions = [
+          "forge@jmmaranan.com"
+          "appindicatorsupport@rgcjonas.gmail.com"
+        ];
+      };
+
+      # Forge auto-tiling defaults
+      # Additional Forge keybindings can be added to this dconf block later
+      "org/gnome/shell/extensions/forge" = {
+        tiling-mode-enabled = true;
+        stacked-tiling-mode-enabled = true;
+      };
+    };
   };
 }

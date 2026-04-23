@@ -8,5 +8,7 @@
     ./touchscreen.nix
     ./developer.nix
     ./gaming.nix
+    ./tts.nix
+    ./stt.nix
   ];
 }

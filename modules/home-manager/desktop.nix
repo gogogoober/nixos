@@ -2,7 +2,22 @@
 { config, lib, pkgs, ... }:
 
 with lib;
-let cfg = config.modules.desktop;
+let
+  cfg = config.modules.desktop;
+
+  wallpaperDir = ../../home/hugo/assets/wallpapers;
+
+  wallpaperCycle = pkgs.writeShellScript "wallpaper-cycle" ''
+    set -eu
+    export PATH=${pkgs.glib}/bin:${pkgs.coreutils}/bin:${pkgs.findutils}/bin:$PATH
+    DIR="${wallpaperDir}"
+    FILE=$(find "$DIR" -type f \( -iname '*.jpg' -o -iname '*.jpeg' -o -iname '*.png' -o -iname '*.webp' \) | shuf -n 1)
+    if [ -n "$FILE" ]; then
+      gsettings set org.gnome.desktop.background picture-uri "file://$FILE"
+      gsettings set org.gnome.desktop.background picture-uri-dark "file://$FILE"
+      gsettings set org.gnome.desktop.background picture-options "zoom"
+    fi
+  '';
 in {
   options.modules.desktop = {
     enable = mkEnableOption "home desktop configuration";
@@ -62,6 +77,24 @@ in {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;
       };
+    };
+
+    systemd.user.services.wallpaper-cycle = {
+      Unit.Description = "Cycle GNOME wallpaper from assets/wallpapers";
+      Service = {
+        Type = "oneshot";
+        ExecStart = "${wallpaperCycle}";
+      };
+    };
+
+    systemd.user.timers.wallpaper-cycle = {
+      Unit.Description = "Cycle GNOME wallpaper every 5 minutes";
+      Timer = {
+        OnActiveSec = "10s";
+        OnUnitActiveSec = "5min";
+        Unit = "wallpaper-cycle.service";
+      };
+      Install.WantedBy = [ "timers.target" ];
     };
   };
 }

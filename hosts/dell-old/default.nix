@@ -7,6 +7,9 @@
     ../../modules/nixos
   ];
 
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   networking.hostName = "dell-old";
   system.stateVersion = "25.05";
 

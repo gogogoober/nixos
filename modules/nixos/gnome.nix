@@ -17,7 +17,6 @@ in {
     services.gnome.excludePackages = with pkgs; [
       gnome-tour
       epiphany
-      geary
       gnome-music
       gnome-maps
       gnome-weather

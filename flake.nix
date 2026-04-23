@@ -17,6 +17,11 @@
     };
 
     hyprland.url = "github:hyprwm/Hyprland";
+
+    nvf = {
+      url = "github:notashelf/nvf";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs@{ self, nixpkgs, flake-parts, home-manager, ... }:

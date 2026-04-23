@@ -4,6 +4,7 @@
     ./common.nix
     ./shell.nix
     ./editors.nix
+    ./lazy-nvf.nix
     ./terminal.nix
     ./desktop.nix
   ];

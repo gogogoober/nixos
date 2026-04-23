@@ -14,6 +14,7 @@
     common.enable = true;
     shell.enable = true;
     editors.enable = true;
+    lazy-nvf.enable = true;
     terminal.enable = true;
     desktop.enable = true;
   };

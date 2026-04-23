@@ -35,6 +35,20 @@ in {
         color-scheme = "prefer-dark";
       };
 
+      "org/gnome/desktop/sound" = {
+        event-sounds = false;
+        input-feedback-sounds = false;
+        theme-name = "__custom";
+      };
+
+      "org/gnome/desktop/wm/preferences" = {
+        audible-bell = false;
+      };
+
+      "org/gnome/desktop/a11y" = {
+        always-show-universal-access-status = false;
+      };
+
       "org/gnome/shell" = {
         enabled-extensions = [
           "forge@jmmaranan.com"

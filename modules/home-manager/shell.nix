@@ -23,6 +23,9 @@ in {
         cat = "bat";
         cd = "z";
       };
+      initContent = ''
+        unsetopt BEEP
+      '';
     };
 
     # Tokyo Night preset — https://starship.rs/presets/tokyo-night

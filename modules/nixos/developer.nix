@@ -23,6 +23,7 @@ in {
       pnpm
       claude-code
       vscode
+      nixd
     ];
   };
 }

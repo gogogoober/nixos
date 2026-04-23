@@ -22,6 +22,10 @@ in {
         tab_bar_min_tabs = 1;
         window_padding_width = 8;
         scrollback_lines = 10000;
+        enable_audio_bell = "no";
+        visual_bell_duration = "0";
+        window_alert_on_bell = "no";
+        bell_on_tab = "no";
       };
     };
   };

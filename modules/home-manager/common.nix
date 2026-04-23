@@ -29,7 +29,11 @@ in {
       enableZshIntegration = true;
     };
 
-    programs.bat.enable = true;
+    programs.bat = {
+      enable = true;
+      # ansi theme inherits the terminal's 16-color palette (Tokyo Night via kitty)
+      config.theme = "ansi";
+    };
     programs.eza.enable = true;
 
     programs.home-manager.enable = true;

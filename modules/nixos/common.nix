@@ -40,6 +40,9 @@ in {
 
     networking.networkmanager.enable = true;
 
+    # Kill all system beeps — PC speaker kernel modules
+    boot.blacklistedKernelModules = [ "pcspkr" "snd_pcsp" ];
+
     services.openssh = {
       enable = true;
       settings = {

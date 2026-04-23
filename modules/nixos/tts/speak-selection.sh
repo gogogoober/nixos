@@ -92,8 +92,13 @@ if [ -z "$text" ]; then
     *)
       saved="$(wl-paste --no-newline 2>/dev/null || true)"
       wl-copy --clear 2>/dev/null || true
-      # 29 = KEY_LEFTCTRL, 46 = KEY_C. Format is keycode:1 down / keycode:0 up.
-      ydotool key 29:1 46:1 46:0 29:0 2>/dev/null || true
+      # Release any modifier the user may still be physically holding from the
+      # hotkey, then synth Ctrl+C. Without this the compositor combines the
+      # held modifier with the injected Ctrl+C and any matching binding fires
+      # (e.g. Forge's window-snap-center on <Control><Alt>c).
+      # 56=LEFTALT 100=RIGHTALT 125=LEFTMETA 126=RIGHTMETA 42=LEFTSHIFT 54=RIGHTSHIFT
+      # 29=LEFTCTRL 46=C. Format is keycode:1 down / keycode:0 up.
+      ydotool key 56:0 100:0 125:0 126:0 42:0 54:0 29:1 46:1 46:0 29:0 2>/dev/null || true
       sleep "$SELECTION_SLEEP"
       text="$(wl-paste --no-newline 2>/dev/null || true)"
       if [ -n "$saved" ]; then

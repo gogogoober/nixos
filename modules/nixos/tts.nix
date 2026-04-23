@@ -11,7 +11,7 @@
 # DE-agnostic Wayland: works on GNOME Mutter, Hyprland, Sway, anything that
 # speaks the standard wl-clipboard protocol.
 #
-# Keybind: wire Super+Period to invoke `speak-selection` in your existing
+# Keybind: wire Alt+Period to invoke `speak-selection` in your existing
 # GNOME and Hyprland keybinds configs — intentionally NOT managed here.
 #
 # ydotool group: programs.ydotool.enable creates the "ydotool" group but

@@ -154,15 +154,14 @@ in {
           "waybar" # top bar
         ];
 
-        gestures = {
-          workspace_swipe = true;
-          workspace_swipe_fingers = 3;
-        };
-
-        # 3-finger up → app picker. Horizontal swipes are handled by
-        # workspace_swipe above.
+        # Continuous 3-finger horizontal swipe drags workspaces.
         gesture = [
-          "3, up, exec, wofi --show drun"
+          "3, horizontal, workspace"
+        ];
+
+        # Discrete 3-finger swipe up launches the app picker.
+        bindgesture = [
+          ", swipe:3:u, exec, wofi --show drun"
         ];
 
         general = {

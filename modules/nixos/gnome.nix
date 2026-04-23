@@ -14,7 +14,7 @@ in {
     services.xserver.desktopManager.gnome.enable = true;
 
     # Remove GNOME bloat
-    services.gnome.excludePackages = with pkgs; [
+    environment.gnome.excludePackages = with pkgs; [
       gnome-tour
       epiphany
       gnome-music

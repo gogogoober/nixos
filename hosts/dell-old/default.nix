@@ -30,7 +30,7 @@
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" ];
+    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" "ydotool" ];
     shell = pkgs.zsh;
   };
 

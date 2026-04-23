@@ -6,6 +6,13 @@
 #   speak-selection grabs the current selection and POSTs it to the daemon,
 #   piping the returned WAV straight to aplay. Eliminates the ~2-3s cold-start
 #   that one-shot `piper` invocations incur.
+#
+# Selection capture:
+#   Try PRIMARY first (works in terminals, editors, native GTK apps). If empty,
+#   synthesize Ctrl+C via ydotool so browsers/Electron apps copy their current
+#   selection to the clipboard, then read the clipboard. Caveat: if no app has
+#   a selection AND a terminal is focused with a running process, the synthetic
+#   Ctrl+C will SIGINT it — uncommon, but worth knowing.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -47,15 +54,20 @@ let
 
   speakSelection = pkgs.writeShellApplication {
     name = "speak-selection";
-    runtimeInputs = with pkgs; [ alsa-utils wl-clipboard procps curl jq ];
+    runtimeInputs = with pkgs; [ alsa-utils wl-clipboard procps curl jq ydotool ];
     text = ''
-      # Stop any in-flight playback. curl will die from SIGPIPE when aplay closes.
       pkill -x aplay 2>/dev/null || true
 
       text="$(wl-paste --primary --no-newline 2>/dev/null || true)"
+
+      # PRIMARY is empty for browsers/Electron; ask the focused app to copy.
+      # 29 = KEY_LEFTCTRL, 46 = KEY_C; format is keycode:1 (down) / keycode:0 (up).
       if [ -z "$text" ]; then
+        ydotool key 29:1 46:1 46:0 29:0 2>/dev/null || true
+        sleep 0.1
         text="$(wl-paste --no-newline 2>/dev/null || true)"
       fi
+
       if [ -z "$text" ]; then
         exit 0
       fi
@@ -74,6 +86,10 @@ in {
 
   config = mkIf cfg.enable {
     environment.systemPackages = [ speakSelection ];
+
+    # Provides ydotoold (system service) + ydotool client. Adds the ydotool
+    # group; users invoking ydotool need to be in it.
+    programs.ydotool.enable = true;
 
     systemd.user.services.piper-server = {
       description = "Piper TTS HTTP daemon (voice model kept warm in memory)";

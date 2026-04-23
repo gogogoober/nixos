@@ -15,7 +15,14 @@ in {
         name = "JetBrainsMono Nerd Font";
         size = 12;
       };
-      # Theming placeholder - add catppuccin or similar here
+      themeFile = "Tokyo_Night";
+      settings = {
+        tab_bar_style = "powerline";
+        tab_powerline_style = "slanted";
+        tab_bar_min_tabs = 1;
+        window_padding_width = 8;
+        scrollback_lines = 10000;
+      };
     };
   };
 }

@@ -28,10 +28,15 @@ in {
       wofi
       mako
       hyprpaper
+      hyprlock
       grim
       slurp
       wl-clipboard
       wtype
+      jq
     ];
+
+    # PAM service for hyprlock to authenticate unlock
+    security.pam.services.hyprlock = { };
   };
 }

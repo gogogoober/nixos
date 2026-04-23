@@ -229,7 +229,6 @@ in
         utility = {
           motion.flash-nvim.enable = true;
           surround.enable = true;
-          preserve-view.enable = true;
           nvim-biscuits.enable = true;
           snacks-nvim.enable = true;
           undotree.enable = true;

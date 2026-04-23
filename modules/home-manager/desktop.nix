@@ -97,7 +97,7 @@ in {
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection" = {
         name = "Speak selection";
-        binding = "<Alt>Escape";
+        binding = "<Super>period";
         command = "speak-selection";
       };
     };

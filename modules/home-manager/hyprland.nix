@@ -55,6 +55,7 @@ in {
           "$mod,       C,     Universal copy,       exec, hypr-clipboard copy"
           "$mod,       V,     Universal paste,      exec, hypr-clipboard paste"
           "$mod,       X,     Universal cut,        exec, hypr-clipboard cut"
+          "$mod,       grave, Speak selection,      exec, speak-selection"
         ];
       };
     };

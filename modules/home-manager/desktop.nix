@@ -82,6 +82,24 @@ in {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;
       };
+
+      # Free up Super+` (default: switch-group) so we can use it for TTS.
+      "org/gnome/desktop/wm/keybindings" = {
+        switch-group = [ ];
+        switch-group-backward = [ ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys" = {
+        custom-keybindings = [
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
+        ];
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection" = {
+        name = "Speak selection";
+        binding = "<Super>grave";
+        command = "speak-selection";
+      };
     };
 
     systemd.user.services.wallpaper-cycle = {

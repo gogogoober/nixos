@@ -16,12 +16,17 @@
 # single `kill -TERM -<pgid>` from a subsequent invocation stops the whole
 # pipeline mid-sentence.
 # ─────────────────────────────────────────────────────────────────────────
+DEBUG_LOG="${XDG_RUNTIME_DIR:-/tmp}/speak-selection.debug.log"
+log() { printf '[%s] %s pid=%s pgid=%s %s\n' "$(date +%H:%M:%S.%3N)" "${1:-?}" "$$" "$(ps -o pgid= -p $$ | tr -d ' ')" "${2:-}" >> "$DEBUG_LOG"; }
+
 if [ "${1:-}" = "--run" ]; then
   text="${TTS_TEXT:-}"
   unset TTS_TEXT
+  log RUN-enter "text_len=${#text}"
   [ -n "$text" ] || exit 0
 
   echo "$$" > "$LOCK_FILE"
+  log RUN-lockwritten "content=$$"
 
   # shellcheck disable=SC2329  # invoked via trap
   cleanup_run() {
@@ -39,6 +44,7 @@ if [ "${1:-}" = "--run" ]; then
         --data-binary @- \
         "http://$PIPER_HOST:$PIPER_PORT/" \
     | aplay -q
+  log RUN-finished "aplay exited"
 
   unset text
   exit 0
@@ -52,14 +58,18 @@ fi
 # press within the ~250ms it takes to capture a selection is ignored — the
 # first press's readout will start. Subsequent presses during the readout
 # itself acquire the lock normally and perform stop-and-replace.
+log MAIN-enter "args=$*"
 exec 9> "$MAIN_LOCK"
 if ! flock -n 9; then
+  log MAIN-flock-failed "another main flow is already running"
   exit 0
 fi
+log MAIN-flock-acquired ""
 
 # 1. If a reader is in flight, stop it and exit — press-again-to-stop.
 if [ -f "$LOCK_FILE" ]; then
   old_pgid="$(cat "$LOCK_FILE" 2>/dev/null || true)"
+  log MAIN-stopping "old_pgid=$old_pgid"
   if [ -n "$old_pgid" ]; then
     kill -TERM "-$old_pgid" 2>/dev/null || true
   fi
@@ -67,6 +77,7 @@ if [ -f "$LOCK_FILE" ]; then
   unset old_pgid
   exit 0
 fi
+log MAIN-no-reader "LOCK_FILE absent"
 
 # 2. Capture the current selection.
 # PRIMARY is populated by terminals, editors, and most GTK apps — try it
@@ -128,5 +139,7 @@ fi
 # out of argv (so it's not visible in /proc/<pid>/cmdline) and avoids ever
 # writing it to disk. The env var is only readable by our UID via
 # /proc/<pid>/environ, and the --run branch unsets it immediately.
+log MAIN-spawning "text_len=${#text}"
 TTS_TEXT="$text" setsid --fork "$0" --run </dev/null >/dev/null 2>&1
+log MAIN-spawned ""
 unset text TTS_TEXT

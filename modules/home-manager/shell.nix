@@ -37,11 +37,10 @@ in {
 
         directory = {
           truncation_length = 4;
+          truncate_to_repo = false;
           truncation_symbol = "…/";
           style = "blue";
-          before_repo_root_style = "blue";
           format = "[$path]($style) ";
-          repo_root_format = "[$before_root_path]($before_repo_root_style)[$repo_root](blue)[$path](bold white) ";
           substitutions = {
             "Documents" = "󰈙 ";
             "Downloads" = " ";
@@ -57,8 +56,18 @@ in {
         };
 
         git_status = {
-          style = "red";
+          style = "yellow";
           format = "([$all_status$ahead_behind]($style) )";
+          modified = " ";
+          staged = " ";
+          untracked = " ";
+          deleted = " ";
+          renamed = " ";
+          stashed = " ";
+          conflicted = " ";
+          ahead = " ";
+          behind = " ";
+          diverged = " ";
         };
       };
     };

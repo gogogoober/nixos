@@ -64,8 +64,8 @@ in {
       settings = {
         "$mod" = "SUPER";
 
-        # Catch-all: any output, preferred resolution, auto position, auto scale.
-        monitor = [ ",preferred,auto,auto" ];
+        # Catch-all: any output, preferred resolution, auto position, 1x scale.
+        monitor = [ ",preferred,auto,1" ];
 
         # Wayland-friendly defaults for Electron + Firefox + Qt.
         env = [
@@ -99,7 +99,7 @@ in {
           "$mod,       C,      Universal copy,        exec, hypr-clipboard copy"
           "$mod,       V,      Universal paste,       exec, hypr-clipboard paste"
           "$mod,       X,      Universal cut,         exec, hypr-clipboard cut"
-          "ALT,        period, Speak selection,       exec, speak-selection"
+          "SUPER,      escape, Speak selection,       exec, speak-selection"
 
           # Focus movement
           "$mod,       left,   Focus window left,     movefocus, l"

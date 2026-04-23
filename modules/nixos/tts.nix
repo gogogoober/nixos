@@ -1,8 +1,11 @@
-# Piper TTS with selection-to-speech keybind helper.
+# Piper TTS with a warm-model daemon and selection-to-speech helper.
 #
-# Provides `speak-selection`: reads the current selection (primary, then
-# clipboard fallback), pipes it to Piper, and plays via aplay. Toggles —
-# pressing again while playing stops playback.
+# Architecture:
+#   piper-server (systemd user service) loads the voice once and keeps it in
+#   memory, exposing piper's built-in HTTP API on 127.0.0.1.
+#   speak-selection grabs the current selection and POSTs it to the daemon,
+#   piping the returned WAV straight to aplay. Eliminates the ~2-3s cold-start
+#   that one-shot `piper` invocations incur.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -28,13 +31,25 @@ let
     cp ${voiceJson} $out/${voiceName}.onnx.json
   '';
 
-  # Sample rate 22050 matches the lessac-high model. Change with the voice.
+  # piper-tts ships only the one-shot CLI. Re-derive the python wrapper with
+  # http_server as the entry point so we can run it as a long-lived server.
+  piperServer = pkgs.runCommand "piper-server" { } ''
+    mkdir -p $out/bin
+    sed 's|from piper\.__main__ import main|from piper.http_server import main|' \
+      ${pkgs.piper-tts}/bin/.piper-wrapped > $out/bin/.piper-server-wrapped
+    chmod +x $out/bin/.piper-server-wrapped
+    sed "s|${pkgs.piper-tts}/bin/.piper-wrapped|$out/bin/.piper-server-wrapped|g" \
+      ${pkgs.piper-tts}/bin/piper > $out/bin/piper-server
+    chmod +x $out/bin/piper-server
+  '';
+
+  port = "5174";
+
   speakSelection = pkgs.writeShellApplication {
     name = "speak-selection";
-    runtimeInputs = with pkgs; [ piper-tts alsa-utils wl-clipboard procps ];
+    runtimeInputs = with pkgs; [ alsa-utils wl-clipboard procps curl jq ];
     text = ''
-      # Always kill any in-flight playback so a new press supersedes it.
-      pkill -x piper 2>/dev/null || true
+      # Stop any in-flight playback. curl will die from SIGPIPE when aplay closes.
       pkill -x aplay 2>/dev/null || true
 
       text="$(wl-paste --primary --no-newline 2>/dev/null || true)"
@@ -45,17 +60,29 @@ let
         exit 0
       fi
 
-      printf '%s' "$text" \
-        | piper -m ${voice}/${voiceName}.onnx --output-raw 2>/dev/null \
-        | aplay -q -r 22050 -f S16_LE -t raw -
+      curl -sS --max-time 60 -X POST \
+        -H "Content-Type: application/json" \
+        -d "$(jq -n --arg t "$text" '{text: $t}')" \
+        "http://127.0.0.1:${port}/" \
+      | aplay -q
     '';
   };
 in {
   options.modules.tts = {
-    enable = mkEnableOption "Piper TTS with speak-selection helper";
+    enable = mkEnableOption "Piper TTS daemon + speak-selection helper";
   };
 
   config = mkIf cfg.enable {
     environment.systemPackages = [ speakSelection ];
+
+    systemd.user.services.piper-server = {
+      description = "Piper TTS HTTP daemon (voice model kept warm in memory)";
+      wantedBy = [ "default.target" ];
+      serviceConfig = {
+        ExecStart = "${piperServer}/bin/piper-server -m ${voice}/${voiceName}.onnx --host 127.0.0.1 --port ${port}";
+        Restart = "on-failure";
+        RestartSec = 5;
+      };
+    };
   };
 }

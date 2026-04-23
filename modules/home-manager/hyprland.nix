@@ -8,6 +8,11 @@ with lib;
 let
   cfg = config.modules.hyprland;
 
+  # Issue: helper scripts embed the nixpkgs-shipped Hyprland path via
+  # ${pkgs.hyprland}/bin/hyprctl, but the system installs Hyprland from the
+  # flake input (inputs.hyprland). If the IPC protocol ever diverges between
+  # the two versions these scripts will break. Switch to bare `hyprctl` /
+  # `jq` / `wofi` / `hyprlock` and rely on PATH.
   hyprClipboard = pkgs.writeShellScriptBin "hypr-clipboard" ''
     action="$1"
     class=$(${pkgs.hyprland}/bin/hyprctl activewindow -j | ${pkgs.jq}/bin/jq -r .class)
@@ -64,15 +69,19 @@ in {
 
         # Wayland-friendly defaults for Electron + Firefox + Qt.
         env = [
+          # Issue: NIXOS_OZONE_WL is also set in modules/nixos/hyprland.nix via
+          # environment.sessionVariables. Pick one source of truth.
           "NIXOS_OZONE_WL,1"
           "MOZ_ENABLE_WAYLAND,1"
           "QT_QPA_PLATFORM,wayland;xcb"
+          # Issue: XDG_SESSION_TYPE is set automatically by systemd-logind when
+          # Hyprland is launched via its wayland-session .desktop file. This
+          # line is redundant — remove it.
           "XDG_SESSION_TYPE,wayland"
         ];
 
         exec-once = [
-          "mako"                                   # notification daemon
-          "wl-paste --watch cliphist store"        # optional clipboard history, harmless if cliphist missing
+          "mako"   # notification daemon
         ];
 
         bindd = [
@@ -83,6 +92,9 @@ in {
           "$mod,       F,      Toggle fullscreen,     fullscreen, 0"
           "$mod,       SPACE,  App launcher,          exec, wofi --show drun"
           "$mod,       K,      Show keybindings,      exec, hypr-cheatsheet"
+          # Issue: $mod+L invokes hypr-lock-sleep which locks AND suspends in
+          # one action. Consider splitting: one bind to lock only (hyprlock),
+          # another to suspend (hypr-lock-sleep).
           "$mod,       L,      Lock and sleep,        exec, hypr-lock-sleep"
           "$mod,       C,      Universal copy,        exec, hypr-clipboard copy"
           "$mod,       V,      Universal paste,       exec, hypr-clipboard paste"

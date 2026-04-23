@@ -53,6 +53,75 @@ in {
   config = mkIf cfg.enable {
     home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep ];
 
+    programs.waybar = {
+      enable = true;
+      settings.mainBar = {
+        layer = "top";
+        position = "top";
+        height = 30;
+
+        modules-left = [ "hyprland/workspaces" ];
+        modules-center = [ "clock" ];
+        modules-right = [ "tray" "pulseaudio" "network" "battery" ];
+
+        "hyprland/workspaces" = {
+          format = "{id}";
+          on-click = "activate";
+        };
+
+        clock = {
+          format = "{:%a %b %d  %H:%M}";
+          tooltip-format = "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>";
+        };
+
+        network = {
+          format-wifi = "Wi-Fi {signalStrength}%";
+          format-ethernet = "Ethernet";
+          format-disconnected = "Offline";
+          tooltip-format = "{ipaddr}";
+        };
+
+        pulseaudio = {
+          format = "Vol {volume}%";
+          format-muted = "Vol Muted";
+          on-click = "pavucontrol";
+        };
+
+        battery = {
+          format = "Bat {capacity}%";
+          states = { warning = 20; critical = 10; };
+        };
+
+        tray = { spacing = 8; };
+      };
+
+      style = ''
+        * {
+          font-family: "Cantarell", "Inter", sans-serif;
+          font-size: 13px;
+        }
+        window#waybar {
+          background: rgba(30, 30, 30, 0.9);
+          color: #e0e0e0;
+        }
+        #workspaces button {
+          padding: 0 10px;
+          background: transparent;
+          color: #888;
+          border: none;
+        }
+        #workspaces button.active {
+          color: #fff;
+          background: rgba(255, 255, 255, 0.12);
+        }
+        #clock, #network, #pulseaudio, #battery, #tray {
+          padding: 0 12px;
+        }
+        #battery.warning { color: #f9b500; }
+        #battery.critical { color: #f44336; }
+      '';
+    };
+
     wayland.windowManager.hyprland = {
       enable = true;
       # NixOS module (modules/nixos/hyprland.nix) installs Hyprland system-wide
@@ -82,6 +151,18 @@ in {
 
         exec-once = [
           "mako"   # notification daemon
+          "waybar" # top bar
+        ];
+
+        gestures = {
+          workspace_swipe = true;
+          workspace_swipe_fingers = 3;
+        };
+
+        # 3-finger up → app picker. Horizontal swipes are handled by
+        # workspace_swipe above.
+        gesture = [
+          "3, up, exec, wofi --show drun"
         ];
 
         general = {

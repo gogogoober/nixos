@@ -140,6 +140,9 @@ fi
 # writing it to disk. The env var is only readable by our UID via
 # /proc/<pid>/environ, and the --run branch unsets it immediately.
 log MAIN-spawning "text_len=${#text}"
-TTS_TEXT="$text" setsid --fork "$0" --run </dev/null >/dev/null 2>&1
+# Close fd 9 so the detached reader doesn't inherit the MAIN_LOCK flock —
+# otherwise the lock is held for the whole readout duration and subsequent
+# hotkey presses (to stop) silently fail the flock check.
+TTS_TEXT="$text" setsid --fork "$0" --run </dev/null >/dev/null 2>&1 9<&-
 log MAIN-spawned ""
 unset text TTS_TEXT

@@ -37,4 +37,17 @@
   # Hardware quirks specific to this machine
   hardware.firmware = [ pkgs.linux-firmware ];
   services.fprintd.enable = false;
+
+  # Swap Ctrl and Alt to match macOS muscle memory
+  services.xserver.xkb.options = "ctrl:swap_lalt_lctl";
+  services.keyd = {
+    enable = true;
+    keyboards.default = {
+      ids = [ "*" ];
+      settings.main = {
+        leftalt = "leftcontrol";
+        leftcontrol = "leftalt";
+      };
+    };
+  };
 }

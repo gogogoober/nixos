@@ -119,7 +119,6 @@ let
       alsa-utils
       curl
       jq
-      libnotify
       util-linux     # setsid, flock
       wl-clipboard
       ydotool

@@ -5,10 +5,9 @@
 #   LOCK_FILE, MAIN_LOCK
 #
 # Semantics (a single hotkey drives every state):
-#   idle + selection        → start reading
-#   reading + new selection → stop current, start new
-#   reading + no selection  → stop current, exit
-#   idle + no selection     → no-op
+#   idle + selection    → start reading
+#   idle + no selection → no-op
+#   reading             → stop, exit (pure toggle — press again to stop)
 
 # ─────────────────────────────────────────────────────────────────────────
 # --run subcommand
@@ -58,7 +57,7 @@ if ! flock -n 9; then
   exit 0
 fi
 
-# 1. Stop any in-flight reader.
+# 1. If a reader is in flight, stop it and exit — press-again-to-stop.
 if [ -f "$LOCK_FILE" ]; then
   old_pgid="$(cat "$LOCK_FILE" 2>/dev/null || true)"
   if [ -n "$old_pgid" ]; then
@@ -66,6 +65,7 @@ if [ -f "$LOCK_FILE" ]; then
   fi
   rm -f "$LOCK_FILE"
   unset old_pgid
+  exit 0
 fi
 
 # 2. Capture the current selection.
@@ -107,7 +107,7 @@ if [ -z "$text" ]; then
   unset clip_types
 fi
 
-# 3. No selection → we've already stopped any previous reader, done.
+# 3. No selection → nothing to read.
 if [ -z "$text" ]; then
   exit 0
 fi
@@ -118,10 +118,6 @@ fi
 if [ "${#text}" -gt "$MAX_CHARS" ]; then
   text="${text:0:$MAX_CHARS}"
 fi
-
-# TODO remove this notification once the script is more functional.
-notify-send -t 1500 -a speak-selection "Reading selection" \
-  "$(printf '%.80s' "$text")…" 2>/dev/null || true
 
 # 5. Hand off to a detached session. Passing the text via env var keeps it
 # out of argv (so it's not visible in /proc/<pid>/cmdline) and avoids ever

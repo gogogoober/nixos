@@ -82,19 +82,19 @@ in
 
         # Language support - per-language LSP, treesitter, formatter, linter
         languages = {
-          enableLSP = true;
+          # LSP is enabled at vim.lsp.enable level
           enableTreesitter = true;
           enableFormat = true;
           enableExtraDiagnostics = true;
 
-          ts.enable = true;          # TypeScript, JavaScript, React
+          typescript.enable = true;   # TypeScript, JavaScript, React
           nix.enable = true;
           lua.enable = true;
           bash.enable = true;
           markdown.enable = true;
           html.enable = true;        # Angular templates
           css.enable = true;
-          tailwind.enable = true;
+          # tailwind LSP is now under vim.lsp.presets
           python.enable = true;
           go.enable = true;
           rust.enable = true;
@@ -162,11 +162,12 @@ in
         lsp = {
           enable = true;
           formatOnSave = true;
+          presets.tailwindcss-language-server.enable = true;
           lspkind.enable = true;
           lightbulb.enable = true;
           lspsaga.enable = false;
           trouble.enable = true;
-          lspSignature.enable = true;
+          lspSignature.enable = false;
           otter-nvim.enable = true;
           nvim-docs-view.enable = false;
         };
@@ -177,6 +178,7 @@ in
           setupOpts = {
             keymap.preset = "default";
             completion.documentation.auto_show = true;
+            signature.enabled = true;
           };
         };
 

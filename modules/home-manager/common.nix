@@ -13,8 +13,8 @@ in {
 
     programs.git = {
       enable = true;
-      userName = "Hugo";
-      userEmail = "juicebox.salinas@gmail.com";
+      settings.user.name = "Hugo";
+      settings.user.email = "juicebox.salinas@gmail.com";
     };
 
     programs.gh.enable = true;

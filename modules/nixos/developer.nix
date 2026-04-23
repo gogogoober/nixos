@@ -1,4 +1,4 @@
-# Developer tools: compilers, language runtimes, development utilities
+# Developer tools: docker, language runtimes, dev utilities
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,6 +9,37 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Developer config goes here
+    # Docker
+    virtualisation.docker.enable = true;
+    users.extraGroups.docker.members = [ "hugo" ];
+
+    # Nix tooling
+    programs.direnv.enable = true;
+
+    environment.systemPackages = with pkgs; [
+      # Version control
+      git
+      gh
+
+      # Language runtimes & toolchains
+      go
+      rustup
+      nodejs_22
+      corepack_22   # enables pnpm/yarn without global install
+      typescript
+
+      # Build tools
+      gcc
+      gnumake
+      pkg-config
+      openssl
+
+      # Dev utilities
+      claude-code
+      jq
+      yq-go
+      httpie
+      docker-compose
+    ];
   };
 }

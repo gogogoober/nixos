@@ -1,4 +1,4 @@
-# Home desktop configuration: GTK/Qt theming, cursor, wallpaper, app defaults
+# Home desktop configuration: GTK theming, cursor, app defaults
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,6 +9,29 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Home desktop config goes here
+    gtk = {
+      enable = true;
+      theme = {
+        name = "adw-gtk3-dark";
+        package = pkgs.adw-gtk3;
+      };
+      iconTheme = {
+        name = "Papirus-Dark";
+        package = pkgs.papirus-icon-theme;
+      };
+    };
+
+    dconf.settings = {
+      "org/gnome/desktop/interface" = {
+        color-scheme = "prefer-dark";
+      };
+    };
+
+    home.packages = with pkgs; [
+      firefox
+      nautilus
+      loupe       # image viewer
+      papers      # pdf viewer
+    ];
   };
 }

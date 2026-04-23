@@ -1,4 +1,4 @@
-# Common home config: base packages, XDG dirs, default dotfiles
+# Common home config: base packages, XDG dirs
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,6 +9,19 @@ in {
   };
 
   config = mkIf cfg.enable {
-    # Common home config goes here
+    home.packages = with pkgs; [
+      ripgrep
+      fd
+      bat
+      eza
+      fzf
+      tree
+      tldr
+      du-dust
+    ];
+
+    xdg.enable = true;
+
+    programs.home-manager.enable = true;
   };
 }

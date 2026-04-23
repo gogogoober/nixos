@@ -13,18 +13,24 @@
   networking.hostName = "dell-old";
   system.stateVersion = "25.05";
 
-  # Module enable flags
+  # Module enable flags.
+  # DE toggle: flip these two to swap between GNOME and Hyprland. Both can
+  # be true simultaneously (GDM will offer both sessions at login).
   modules = {
     common.enable = true;
     desktop.enable = true;
-    gnome.enable = true;
-    hyprland.enable = false;
+    gnome.enable = false;
+    hyprland.enable = true;
     touchscreen.enable = false;
     developer.enable = true;
     tts.enable = true;
     stt.enable = true;
     gaming.enable = true;
   };
+
+  # Mirror the NixOS Hyprland flag into home-manager so the user's Hyprland
+  # config (keybinds, monitor, autostart) is generated iff the session is.
+  home-manager.users.hugo.modules.hyprland.enable = config.modules.hyprland.enable;
 
   # User account
   users.users.hugo = {

@@ -1,4 +1,5 @@
-# GNOME desktop environment: GDM, GNOME shell, Forge tiling, AppIndicator
+# GNOME desktop environment: GNOME shell, Forge tiling, AppIndicator.
+# GDM + xserver live in desktop.nix so they stay up regardless of DE choice.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -9,8 +10,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    services.xserver.enable = true;
-    services.displayManager.gdm.enable = true;
     services.desktopManager.gnome.enable = true;
 
     # Remove GNOME bloat

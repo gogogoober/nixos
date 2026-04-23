@@ -9,6 +9,13 @@ in {
   };
 
   config = mkIf cfg.enable {
+    # Display manager (GDM) — always on, regardless of which DE is active.
+    # GDM offers whichever sessions are installed (GNOME, Hyprland, etc.),
+    # so flipping modules.gnome.enable / modules.hyprland.enable just changes
+    # which session is available at login.
+    services.xserver.enable = true;
+    services.displayManager.gdm.enable = true;
+
     # Audio - full pipewire stack
     services.pulseaudio.enable = false;
     security.rtkit.enable = true;

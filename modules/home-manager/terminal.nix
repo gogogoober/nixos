@@ -15,7 +15,7 @@ in {
         name = "JetBrainsMono Nerd Font";
         size = 12;
       };
-      themeFile = "Tokyo_Night";
+      themeFile = "tokyo_night_night";
       settings = {
         tab_bar_style = "powerline";
         tab_powerline_style = "slanted";

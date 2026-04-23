@@ -33,10 +33,9 @@ let
     name = "speak-selection";
     runtimeInputs = with pkgs; [ piper-tts alsa-utils wl-clipboard procps ];
     text = ''
-      if pkill -x piper 2>/dev/null; then
-        pkill -x aplay 2>/dev/null || true
-        exit 0
-      fi
+      # Always kill any in-flight playback so a new press supersedes it.
+      pkill -x piper 2>/dev/null || true
+      pkill -x aplay 2>/dev/null || true
 
       text="$(wl-paste --primary --no-newline 2>/dev/null || true)"
       if [ -z "$text" ]; then

@@ -83,12 +83,6 @@ in {
         stacked-tiling-mode-enabled = true;
       };
 
-      # Free up Super+` (default: switch-group) so we can use it for TTS.
-      "org/gnome/desktop/wm/keybindings" = {
-        switch-group = [ ];
-        switch-group-backward = [ ];
-      };
-
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
@@ -97,7 +91,7 @@ in {
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection" = {
         name = "Speak selection";
-        binding = "<Super>grave";
+        binding = "<Primary>Escape";
         command = "speak-selection";
       };
     };

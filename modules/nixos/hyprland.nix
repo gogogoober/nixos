@@ -14,10 +14,10 @@ in {
       package = inputs.hyprland.packages.${pkgs.system}.hyprland;
     };
 
-    xdg.portal = {
-      enable = true;
-      extraPortals = [ pkgs.xdg-desktop-portal-hyprland ];
-    };
+    # programs.hyprland.enable already installs xdg-desktop-portal-hyprland via
+    # its own xdg.portal.extraPortals, and desktop.nix already enables the
+    # portal. No portal config needed here — explicitly adding it duplicates
+    # the systemd user unit symlink and fails the build with "File exists".
 
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";

@@ -60,7 +60,7 @@ in
 
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
-          enkia.tokyo-night # Theme
+          dracula-theme.theme-dracula # Theme
           esbenp.prettier-vscode # Formatter
           tekumara.typos-vscode # Typo checker
           bradlc.vscode-tailwindcss # Tailwind IntelliSense
@@ -69,7 +69,6 @@ in
           golang.go # Go language support
           jnoortheen.nix-ide # Nix language support
           angular.ng-template # Angular template language
-          eamodio.gitlens # Git blame and history
           usernamehw.errorlens # Inline diagnostics
           christian-kohler.path-intellisense # Path autocomplete
           editorconfig.editorconfig # .editorconfig support

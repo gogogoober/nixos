@@ -77,5 +77,8 @@
   "telemetry.telemetryLevel": "off",
   "terminal.integrated.defaultProfile.linux": "zsh",
   "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font'",
-  "workbench.colorTheme": "Tokyo Night"
+  "workbench.colorTheme": "Dracula",
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor"
+  }
 }

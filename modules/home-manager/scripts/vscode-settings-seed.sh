@@ -9,7 +9,7 @@ set -euo pipefail
 SEED="${VSCODE_SEED:-}"
 if [ -z "$SEED" ]; then
   script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-  SEED="$script_dir/../../../utils/vscode-settings-seed.json"
+  SEED="$script_dir/../../../assets/vscode/settings.json"
 fi
 
 if [ ! -f "$SEED" ]; then

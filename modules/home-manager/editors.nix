@@ -13,7 +13,7 @@ let
     name = "vscode-settings-seed";
     runtimeInputs = [ pkgs.coreutils ];
     text = ''
-      export VSCODE_SEED=${./../../utils/vscode-settings-seed.json}
+      export VSCODE_SEED=${./../../assets/vscode/settings.json}
       # shellcheck source=/dev/null
       source ${./scripts/vscode-settings-seed.sh}
     '';
@@ -86,7 +86,7 @@ in
         # settings.json is NOT managed as a nix-store symlink here. Home Manager
         # would make it read-only, which breaks any extension that writes to it
         # (e.g. Claude Code persisting preferredLocation). Instead, the seed
-        # lives at utils/vscode-settings-seed.json and gets copied onto the real
+        # lives at assets/vscode/settings.json and gets copied onto the real
         # file on every rebuild by the activation hook below. Drift between
         # rebuilds is inspected with `vscode-settings-diff`.
       };

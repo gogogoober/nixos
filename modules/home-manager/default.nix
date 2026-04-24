@@ -8,5 +8,6 @@
     ./terminal.nix
     ./desktop.nix
     ./hyprland
+    ./claude.nix
   ];
 }

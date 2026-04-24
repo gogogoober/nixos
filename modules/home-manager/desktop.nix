@@ -5,7 +5,7 @@ with lib;
 let
   cfg = config.modules.desktop;
 
-  wallpaperDir = ../../home/hugo/assets/wallpapers;
+  wallpaperDir = ../../assets/wallpapers;
 
   wallpaperCycle = pkgs.writeShellScript "wallpaper-cycle" ''
     set -eu

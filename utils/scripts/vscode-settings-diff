@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Report keys in ~/.config/Code/User/settings.json that drift from the seed.
 
-The seed lives at ../vscode-settings-seed.json relative to this script. VS Code
-writes JSONC (comments + trailing commas), so we run a lightweight strip before
-feeding the text to json.loads — the regexes are not a full JSONC parser but
-cover everything VS Code actually emits to settings.json.
+The seed lives at ../../assets/vscode/settings.json relative to this script.
+VS Code writes JSONC (comments + trailing commas), so we run a lightweight
+strip before feeding the text to json.loads — the regexes are not a full
+JSONC parser but cover everything VS Code actually emits to settings.json.
 """
 
 import json
@@ -27,7 +27,7 @@ def load_jsonc(path):
 
 def main():
     script_dir = os.path.dirname(os.path.realpath(__file__))
-    seed_path = os.path.normpath(os.path.join(script_dir, "..", "vscode-settings-seed.json"))
+    seed_path = os.path.normpath(os.path.join(script_dir, "..", "..", "assets", "vscode", "settings.json"))
     target_path = os.path.expanduser("~/.config/Code/User/settings.json")
 
     if not os.path.exists(seed_path):

@@ -24,7 +24,7 @@ in
 
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
-          zhuangtongfa.material-theme # One Dark Pro theme
+          github.github-vscode-theme # GitHub theme
           esbenp.prettier-vscode # Formatter
           tekumara.typos-vscode # Typo checker
           bradlc.vscode-tailwindcss # Tailwind IntelliSense
@@ -117,7 +117,7 @@ in
           "telemetry.telemetryLevel" = "off";
           "terminal.integrated.defaultProfile.linux" = "zsh";
           "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-          "workbench.colorTheme" = "One Dark Pro Night Flat";
+          "workbench.colorTheme" = "GitHub Dark Default";
           "workbench.editorAssociations" = {
             "*.md" = "vscode.markdown.preview.editor";
           };

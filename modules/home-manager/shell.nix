@@ -49,10 +49,17 @@ in
       };
     };
 
+    # Git-aware prompt with nerd-font glyphs
     programs.starship = {
       enable = true;
       enableTransience = true;
       settings = starshipSettings;
+    };
+
+    # Colorize command output
+    programs.grc = {
+      enable = true;
+      enableAliases = true;
     };
   };
 }

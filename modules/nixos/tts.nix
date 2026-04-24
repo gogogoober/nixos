@@ -6,7 +6,7 @@
 #   • speak-selection — the hotkey target. One invocation always stops any
 #                       running readout, then captures the current selection
 #                       and speaks it if there is one. Shell logic lives in
-#                       ./tts/speak-selection.sh; this file only wires config.
+#                       ./scripts/speak-selection.sh; this file only wires config.
 #
 # DE-agnostic Wayland: works on GNOME Mutter, Hyprland, Sway, anything that
 # speaks the standard wl-clipboard protocol.
@@ -123,7 +123,7 @@ let
       wl-clipboard
       ydotool
     ];
-    text = settingsPreamble + "\n" + builtins.readFile ./tts/speak-selection.sh;
+    text = settingsPreamble + "\n" + builtins.readFile ./scripts/speak-selection.sh;
   };
 in {
   options.modules.tts = {

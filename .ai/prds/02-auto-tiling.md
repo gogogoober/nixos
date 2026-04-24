@@ -1,4 +1,4 @@
-# Terminal Configuration PRD
+# Auto Tiling Configuration PRD
 
 ## Goal
 _One or two sentences on what good looks like for the terminal._

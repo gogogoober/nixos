@@ -39,21 +39,51 @@ in
         ];
 
         userSettings = {
-          "[css]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[go]" = { "editor.defaultFormatter" = "golang.go"; };
-          "[html]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[javascript]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[javascriptreact]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[json]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[jsonc]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[markdown]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[nix]" = { "editor.defaultFormatter" = "jnoortheen.nix-ide"; };
-          "[python]" = { "editor.defaultFormatter" = "ms-python.python"; };
-          "[rust]" = { "editor.defaultFormatter" = "rust-lang.rust-analyzer"; };
-          "[scss]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[typescript]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[typescriptreact]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
-          "[yaml]" = { "editor.defaultFormatter" = "esbenp.prettier-vscode"; };
+          "[css]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[go]" = {
+            "editor.defaultFormatter" = "golang.go";
+          };
+          "[html]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[javascript]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[javascriptreact]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[json]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[jsonc]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[markdown]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[nix]" = {
+            "editor.defaultFormatter" = "jnoortheen.nix-ide";
+          };
+          "[python]" = {
+            "editor.defaultFormatter" = "ms-python.python";
+          };
+          "[rust]" = {
+            "editor.defaultFormatter" = "rust-lang.rust-analyzer";
+          };
+          "[scss]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[typescript]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[typescriptreact]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
+          "[yaml]" = {
+            "editor.defaultFormatter" = "esbenp.prettier-vscode";
+          };
           "claudeCode.preferredLocation" = "panel";
           "editor.bracketPairColorization.enabled" = true;
           "editor.codeActionsOnSave" = {
@@ -87,7 +117,7 @@ in
           "telemetry.telemetryLevel" = "off";
           "terminal.integrated.defaultProfile.linux" = "zsh";
           "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-          "workbench.colorTheme" = "One Dark Pro";
+          "workbench.colorTheme" = "Darker theme";
           "workbench.editorAssociations" = {
             "*.md" = "vscode.markdown.preview.editor";
           };

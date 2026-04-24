@@ -1,4 +1,3 @@
-# Surface Go 3 - host configuration
 {
   config,
   lib,
@@ -16,7 +15,6 @@
   networking.hostName = "surface-go-3";
   system.stateVersion = "25.05";
 
-  # Module enable flags
   modules = {
     common.enable = true;
     desktop.enable = true;
@@ -29,7 +27,6 @@
     gaming.enable = false;
   };
 
-  # User account
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
@@ -42,6 +39,4 @@
     ];
     shell = pkgs.zsh;
   };
-
-  # Hardware quirks specific to this machine go here
 }

@@ -1,4 +1,3 @@
-# Barrel file - imports all NixOS modules
 {
   imports = [
     ./common.nix

@@ -1,7 +1,3 @@
-# System-level dev toolchain: docker daemon and language runtimes that any user
-# or service on the host may need. Personal editor tooling lives in the
-# home-manager devtools module instead.
-# Docker group membership is a user mutation - set in the host file, not here.
 {
   config,
   lib,

@@ -1,7 +1,3 @@
-# All keyboard bindings plus the small helper scripts a few binds invoke
-# (universal clipboard shim, cheatsheet, lock-and-sleep). Popover overlays
-# like the app drawer and power menu live in overlay.nix; binds here only
-# dispatch to `hypr-app-drawer` / `hypr-power-menu`.
 {
   config,
   lib,
@@ -13,11 +9,6 @@ with lib;
 let
   cfg = config.modules.hyprland;
 
-  # Issue: helper scripts embed the nixpkgs-shipped Hyprland path via
-  # ${pkgs.hyprland}/bin/hyprctl, but the system installs Hyprland from the
-  # flake input (inputs.hyprland). If the IPC protocol ever diverges between
-  # the two versions these scripts will break. Switch to bare `hyprctl` /
-  # `jq` / `wofi` / `hyprlock` and rely on PATH.
   hyprClipboard = pkgs.writeShellScriptBin "hypr-clipboard" ''
     action="$1"
     class=$(${pkgs.hyprland}/bin/hyprctl activewindow -j | ${pkgs.jq}/bin/jq -r .class)
@@ -45,7 +36,7 @@ let
     ${pkgs.systemd}/bin/systemctl suspend
   '';
 
-  # Workspace 1-9: switch with $mod, move window with $mod+SHIFT.
+  # Workspaces 1-9: $mod switches, $mod+SHIFT moves window
   workspaceBinds =
     builtins.concatMap
       (n: [
@@ -83,9 +74,6 @@ in
         "$mod,       F,      Toggle fullscreen,     fullscreen, 0"
         "$mod,       SPACE,  App launcher,          exec, hypr-app-drawer"
         "$mod,       K,      Show keybindings,      exec, hypr-cheatsheet"
-        # Issue: $mod+L invokes hypr-lock-sleep which locks AND suspends in
-        # one action. Consider splitting: one bind to lock only (hyprlock),
-        # another to suspend (hypr-lock-sleep).
         "$mod,       L,      Lock and sleep,        exec, hypr-lock-sleep"
         "$mod,       C,      Universal copy,        exec, hypr-clipboard copy"
         "$mod,       V,      Universal paste,       exec, hypr-clipboard paste"
@@ -98,7 +86,6 @@ in
         "$mod,       up,     Focus window up,       movefocus, u"
         "$mod,       down,   Focus window down,     movefocus, d"
 
-        # Escape hatch — log out of Hyprland back to GDM.
         "$mod SHIFT, Q,      Exit Hyprland,         exit,"
       ]
       ++ workspaceBinds;

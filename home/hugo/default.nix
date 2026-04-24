@@ -1,4 +1,3 @@
-# Home-manager entry point for user hugo
 { ... }:
 
 {
@@ -9,7 +8,6 @@
   home.username = "hugo";
   home.homeDirectory = "/home/hugo";
 
-  # Module enable flags
   modules = {
     common.enable = true;
     shell.enable = true;

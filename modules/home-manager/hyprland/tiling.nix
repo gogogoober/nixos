@@ -1,6 +1,3 @@
-# How windows are tiled: gaps, borders, layout engine, and the per-workspace
-# rules that strip decoration when a workspace goes fullscreen. Aesthetic of
-# the window itself (rounding, blur, shadow) lives in windows.nix.
 { config, lib, ... }:
 
 with lib;
@@ -21,8 +18,7 @@ in
         layout = "dwindle";
       };
 
-      # Smart gaps: drop borders/rounding/gaps only when a workspace is
-      # fullscreen (f[1]). A lone tiled window still gets outer margin.
+      # Drop gaps/borders/rounding when workspace is fullscreen (f[1])
       workspace = [
         "f[1], gapsout:0, gapsin:0"
       ];

@@ -1,4 +1,3 @@
-# Terminal configuration: kitty
 {
   config,
   lib,

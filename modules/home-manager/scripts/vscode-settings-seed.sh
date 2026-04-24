@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Overwrites ~/.config/Code/User/settings.json with the declarative seed.
-# Invoked automatically by home-manager activation, and can be re-run by hand.
-# Seed path comes from the Nix wrapper via VSCODE_SEED; fall back to a repo-relative
-# path so the raw script stays runnable outside the Nix build for testing.
+# Overwrites ~/.config/Code/User/settings.json from the declarative seed.
+# VSCODE_SEED is set by the Nix wrapper; fallback lets the raw script run standalone.
 
 SEED="${VSCODE_SEED:-}"
 if [ -z "$SEED" ]; then
@@ -20,8 +18,7 @@ fi
 TARGET="${HOME}/.config/Code/User/settings.json"
 mkdir -p "$(dirname "$TARGET")"
 
-# Drop any leftover symlink from a previous Home Manager generation that
-# managed settings.json declaratively via the nix store.
+# Drop stale symlink from a previous HM generation
 if [ -L "$TARGET" ]; then
   rm "$TARGET"
 fi

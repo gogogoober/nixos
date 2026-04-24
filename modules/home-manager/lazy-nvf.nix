@@ -49,10 +49,9 @@ in
         viAlias = true;
         vimAlias = true;
 
-        # Leader matches LazyVim default
+        # Matches LazyVim default
         globals.mapleader = " ";
 
-        # Editor defaults
         options = {
           tabstop = 2;
           shiftwidth = 2;
@@ -74,7 +73,7 @@ in
           mouse = "a";
         };
 
-        # Dracula via extraPlugins - nvf doesn't ship it natively
+        # nvf doesn't ship Dracula natively
         theme.enable = false;
         extraPlugins = {
           dracula-nvim = {
@@ -89,9 +88,7 @@ in
           };
         };
 
-        # Language support - per-language LSP, treesitter, formatter, linter
         languages = {
-          # LSP is enabled at vim.lsp.enable level
           enableTreesitter = true;
           enableFormat = true;
           enableExtraDiagnostics = true;
@@ -103,7 +100,6 @@ in
           markdown.enable = true;
           html.enable = true; # Angular templates
           css.enable = true;
-          # tailwind LSP is now under vim.lsp.presets
           python.enable = true;
           go.enable = true;
           rust.enable = true;
@@ -111,14 +107,12 @@ in
           json.enable = true;
         };
 
-        # Picker - choose at module-option level
         telescope.enable = cfg.picker == "telescope";
         fzf-lua = mkIf (cfg.picker == "fzf-lua") {
           enable = true;
           profile = "default";
         };
 
-        # VSCode-style file tree on the left
         filetree.neo-tree = {
           enable = true;
           setupOpts = {
@@ -158,7 +152,6 @@ in
           };
         };
 
-        # Treesitter
         treesitter = {
           enable = true;
           fold = true;
@@ -167,7 +160,6 @@ in
           textobjects.enable = true;
         };
 
-        # LSP
         lsp = {
           enable = true;
           formatOnSave = true;
@@ -212,7 +204,6 @@ in
           };
         };
 
-        # Completion - blink.cmp, modern and fast
         autocomplete.blink-cmp = {
           enable = true;
           setupOpts = {
@@ -222,17 +213,14 @@ in
           };
         };
 
-        # Snippets
         snippets.luasnip.enable = true;
 
-        # Git
         git = {
           enable = true;
           gitsigns.enable = true;
           gitsigns.codeActions.enable = true;
         };
 
-        # Visual
         visuals = {
           nvim-web-devicons.enable = true;
           indent-blankline.enable = true;
@@ -241,7 +229,6 @@ in
           rainbow-delimiters.enable = true;
         };
 
-        # Statusline and tabline
         statusline.lualine = {
           enable = true;
           theme = "auto";
@@ -249,7 +236,6 @@ in
 
         tabline.nvimBufferline.enable = true;
 
-        # UI
         ui = {
           borders.enable = true;
           noice.enable = true;
@@ -261,13 +247,11 @@ in
           nvim-ufo.enable = true;
         };
 
-        # Keybindings
         binds = {
           whichKey.enable = true;
           cheatsheet.enable = true;
         };
 
-        # Utility
         utility = {
           motion.flash-nvim.enable = true;
           surround.enable = true;
@@ -277,19 +261,16 @@ in
           outline.aerial-nvim.enable = true;
         };
 
-        # Notes
         notes.todo-comments.enable = true;
 
-        # Terminal
         terminal.toggleterm = {
           enable = true;
           lazygit.enable = true;
         };
 
-        # Dashboard
         dashboard.alpha.enable = true;
 
-        # Auto-open neo-tree on startup when directory is opened
+        # Open neo-tree when nvim launches into a directory
         luaConfigRC.auto-open-tree = mkIf cfg.autoOpenTree ''
           vim.api.nvim_create_autocmd("VimEnter", {
             callback = function()
@@ -300,7 +281,6 @@ in
           })
         '';
 
-        # Keymaps - picker commands switch based on cfg.picker
         keymaps =
           let
             findFiles =
@@ -532,16 +512,12 @@ in
               desc = "Quit";
             }
 
-            # Clear search highlight
             {
               key = "<Esc>";
               mode = "n";
               action = "<cmd>nohlsearch<cr>";
               desc = "Clear highlight";
             }
-
-            # Reserved for voice-driven bindings
-            # { key = "<leader>vs"; mode = "n"; action = "..."; desc = "Speak selection"; }
           ];
       };
     };

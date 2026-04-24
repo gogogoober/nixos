@@ -10,11 +10,7 @@ with lib;
 let
   cfg = config.modules.claude;
 
-  # Wraps the raw seed script with the Nix-store path to the seed tree baked
-  # in. Same pattern as vscodeSettingsSeed in editors.nix: the raw script
-  # lives at modules/home-manager/scripts/ so it stays editable and runnable
-  # outside the Nix build; this wrapper is what lands on PATH and what the
-  # activation hook invokes.
+  # Wrap seed script with the seed tree path baked in
   claudeSkillsSeed = pkgs.writeShellApplication {
     name = "claude-skills-seed";
     runtimeInputs = [ pkgs.coreutils ];
@@ -33,12 +29,9 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Install the seeder on PATH so it can be re-run by hand at any time.
     home.packages = [ claudeSkillsSeed ];
 
-    # Re-seed ~/.claude/{CLAUDE.md, skills/<seeded>} on every home-manager
-    # switch. Per-file-by-name semantics: only files/dirs present in
-    # assets/claude/ are touched. See claude-skills-seed.sh for details.
+    # Re-seed ~/.claude each rebuild; only files in assets/claude/ are touched
     home.activation.seedClaudeSkills = hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD ${claudeSkillsSeed}/bin/claude-skills-seed
     '';

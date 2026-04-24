@@ -1,4 +1,3 @@
-# Dell Old - host configuration
 {
   config,
   lib,
@@ -19,9 +18,7 @@
   networking.hostName = "dell-old";
   system.stateVersion = "25.05";
 
-  # Module enable flags.
-  # DE toggle: flip these two to swap between GNOME and Hyprland. Both can
-  # be true simultaneously (GDM will offer both sessions at login).
+  # Both DEs can be enabled; GDM offers both at login
   modules = {
     common.enable = true;
     desktop.enable = true;
@@ -34,11 +31,9 @@
     gaming.enable = true;
   };
 
-  # Mirror the NixOS Hyprland flag into home-manager so the user's Hyprland
-  # config (keybinds, monitor, autostart) is generated iff the session is.
+  # Mirror to home-manager so user Hyprland config matches the session
   home-manager.users.hugo.modules.hyprland.enable = config.modules.hyprland.enable;
 
-  # User account
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
@@ -53,11 +48,10 @@
     shell = pkgs.zsh;
   };
 
-  # Hardware quirks specific to this machine
   hardware.firmware = [ pkgs.linux-firmware ];
   services.fprintd.enable = false;
 
-  # Swap Ctrl and Alt to match macOS muscle memory
+  # macOS muscle memory
   services.xserver.xkb.options = "ctrl:swap_lalt_lctl";
   services.keyd = {
     enable = true;

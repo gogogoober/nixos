@@ -1,4 +1,3 @@
-# Shell configuration: zsh, starship prompt, aliases
 {
   config,
   lib,

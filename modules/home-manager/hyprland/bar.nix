@@ -1,6 +1,3 @@
-# Waybar (the top bar): modules, layout, and CSS styling. Launched via
-# exec-once in session.nix; the systemd user service is disabled so there's
-# exactly one instance.
 { config, lib, ... }:
 
 with lib;
@@ -11,9 +8,7 @@ in
   config = mkIf cfg.enable {
     programs.waybar = {
       enable = true;
-      # Disable the home-manager user-service so waybar is only launched once,
-      # via Hyprland's exec-once. The systemd service sometimes races with the
-      # session and can pass flags that conflict with the exec-once instance.
+      # Hyprland exec-once launches waybar; disable the service to avoid double instance
       systemd.enable = false;
       settings.mainBar = {
         layer = "top";

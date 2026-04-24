@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Report keys in ~/.config/Code/User/settings.json that drift from the seed.
 
-The seed lives at ../../assets/vscode/settings.json relative to this script.
-VS Code writes JSONC (comments + trailing commas), so we run a lightweight
-strip before feeding the text to json.loads — the regexes are not a full
-JSONC parser but cover everything VS Code actually emits to settings.json.
+Seed lives at ../../assets/vscode/settings.json. Strips JSONC features (comments,
+trailing commas) before json.loads — not a full JSONC parser but covers what VS
+Code emits.
 """
 
 import json
@@ -16,11 +15,11 @@ import sys
 def load_jsonc(path):
     with open(path, "r", encoding="utf-8") as f:
         text = f.read()
-    # Strip // line comments, but leave "://" inside strings alone.
+    # Strip // line comments, leave "://" alone
     text = re.sub(r'(?<!:)//[^\n]*', '', text)
-    # Strip /* */ block comments.
+    # Strip /* */ block comments
     text = re.sub(r'/\*.*?\*/', '', text, flags=re.DOTALL)
-    # Strip trailing commas before } or ].
+    # Strip trailing commas before } or ]
     text = re.sub(r',(\s*[}\]])', r'\1', text)
     return json.loads(text)
 

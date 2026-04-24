@@ -1,6 +1,3 @@
-# Hyprland user config — split by concern so each area is easy to find.
-# Each sub-file is its own home-manager module gated on modules.hyprland.enable
-# and writes into a distinct subtree of wayland.windowManager.hyprland.settings.
 { config, lib, ... }:
 
 with lib;
@@ -26,9 +23,7 @@ in
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland = {
       enable = true;
-      # NixOS module (modules/nixos/hyprland.nix) installs Hyprland system-wide
-      # from the flake input. Suppress home-manager's user-level install to avoid
-      # a duplicate Hyprland package and session-file confusion.
+      # NixOS installs Hyprland system-wide; suppress the home-manager copy
       package = null;
       portalPackage = null;
     };

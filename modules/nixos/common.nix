@@ -1,4 +1,3 @@
-# Common system configuration: locale, timezone, nix settings, networking, SSH, firewall, base CLI
 {
   config,
   lib,
@@ -55,7 +54,7 @@ in
 
     networking.networkmanager.enable = true;
 
-    # Kill all system beeps — PC speaker kernel modules
+    # Silence PC speaker beeps
     boot.blacklistedKernelModules = [
       "pcspkr"
       "snd_pcsp"
@@ -83,25 +82,23 @@ in
     };
 
     environment.systemPackages = with pkgs; [
-      git
-      vim
-      wget
-      curl
-      htop
-      tree
-      unzip
-      file
-      ripgrep
-      fd
-      bat
-      eza
-      fzf
-      zoxide
-      jq
-
-      # Spell check dictionaries picked up by GTK, Qt, and Chromium-based apps
-      hunspell
-      hunspellDicts.en_US-large
+      git # Version control
+      vim # Fallback editor
+      wget # HTTP downloader
+      curl # HTTP client
+      htop # Process viewer
+      tree # Directory tree printer
+      unzip # Zip archive extractor
+      file # File type detector
+      ripgrep # Fast recursive grep
+      fd # Friendlier find
+      bat # Cat with syntax highlighting
+      eza # Modern ls
+      fzf # Fuzzy finder
+      zoxide # Smarter cd
+      jq # JSON processor
+      hunspell # Spell checker, picked up by GTK, Qt, Chromium apps
+      hunspellDicts.en_US-large # US English dictionary for hunspell
     ];
   };
 }

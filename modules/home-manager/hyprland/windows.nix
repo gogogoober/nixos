@@ -1,6 +1,3 @@
-# Aesthetic of an individual window: rounded corners, drop shadow, blur
-# behind translucent surfaces. Tiling behaviour (gaps, borders, layout,
-# fullscreen rules) lives in tiling.nix.
 { config, lib, ... }:
 
 with lib;

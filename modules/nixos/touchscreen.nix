@@ -1,6 +1,3 @@
-# Touchscreen hardware layer: iio sensors, libwacom pen support
-# Compositor-specific touch gestures live in the GNOME or Hyprland module, not here.
-# This module is hardware-layer only.
 {
   config,
   lib,

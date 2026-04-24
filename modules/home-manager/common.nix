@@ -1,4 +1,3 @@
-# Common home config: git, gh, CLI tools, XDG
 {
   config,
   lib,
@@ -40,7 +39,7 @@ in
 
     programs.bat = {
       enable = true;
-      # ansi theme inherits the terminal's 16-color palette (Tokyo Night via kitty)
+      # inherit terminal palette
       config.theme = "ansi";
     };
     programs.eza.enable = true;

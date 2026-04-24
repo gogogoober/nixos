@@ -1,6 +1,4 @@
-# Touchpad gestures. Hyprland 0.54's built-in `gesture` keyword only accepts
-# motion-capable dispatchers (workspace/move/…); discrete "swipe-up → launch
-# app" needs the hyprgrass plugin or an external gesture daemon — deferred.
+# Hyprland gesture only supports motion dispatchers; discrete gestures need hyprgrass
 { config, lib, ... }:
 
 with lib;
@@ -10,7 +8,7 @@ in
 {
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland.settings = {
-      # Continuous 3-finger horizontal swipe drags workspaces.
+      # 3-finger horizontal swipe drags workspaces
       gesture = [
         "3, horizontal, workspace"
       ];

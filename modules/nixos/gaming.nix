@@ -1,4 +1,3 @@
-# Gaming: Steam, gamemode, mangohud, protontricks
 {
   config,
   lib,
@@ -20,8 +19,8 @@ in
     programs.gamemode.enable = true;
 
     environment.systemPackages = with pkgs; [
-      mangohud
-      protontricks
+      mangohud # In-game performance overlay
+      protontricks # Per-game Proton config tool
     ];
   };
 }

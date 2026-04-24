@@ -1,5 +1,3 @@
-# GNOME desktop environment: GNOME shell, Forge tiling, AppIndicator.
-# GDM + xserver live in desktop.nix so they stay up regardless of DE choice.
 {
   config,
   lib,
@@ -19,25 +17,22 @@ in
   config = mkIf cfg.enable {
     services.desktopManager.gnome.enable = true;
 
-    # Remove GNOME bloat
     environment.gnome.excludePackages = with pkgs; [
-      gnome-tour
-      epiphany
-      gnome-music
-      gnome-maps
-      gnome-weather
-      totem
+      gnome-tour # Welcome/onboarding
+      epiphany # GNOME Web browser
+      gnome-music # Music player
+      gnome-maps # Maps
+      gnome-weather # Weather
+      totem # Video player
     ];
 
-    # Tweaks, dconf editor, and shell extensions
     environment.systemPackages = with pkgs; [
-      gnome-tweaks
-      dconf-editor
-      gnomeExtensions.forge
-      gnomeExtensions.appindicator
+      gnome-tweaks # GUI for GNOME tweaks
+      dconf-editor # Low-level dconf editor
+      gnomeExtensions.forge # Tiling window manager extension
+      gnomeExtensions.appindicator # Legacy tray icon support
     ];
 
-    # AppIndicator tray icon support
     services.udev.packages = [ pkgs.gnome-settings-daemon ];
   };
 }

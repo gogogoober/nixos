@@ -1,4 +1,3 @@
-# Home desktop configuration: GTK dark mode, cursor, GNOME Forge dconf, Firefox default
 {
   config,
   lib,
@@ -45,7 +44,6 @@ in
       gtk.enable = true;
     };
 
-    # Firefox as default browser
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {
@@ -82,14 +80,12 @@ in
         ];
       };
 
-      # Forge auto-tiling defaults
-      # Additional Forge keybindings can be added to this dconf block later
       "org/gnome/shell/extensions/forge" = {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;
       };
 
-      # Free up Alt+Esc (default: cycle-windows) for TTS.
+      # Free Alt+Esc for TTS
       "org/gnome/desktop/wm/keybindings" = {
         cycle-windows = [ ];
         cycle-windows-backward = [ ];

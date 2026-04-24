@@ -11,7 +11,7 @@
   modules = {
     common.enable = true;
     shell.enable = true;
-    editors.enable = true;
+    vscode.enable = true;
     devtools.enable = true;
     lazy-nvf.enable = true;
     terminal.enable = true;

@@ -2,7 +2,7 @@
   imports = [
     ./common.nix
     ./shell.nix
-    ./editors.nix
+    ./vscode.nix
     ./devtools.nix
     ./lazy-nvf.nix
     ./terminal.nix

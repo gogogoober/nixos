@@ -24,7 +24,7 @@ in
 
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
-          github.github-vscode-theme # GitHub theme
+          catppuccin.catppuccin-vsc # Catppuccin theme
           esbenp.prettier-vscode # Formatter
           tekumara.typos-vscode # Typo checker
           bradlc.vscode-tailwindcss # Tailwind IntelliSense
@@ -117,7 +117,7 @@ in
           "telemetry.telemetryLevel" = "off";
           "terminal.integrated.defaultProfile.linux" = "zsh";
           "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-          "workbench.colorTheme" = "GitHub Dark Default";
+          "workbench.colorTheme" = "Catppuccin Mocha";
           "workbench.editorAssociations" = {
             "*.md" = "vscode.markdown.preview.editor";
           };

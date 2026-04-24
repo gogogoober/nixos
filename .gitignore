@@ -5,3 +5,6 @@ result-*
 
 # Ignore automatically generated direnv output
 .direnv
+
+# Scratch space for PRDs, reference configs, and planning notes
+#.ai

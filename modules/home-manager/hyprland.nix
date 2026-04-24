@@ -40,6 +40,17 @@ let
     ${pkgs.systemd}/bin/systemctl suspend
   '';
 
+  hyprPowerMenu = pkgs.writeShellScriptBin "hypr-power-menu" ''
+    choice=$(printf 'Lock\nSuspend\nReboot\nShutdown' \
+      | ${pkgs.wofi}/bin/wofi --dmenu --prompt="Power" --width=220 --height=200)
+    case "$choice" in
+      Lock)     ${pkgs.hyprlock}/bin/hyprlock ;;
+      Suspend)  ${pkgs.systemd}/bin/systemctl suspend ;;
+      Reboot)   ${pkgs.systemd}/bin/systemctl reboot ;;
+      Shutdown) ${pkgs.systemd}/bin/systemctl poweroff ;;
+    esac
+  '';
+
   # Workspace 1-9: switch with $mod, move window with $mod+SHIFT.
   workspaceBinds = builtins.concatMap (n: [
     "$mod,       ${toString n}, Switch to workspace ${toString n},       workspace, ${toString n}"
@@ -51,10 +62,14 @@ in {
   };
 
   config = mkIf cfg.enable {
-    home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep ];
+    home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep hyprPowerMenu ];
 
     programs.waybar = {
       enable = true;
+      # Disable the home-manager user-service so waybar is only launched once,
+      # via Hyprland's exec-once. The systemd service sometimes races with the
+      # session and can pass flags that conflict with the exec-once instance.
+      systemd.enable = false;
       settings.mainBar = {
         layer = "top";
         position = "top";
@@ -62,7 +77,7 @@ in {
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "clock" ];
-        modules-right = [ "tray" "pulseaudio" "network" "battery" ];
+        modules-right = [ "tray" "pulseaudio" "network" "battery" "custom/power" ];
 
         "hyprland/workspaces" = {
           format = "{id}";
@@ -93,6 +108,12 @@ in {
         };
 
         tray = { spacing = 8; };
+
+        "custom/power" = {
+          format = "⏻";
+          tooltip = false;
+          on-click = "hypr-power-menu";
+        };
       };
 
       style = ''
@@ -114,9 +135,11 @@ in {
           color: #fff;
           background: rgba(255, 255, 255, 0.12);
         }
-        #clock, #network, #pulseaudio, #battery, #tray {
+        #clock, #network, #pulseaudio, #battery, #tray, #custom-power {
           padding: 0 12px;
         }
+        #custom-power { color: #ddd; }
+        #custom-power:hover { color: #fff; background: rgba(255, 255, 255, 0.12); }
         #battery.warning { color: #f9b500; }
         #battery.critical { color: #f44336; }
       '';

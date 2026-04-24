@@ -15,6 +15,18 @@ let
     url = "https://raw.githubusercontent.com/starship/starship/v1.24.2/docs/public/presets/toml/nerd-font-symbols.toml";
     sha256 = "0f0pykrldyr5cxva278ahjs0xnqbm9gig7w8g850rswmiscc65fg";
   };
+
+  starshipSettings =
+    let
+      preset = fromTOML (builtins.readFile starshipPreset);
+    in
+    preset
+    // {
+      directory = preset.directory // {
+        truncation_length = 5;
+        truncate_to_repo = false;
+      };
+    };
 in
 {
   options.modules.shell = {
@@ -36,7 +48,7 @@ in
 
     programs.starship = {
       enable = true;
-      settings = fromTOML (builtins.readFile starshipPreset);
+      settings = starshipSettings;
     };
   };
 }

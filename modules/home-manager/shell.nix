@@ -9,9 +9,11 @@ with lib;
 let
   cfg = config.modules.shell;
 
+  # Pin preset to match installed starship; newer presets carry modules
+  # the older binary rejects with "Unknown key" warnings at shell start.
   starshipPreset = pkgs.fetchurl {
-    url = "https://raw.githubusercontent.com/starship/starship/v1.25.0/docs/public/presets/toml/nerd-font-symbols.toml";
-    sha256 = "1v4cda5zf5a9wirgxc1in6c40wrsa7pbjphb9ihkrgkwgp8jhj5q";
+    url = "https://raw.githubusercontent.com/starship/starship/v1.24.2/docs/public/presets/toml/nerd-font-symbols.toml";
+    sha256 = "0f0pykrldyr5cxva278ahjs0xnqbm9gig7w8g850rswmiscc65fg";
   };
 in
 {

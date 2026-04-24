@@ -47,6 +47,9 @@ in
         cat = "bat";
         cd = "z";
       };
+      initContent = ''
+        source ${pkgs.grc}/etc/grc.zsh
+      '';
     };
 
     # Git-aware prompt with nerd-font glyphs
@@ -56,10 +59,6 @@ in
       settings = starshipSettings;
     };
 
-    # Colorize command output
-    programs.grc = {
-      enable = true;
-      enableAliases = true;
-    };
+    home.packages = [ pkgs.grc ];
   };
 }

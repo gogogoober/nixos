@@ -60,7 +60,7 @@ in
 
       profiles.default = {
         extensions = with pkgs.vscode-extensions; [
-          dracula-theme.theme-dracula # Theme
+          nguyenhoanglam.beautiful-dracula # Theme
           esbenp.prettier-vscode # Formatter
           tekumara.typos-vscode # Typo checker
           bradlc.vscode-tailwindcss # Tailwind IntelliSense

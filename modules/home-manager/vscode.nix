@@ -104,6 +104,7 @@ in
           "editor.tabSize" = 2;
           "explorer.confirmDelete" = false;
           "explorer.confirmDragAndDrop" = false;
+          "extensions.ignoreRecommendations" = true;
           "files.autoSave" = "onFocusChange";
           "files.insertFinalNewline" = true;
           "files.trimFinalNewlines" = true;

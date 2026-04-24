@@ -187,7 +187,7 @@ in {
 
         general = {
           gaps_in = 2;
-          gaps_out = 0;
+          gaps_out = 8;
           border_size = 1;
           "col.active_border" = "rgba(ccccffff)";
           "col.inactive_border" = "rgba(595959aa)";
@@ -212,15 +212,13 @@ in {
           };
         };
 
-        # Smart gaps: drop borders/rounding/gaps when a workspace has a single
-        # tiled window (w[tv1]) or is fullscreen (f[1]).
+        # Smart gaps: drop borders/rounding/gaps only when a workspace is
+        # fullscreen (f[1]). A lone tiled window still gets outer margin.
         workspace = [
-          "w[tv1], gapsout:0, gapsin:0"
           "f[1], gapsout:0, gapsin:0"
         ];
 
         windowrule = [
-          "border_size 0, rounding 0, match:float 0, match:workspace w[tv1]"
           "border_size 0, rounding 0, match:float 0, match:workspace f[1]"
         ];
 

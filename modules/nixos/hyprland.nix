@@ -24,15 +24,25 @@ in {
     };
 
     environment.systemPackages = with pkgs; [
+      # Status bar for Wayland compositors; renders the top bar.
       waybar
+      # Dmenu-style application launcher / menu for Wayland.
       wofi
+      # Lightweight Wayland notification daemon (shows desktop notifications).
       mako
+      # Wallpaper daemon from the Hyprland project.
       hyprpaper
+      # Screen locker from the Hyprland project.
       hyprlock
+      # CLI screenshot tool that captures Wayland output to an image.
       grim
+      # Lets the user click/drag to select a region, printing its geometry.
       slurp
+      # Command-line clipboard read/write for Wayland (wl-copy, wl-paste).
       wl-clipboard
+      # Synthesizes keyboard input on Wayland (xdotool type equivalent).
       wtype
+      # JSON parser used by helper scripts to read `hyprctl -j` output.
       jq
     ];
 

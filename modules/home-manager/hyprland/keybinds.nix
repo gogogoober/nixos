@@ -1,6 +1,7 @@
 # All keyboard bindings plus the small helper scripts a few binds invoke
-# (universal clipboard shim, cheatsheet, lock-and-sleep, power menu). The
-# app drawer lives here too since it's just $mod+SPACE → wofi --show drun.
+# (universal clipboard shim, cheatsheet, lock-and-sleep). Popover overlays
+# like the app drawer and power menu live in overlay.nix; binds here only
+# dispatch to `hypr-app-drawer` / `hypr-power-menu`.
 { config, lib, pkgs, ... }:
 
 with lib;
@@ -39,17 +40,6 @@ let
     ${pkgs.systemd}/bin/systemctl suspend
   '';
 
-  hyprPowerMenu = pkgs.writeShellScriptBin "hypr-power-menu" ''
-    choice=$(printf 'Lock\nSuspend\nReboot\nShutdown' \
-      | ${pkgs.wofi}/bin/wofi --dmenu --prompt="Power" --width=220 --height=200)
-    case "$choice" in
-      Lock)     ${pkgs.hyprlock}/bin/hyprlock ;;
-      Suspend)  ${pkgs.systemd}/bin/systemctl suspend ;;
-      Reboot)   ${pkgs.systemd}/bin/systemctl reboot ;;
-      Shutdown) ${pkgs.systemd}/bin/systemctl poweroff ;;
-    esac
-  '';
-
   # Workspace 1-9: switch with $mod, move window with $mod+SHIFT.
   workspaceBinds = builtins.concatMap (n: [
     "$mod,       ${toString n}, Switch to workspace ${toString n},       workspace, ${toString n}"
@@ -57,7 +47,7 @@ let
   ]) [ 1 2 3 4 5 6 7 8 9 ];
 in {
   config = mkIf cfg.enable {
-    home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep hyprPowerMenu ];
+    home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep ];
 
     wayland.windowManager.hyprland.settings = {
       "$mod" = "SUPER";
@@ -68,7 +58,7 @@ in {
         "$mod,       A,      Open Claude,           exec, kitty -e claude"
         "$mod,       W,      Close window,          killactive,"
         "$mod,       F,      Toggle fullscreen,     fullscreen, 0"
-        "$mod,       SPACE,  App launcher,          exec, wofi --show drun"
+        "$mod,       SPACE,  App launcher,          exec, hypr-app-drawer"
         "$mod,       K,      Show keybindings,      exec, hypr-cheatsheet"
         # Issue: $mod+L invokes hypr-lock-sleep which locks AND suspends in
         # one action. Consider splitting: one bind to lock only (hyprlock),

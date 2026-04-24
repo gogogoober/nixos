@@ -7,11 +7,14 @@ with lib;
 let cfg = config.modules.hyprland;
 in {
   imports = [
-    ./session.nix   # monitor, env vars, exec-once autostart
-    ./keybinds.nix  # $mod binds + helper scripts + app-drawer
-    ./windows.nix   # tiling: gaps, borders, decoration, per-workspace rules
-    ./gestures.nix  # touchpad gestures
-    ./bar.nix       # waybar config + styling
+    ./startup.nix         # monitor, env vars, exec-once autostart
+    ./keybinds.nix        # $mod binds + helper scripts
+    ./tiling.nix          # gaps, borders, layout engine, fullscreen rules
+    ./windows.nix         # per-window aesthetic: rounding, blur, shadow
+    ./gestures.nix        # touchpad gestures
+    ./bar.nix             # waybar config + styling
+    ./overlay.nix         # app drawer + power menu (shared popover UI/UX)
+    ./quick-settings.nix  # quick settings panel (placeholder)
   ];
 
   options.modules.hyprland = {

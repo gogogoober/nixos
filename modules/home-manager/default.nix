@@ -7,6 +7,6 @@
     ./lazy-nvf.nix
     ./terminal.nix
     ./desktop.nix
-    ./hyprland.nix
+    ./hyprland
   ];
 }

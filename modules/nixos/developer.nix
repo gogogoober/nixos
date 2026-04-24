@@ -37,7 +37,7 @@ in {
       lua-language-server
 
       # Polyglot formatter (markdown, json, yaml, html, css, ts, js)
-      nodePackages.prettier
+      prettier
 
       # Spell check for code and prose, shared by VS Code and Neovim
       typos

@@ -1,7 +1,6 @@
 {
   config,
   lib,
-  pkgs,
   ...
 }:
 
@@ -15,23 +14,13 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.kitty = {
+    programs.ghostty = {
       enable = true;
-      font = {
-        name = "JetBrainsMono Nerd Font";
-        size = 12;
-      };
-      themeFile = "tokyo_night_night";
+      enableZshIntegration = true;
       settings = {
-        tab_bar_style = "powerline";
-        tab_powerline_style = "slanted";
-        tab_bar_min_tabs = 1;
-        window_padding_width = 8;
-        scrollback_lines = 10000;
-        enable_audio_bell = "no";
-        visual_bell_duration = "0";
-        window_alert_on_bell = "no";
-        bell_on_tab = "no";
+        theme = "GitHub Dark Default";
+        font-family = "JetBrainsMono Nerd Font";
+        font-size = 12;
       };
     };
   };

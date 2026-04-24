@@ -13,7 +13,7 @@ let
     action="$1"
     class=$(${pkgs.hyprland}/bin/hyprctl activewindow -j | ${pkgs.jq}/bin/jq -r .class)
     case "$class" in
-      kitty|Alacritty|foot|org.wezfurlong.wezterm) mod="CTRL SHIFT" ;;
+      com.mitchellh.ghostty|Alacritty|foot|org.wezfurlong.wezterm) mod="CTRL SHIFT" ;;
       *) mod="CTRL" ;;
     esac
     case "$action" in
@@ -67,9 +67,9 @@ in
       "$mod" = "SUPER";
 
       bindd = [
-        "$mod,       T,      Open terminal,         exec, kitty"
+        "$mod,       T,      Open terminal,         exec, ghostty"
         "$mod,       B,      Open browser,          exec, firefox"
-        "$mod,       A,      Open Claude,           exec, kitty -e claude"
+        "$mod,       A,      Open Claude,           exec, ghostty -e claude"
         "$mod,       W,      Close window,          killactive,"
         "$mod,       F,      Toggle fullscreen,     fullscreen, 0"
         "$mod,       SPACE,  App launcher,          exec, hypr-app-drawer"

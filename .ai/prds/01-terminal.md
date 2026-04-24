@@ -39,33 +39,82 @@ and updating every place that currently shells out to `kitty`. Shell choice
 - Line 72: `Super+A` launches `kitty -e claude`
 
 ## References
-_GitHub URLs and the specific parts we want from each._
 
-- URL:
-  - What to take:
+- **cdalvaro/github-vscode-theme-iterm** (cloned into
+  `.ai/references/github-vscode-theme-iterm`) — VSCode-accurate GitHub
+  palette as iTerm2 `.itermcolors` plists. Source of truth for the Ghostty
+  theme colors. File to use: `GitHub Dark Default.itermcolors`.
+- **starship.rs/presets/nerd-font-symbols** — proposed Starship preset for
+  git + language iconography.
 
 ## Proposed Changes
-_Filled in once references land. Sketch of likely edits:_
 
-- New `programs.ghostty` block in `modules/home-manager/terminal.nix`
-  replacing the Kitty block, carrying over font/theme/padding/bell settings.
-- Update the terminal-class match and the two launch bindings in
-  `modules/home-manager/hyprland/keybinds.nix` to point at `ghostty`.
-- Decide shell migration (see Decisions) and apply to `shell.nix`,
-  `modules/nixos/common.nix`, and both host files if we change it.
+### Ghostty replaces Kitty
+`modules/home-manager/terminal.nix` shrinks from 19 lines of Kitty config
+to a single `programs.ghostty` block with three settings:
+
+- `theme = "GitHub Dark Default"` (built-in, bundled from iterm2colorschemes)
+- `font-family = "JetBrainsMono Nerd Font"` (already installed via `modules/nixos/desktop.nix`)
+- `font-size = 12`
+
+Every other Kitty setting (tabs, padding, scrollback, bell silencers) drops
+to Ghostty defaults. No asset file needed.
+
+### Starship moves to a preset
+Strip the hand-written `format`, `directory`, `git_branch`, and
+`git_status` blocks. Import the Starship **Nerd Font Symbols** preset,
+pinned to `v1.25.0`, fetched via `pkgs.fetchurl` and converted with
+`fromTOML`.
+
+- Nerd Font icons across every module (git, languages, tools, cloud)
+- Git branch + git status with glyphs
+- Language detection icons based on files in the directory
+
+### Zsh shrinks to essentials
+Keep in `modules/home-manager/shell.nix`:
+
+- `programs.zsh.enable`
+- `autosuggestion.enable`
+- `syntaxHighlighting.enable`
+- History size + dedup
+- Aliases (all kept — functional, not styling): `ll=eza -la`,
+  `tree=eza --tree`, `cat=bat`, `cd=z`
+
+Drop `unsetopt BEEP` (terminal handles bells).
+
+### Fuzzy search stack already in place
+No changes needed. For the record, already configured:
+
+- `programs.fzf.enableZshIntegration` in `modules/home-manager/common.nix`
+  — gives fzf-backed Ctrl-R history search, Ctrl-T file search, Alt-C dir
+  jump
+- `programs.zoxide.enableZshIntegration` in the same file — the `cd=z`
+  alias drives zoxide
+- `ripgrep` and `fzf` binaries in `modules/nixos/common.nix`
+- `fzf-lua` picker in `modules/home-manager/lazy-nvf.nix` (Neovim side)
+
+### Hyprland keybinds point at Ghostty
+In `modules/home-manager/hyprland/keybinds.nix`:
+
+- Terminal class match (line 16): replace `kitty` with Ghostty's class
+  string (likely `com.mitchellh.ghostty`)
+- Launch binding (line 70): `exec, ghostty`
+- Claude binding (line 72): `exec, ghostty -e claude`
+
+### Shell stays as zsh
+No changes to `modules/nixos/common.nix` or the host files.
 
 ## Target Files
 - `modules/home-manager/terminal.nix`
+- `modules/home-manager/shell.nix`
 - `modules/home-manager/hyprland/keybinds.nix`
-- `modules/home-manager/shell.nix` _(if we change the shell)_
-- `modules/nixos/common.nix` _(if we change the shell)_
-- `hosts/dell-old/default.nix` _(if we change the shell)_
-- `hosts/surface-go-3/default.nix` _(if we change the shell)_
 
-## Decisions To Make
-- Shell: stay on zsh, or move to fish/nushell/something else? Ghostty itself
-  does not replace the shell, so this is a separate choice.
-- Theme: keep Tokyo Night Night, or pick a Ghostty-native theme as part of
-  the refresh?
-- Ghostty config surface: use `programs.ghostty` via home-manager, or drop a
-  config file into `~/.config/ghostty` using `xdg.configFile`?
+## Status: Implemented
+
+- Shell stays zsh
+- Aliases stay (ll, tree, cat, cd)
+- JetBrainsMono Nerd Font stays
+- Fuzzy search stack unchanged (fzf, zoxide, ripgrep, fzf-lua already wired)
+- Theme: `GitHub Dark Default` (built-in Ghostty theme, no asset file)
+- Starship preset: Nerd Font Symbols, pinned to `v1.25.0`
+- Net line change: 66 deletions, 13 insertions across three files

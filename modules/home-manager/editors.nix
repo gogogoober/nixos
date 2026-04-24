@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -59,20 +60,23 @@ in
       package = pkgs.vscode-fhs; # FHS wrap for extensions with bundled binaries
 
       profiles.default = {
-        extensions = with pkgs.vscode-extensions; [
-          nguyenhoanglam.beautiful-dracula # Theme
-          esbenp.prettier-vscode # Formatter
-          tekumara.typos-vscode # Typo checker
-          bradlc.vscode-tailwindcss # Tailwind IntelliSense
-          ms-python.python # Python language support
-          rust-lang.rust-analyzer # Rust language server
-          golang.go # Go language support
-          jnoortheen.nix-ide # Nix language support
-          angular.ng-template # Angular template language
-          usernamehw.errorlens # Inline diagnostics
-          christian-kohler.path-intellisense # Path autocomplete
-          editorconfig.editorconfig # .editorconfig support
-        ];
+        extensions =
+          (with pkgs.vscode-extensions; [
+            esbenp.prettier-vscode # Formatter
+            tekumara.typos-vscode # Typo checker
+            bradlc.vscode-tailwindcss # Tailwind IntelliSense
+            ms-python.python # Python language support
+            rust-lang.rust-analyzer # Rust language server
+            golang.go # Go language support
+            jnoortheen.nix-ide # Nix language support
+            angular.ng-template # Angular template language
+            usernamehw.errorlens # Inline diagnostics
+            christian-kohler.path-intellisense # Path autocomplete
+            editorconfig.editorconfig # .editorconfig support
+          ])
+          ++ (with inputs.nix-vscode-extensions.extensions.${pkgs.stdenv.hostPlatform.system}.vscode-marketplace; [
+            nguyenhoanglam.beautiful-dracula # Theme
+          ]);
       };
     };
 

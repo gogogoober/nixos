@@ -1,6 +1,12 @@
 # TODO: Replace with output of nixos-generate-config --show-hardware-config
 # These are minimal stubs so the flake evaluates. They will NOT boot.
-{ config, lib, pkgs, modulesPath, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  modulesPath,
+  ...
+}:
 
 {
   imports = [ (modulesPath + "/installer/scan/not-detected.nix") ];

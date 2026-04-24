@@ -1,10 +1,17 @@
 # GNOME desktop environment: GNOME shell, Forge tiling, AppIndicator.
 # GDM + xserver live in desktop.nix so they stay up regardless of DE choice.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.gnome;
-in {
+let
+  cfg = config.modules.gnome;
+in
+{
   options.modules.gnome = {
     enable = mkEnableOption "GNOME desktop environment";
   };

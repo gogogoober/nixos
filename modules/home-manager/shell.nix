@@ -1,9 +1,16 @@
 # Shell configuration: zsh, starship prompt, aliases
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.shell;
-in {
+let
+  cfg = config.modules.shell;
+in
+{
   options.modules.shell = {
     enable = mkEnableOption "shell configuration";
   };

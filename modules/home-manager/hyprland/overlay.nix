@@ -5,7 +5,12 @@
 #
 # TODO: replace the wofi dmenu look with a unified custom overlay (rounded
 # card, icon grid for the app drawer, iconed rows for the power menu).
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 let
@@ -27,8 +32,12 @@ let
       Shutdown) ${pkgs.systemd}/bin/systemctl poweroff ;;
     esac
   '';
-in {
+in
+{
   config = mkIf cfg.enable {
-    home.packages = [ hyprAppDrawer hyprPowerMenu ];
+    home.packages = [
+      hyprAppDrawer
+      hyprPowerMenu
+    ];
   };
 }

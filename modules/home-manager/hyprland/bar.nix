@@ -4,8 +4,10 @@
 { config, lib, ... }:
 
 with lib;
-let cfg = config.modules.hyprland;
-in {
+let
+  cfg = config.modules.hyprland;
+in
+{
   config = mkIf cfg.enable {
     programs.waybar = {
       enable = true;
@@ -20,7 +22,13 @@ in {
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "clock" ];
-        modules-right = [ "tray" "pulseaudio" "network" "battery" "custom/power" ];
+        modules-right = [
+          "tray"
+          "pulseaudio"
+          "network"
+          "battery"
+          "custom/power"
+        ];
 
         "hyprland/workspaces" = {
           format = "{id}";
@@ -47,10 +55,15 @@ in {
 
         battery = {
           format = "Bat {capacity}%";
-          states = { warning = 20; critical = 10; };
+          states = {
+            warning = 20;
+            critical = 10;
+          };
         };
 
-        tray = { spacing = 8; };
+        tray = {
+          spacing = 8;
+        };
 
         "custom/power" = {
           format = "⏻";

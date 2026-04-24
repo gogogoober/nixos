@@ -2,7 +2,12 @@
 # (universal clipboard shim, cheatsheet, lock-and-sleep). Popover overlays
 # like the app drawer and power menu live in overlay.nix; binds here only
 # dispatch to `hypr-app-drawer` / `hypr-power-menu`.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 let
@@ -41,13 +46,31 @@ let
   '';
 
   # Workspace 1-9: switch with $mod, move window with $mod+SHIFT.
-  workspaceBinds = builtins.concatMap (n: [
-    "$mod,       ${toString n}, Switch to workspace ${toString n},       workspace, ${toString n}"
-    "$mod SHIFT, ${toString n}, Move window to workspace ${toString n},  movetoworkspace, ${toString n}"
-  ]) [ 1 2 3 4 5 6 7 8 9 ];
-in {
+  workspaceBinds =
+    builtins.concatMap
+      (n: [
+        "$mod,       ${toString n}, Switch to workspace ${toString n},       workspace, ${toString n}"
+        "$mod SHIFT, ${toString n}, Move window to workspace ${toString n},  movetoworkspace, ${toString n}"
+      ])
+      [
+        1
+        2
+        3
+        4
+        5
+        6
+        7
+        8
+        9
+      ];
+in
+{
   config = mkIf cfg.enable {
-    home.packages = [ hyprClipboard hyprCheatsheet hyprLockSleep ];
+    home.packages = [
+      hyprClipboard
+      hyprCheatsheet
+      hyprLockSleep
+    ];
 
     wayland.windowManager.hyprland.settings = {
       "$mod" = "SUPER";
@@ -77,7 +100,8 @@ in {
 
         # Escape hatch — log out of Hyprland back to GDM.
         "$mod SHIFT, Q,      Exit Hyprland,         exit,"
-      ] ++ workspaceBinds;
+      ]
+      ++ workspaceBinds;
     };
   };
 }

@@ -1,5 +1,11 @@
 # Surface Go 3 - host configuration
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -27,7 +33,13 @@
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "input"
+      "docker"
+    ];
     shell = pkgs.zsh;
   };
 

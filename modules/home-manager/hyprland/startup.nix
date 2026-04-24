@@ -3,8 +3,10 @@
 { config, lib, ... }:
 
 with lib;
-let cfg = config.modules.hyprland;
-in {
+let
+  cfg = config.modules.hyprland;
+in
+{
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland.settings = {
       # Catch-all: any output, preferred resolution, auto position, 1x scale.
@@ -24,7 +26,7 @@ in {
       ];
 
       exec-once = [
-        "mako"   # notification daemon
+        "mako" # notification daemon
         "waybar" # top bar
       ];
     };

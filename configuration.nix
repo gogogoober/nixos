@@ -5,10 +5,10 @@
 { config, pkgs, ... }:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Bootloader.
   boot.loader.systemd-boot.enable = true;
@@ -43,7 +43,10 @@
   };
 
   # Enable Experimental Features
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
 
   # Enable the X11 windowing system.
   services.xserver.enable = true;
@@ -84,9 +87,12 @@
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "networkmanager" "wheel" ];
+    extraGroups = [
+      "networkmanager"
+      "wheel"
+    ];
     packages = with pkgs; [
-    #  thunderbird
+      #  thunderbird
     ];
   };
 
@@ -99,12 +105,12 @@
   # List packages installed in system profile. To search, run:
   # $ nix search wget
 
-environment.systemPackages = with pkgs; [
-  vim
-  git
-  claude-code
-  vscode
-];
+  environment.systemPackages = with pkgs; [
+    vim
+    git
+    claude-code
+    vscode
+  ];
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

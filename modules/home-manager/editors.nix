@@ -1,4 +1,9 @@
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 
@@ -36,7 +41,7 @@ in
     # Plain vim as universal fallback - light, always works, zero config surprises
     programs.vim = {
       enable = true;
-      defaultEditor = false;   # nvf's neovim wins when both are installed
+      defaultEditor = false; # nvf's neovim wins when both are installed
       settings = {
         number = true;
         relativenumber = true;

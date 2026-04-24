@@ -1,11 +1,20 @@
 # Common home config: git, gh, CLI tools, XDG
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.common;
-in {
+let
+  cfg = config.modules.common;
+in
+{
   options.modules.common = {
-    enable = mkEnableOption "common home configuration" // { default = true; };
+    enable = mkEnableOption "common home configuration" // {
+      default = true;
+    };
   };
 
   config = mkIf cfg.enable {

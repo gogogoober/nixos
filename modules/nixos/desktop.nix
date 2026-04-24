@@ -1,9 +1,16 @@
 # Shared graphical stack: pipewire, fonts, xdg portals, printing, bluetooth
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.desktop;
-in {
+let
+  cfg = config.modules.desktop;
+in
+{
   options.modules.desktop = {
     enable = mkEnableOption "shared desktop/graphical stack";
   };

@@ -1,9 +1,16 @@
 # Terminal configuration: kitty
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.terminal;
-in {
+let
+  cfg = config.modules.terminal;
+in
+{
   options.modules.terminal = {
     enable = mkEnableOption "terminal configuration";
   };

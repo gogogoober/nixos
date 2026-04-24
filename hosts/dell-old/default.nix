@@ -1,5 +1,11 @@
 # Dell Old - host configuration
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
   imports = [
@@ -36,7 +42,14 @@
   users.users.hugo = {
     isNormalUser = true;
     description = "Hugo";
-    extraGroups = [ "wheel" "networkmanager" "video" "input" "docker" "ydotool" ];
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "input"
+      "docker"
+      "ydotool"
+    ];
     shell = pkgs.zsh;
   };
 

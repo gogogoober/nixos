@@ -1,11 +1,20 @@
 # Common system configuration: locale, timezone, nix settings, networking, SSH, firewall, base CLI
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.common;
-in {
+let
+  cfg = config.modules.common;
+in
+{
   options.modules.common = {
-    enable = mkEnableOption "common system configuration" // { default = true; };
+    enable = mkEnableOption "common system configuration" // {
+      default = true;
+    };
   };
 
   config = mkIf cfg.enable {
@@ -25,9 +34,15 @@ in {
     };
 
     nix.settings = {
-      experimental-features = [ "nix-command" "flakes" ];
+      experimental-features = [
+        "nix-command"
+        "flakes"
+      ];
       auto-optimise-store = true;
-      trusted-users = [ "root" "@wheel" ];
+      trusted-users = [
+        "root"
+        "@wheel"
+      ];
     };
 
     nix.gc = {
@@ -41,7 +56,10 @@ in {
     networking.networkmanager.enable = true;
 
     # Kill all system beeps — PC speaker kernel modules
-    boot.blacklistedKernelModules = [ "pcspkr" "snd_pcsp" ];
+    boot.blacklistedKernelModules = [
+      "pcspkr"
+      "snd_pcsp"
+    ];
 
     services.openssh = {
       enable = true;

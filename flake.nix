@@ -24,19 +24,32 @@
     };
   };
 
-  outputs = inputs@{ self, nixpkgs, flake-parts, home-manager, ... }:
+  outputs =
+    inputs@{
+      self,
+      nixpkgs,
+      flake-parts,
+      home-manager,
+      ...
+    }:
     flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "x86_64-linux" ];
 
-      perSystem = { pkgs, ... }: {
-        packages = import ./packages { inherit pkgs; };
+      perSystem =
+        { pkgs, ... }:
+        {
+          packages = import ./packages { inherit pkgs; };
 
-        formatter = pkgs.nixfmt;
+          formatter = pkgs.nixfmt;
 
-        devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ nixfmt nil git ];
+          devShells.default = pkgs.mkShell {
+            packages = with pkgs; [
+              nixfmt
+              nil
+              git
+            ];
+          };
         };
-      };
 
       flake = {
         nixosConfigurations = {

@@ -1,4 +1,10 @@
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 with lib;
 
@@ -20,7 +26,10 @@ in
     };
 
     picker = mkOption {
-      type = types.enum [ "fzf-lua" "telescope" ];
+      type = types.enum [
+        "fzf-lua"
+        "telescope"
+      ];
       default = "fzf-lua";
       description = "Which fuzzy picker to wire keymaps and LSP actions through.";
     };
@@ -87,12 +96,12 @@ in
           enableFormat = true;
           enableExtraDiagnostics = true;
 
-          typescript.enable = true;   # TypeScript, JavaScript, React
+          typescript.enable = true; # TypeScript, JavaScript, React
           nix.enable = true;
           lua.enable = true;
           bash.enable = true;
           markdown.enable = true;
-          html.enable = true;        # Angular templates
+          html.enable = true; # Angular templates
           css.enable = true;
           # tailwind LSP is now under vim.lsp.presets
           python.enable = true;
@@ -194,7 +203,12 @@ in
               "rust"
               "go"
             ];
-            root_markers = [ ".git" "typos.toml" ".typos.toml" "_typos.toml" ];
+            root_markers = [
+              ".git"
+              "typos.toml"
+              ".typos.toml"
+              "_typos.toml"
+            ];
           };
         };
 
@@ -289,67 +303,242 @@ in
         # Keymaps - picker commands switch based on cfg.picker
         keymaps =
           let
-            findFiles = if cfg.picker == "fzf-lua" then "<cmd>FzfLua files<cr>" else "<cmd>Telescope find_files<cr>";
-            liveGrep = if cfg.picker == "fzf-lua" then "<cmd>FzfLua live_grep<cr>" else "<cmd>Telescope live_grep<cr>";
-            buffers = if cfg.picker == "fzf-lua" then "<cmd>FzfLua buffers<cr>" else "<cmd>Telescope buffers<cr>";
-            helpTags = if cfg.picker == "fzf-lua" then "<cmd>FzfLua help_tags<cr>" else "<cmd>Telescope help_tags<cr>";
-            oldfiles = if cfg.picker == "fzf-lua" then "<cmd>FzfLua oldfiles<cr>" else "<cmd>Telescope oldfiles<cr>";
-            docSymbols = if cfg.picker == "fzf-lua" then "<cmd>FzfLua lsp_document_symbols<cr>" else "<cmd>Telescope lsp_document_symbols<cr>";
-            lspDefinitions = if cfg.picker == "fzf-lua" then "<cmd>FzfLua lsp_definitions<cr>" else "<cmd>Telescope lsp_definitions<cr>";
-            lspReferences = if cfg.picker == "fzf-lua" then "<cmd>FzfLua lsp_references<cr>" else "<cmd>Telescope lsp_references<cr>";
-            lspImpls = if cfg.picker == "fzf-lua" then "<cmd>FzfLua lsp_implementations<cr>" else "<cmd>Telescope lsp_implementations<cr>";
-            codeAction = if cfg.picker == "fzf-lua" then "<cmd>FzfLua lsp_code_actions<cr>" else "<cmd>lua vim.lsp.buf.code_action()<cr>";
+            findFiles =
+              if cfg.picker == "fzf-lua" then "<cmd>FzfLua files<cr>" else "<cmd>Telescope find_files<cr>";
+            liveGrep =
+              if cfg.picker == "fzf-lua" then "<cmd>FzfLua live_grep<cr>" else "<cmd>Telescope live_grep<cr>";
+            buffers =
+              if cfg.picker == "fzf-lua" then "<cmd>FzfLua buffers<cr>" else "<cmd>Telescope buffers<cr>";
+            helpTags =
+              if cfg.picker == "fzf-lua" then "<cmd>FzfLua help_tags<cr>" else "<cmd>Telescope help_tags<cr>";
+            oldfiles =
+              if cfg.picker == "fzf-lua" then "<cmd>FzfLua oldfiles<cr>" else "<cmd>Telescope oldfiles<cr>";
+            docSymbols =
+              if cfg.picker == "fzf-lua" then
+                "<cmd>FzfLua lsp_document_symbols<cr>"
+              else
+                "<cmd>Telescope lsp_document_symbols<cr>";
+            lspDefinitions =
+              if cfg.picker == "fzf-lua" then
+                "<cmd>FzfLua lsp_definitions<cr>"
+              else
+                "<cmd>Telescope lsp_definitions<cr>";
+            lspReferences =
+              if cfg.picker == "fzf-lua" then
+                "<cmd>FzfLua lsp_references<cr>"
+              else
+                "<cmd>Telescope lsp_references<cr>";
+            lspImpls =
+              if cfg.picker == "fzf-lua" then
+                "<cmd>FzfLua lsp_implementations<cr>"
+              else
+                "<cmd>Telescope lsp_implementations<cr>";
+            codeAction =
+              if cfg.picker == "fzf-lua" then
+                "<cmd>FzfLua lsp_code_actions<cr>"
+              else
+                "<cmd>lua vim.lsp.buf.code_action()<cr>";
           in
           [
             # File navigation
-            { key = "<leader>ff"; mode = "n"; action = findFiles; desc = "Find files"; }
-            { key = "<leader>fg"; mode = "n"; action = liveGrep; desc = "Grep project"; }
-            { key = "<leader>fb"; mode = "n"; action = buffers; desc = "Find buffer"; }
-            { key = "<leader>fh"; mode = "n"; action = helpTags; desc = "Help tags"; }
-            { key = "<leader>fr"; mode = "n"; action = oldfiles; desc = "Recent files"; }
-            { key = "<leader>fs"; mode = "n"; action = docSymbols; desc = "Document symbols"; }
+            {
+              key = "<leader>ff";
+              mode = "n";
+              action = findFiles;
+              desc = "Find files";
+            }
+            {
+              key = "<leader>fg";
+              mode = "n";
+              action = liveGrep;
+              desc = "Grep project";
+            }
+            {
+              key = "<leader>fb";
+              mode = "n";
+              action = buffers;
+              desc = "Find buffer";
+            }
+            {
+              key = "<leader>fh";
+              mode = "n";
+              action = helpTags;
+              desc = "Help tags";
+            }
+            {
+              key = "<leader>fr";
+              mode = "n";
+              action = oldfiles;
+              desc = "Recent files";
+            }
+            {
+              key = "<leader>fs";
+              mode = "n";
+              action = docSymbols;
+              desc = "Document symbols";
+            }
 
             # File tree
-            { key = "<leader>e"; mode = "n"; action = "<cmd>Neotree toggle<cr>"; desc = "File tree"; }
-            { key = "<leader>E"; mode = "n"; action = "<cmd>Neotree reveal<cr>"; desc = "Reveal current file in tree"; }
+            {
+              key = "<leader>e";
+              mode = "n";
+              action = "<cmd>Neotree toggle<cr>";
+              desc = "File tree";
+            }
+            {
+              key = "<leader>E";
+              mode = "n";
+              action = "<cmd>Neotree reveal<cr>";
+              desc = "Reveal current file in tree";
+            }
 
             # Buffer navigation
-            { key = "<S-h>"; mode = "n"; action = "<cmd>BufferLineCyclePrev<cr>"; desc = "Previous buffer"; }
-            { key = "<S-l>"; mode = "n"; action = "<cmd>BufferLineCycleNext<cr>"; desc = "Next buffer"; }
-            { key = "<leader>bd"; mode = "n"; action = "<cmd>bdelete<cr>"; desc = "Delete buffer"; }
+            {
+              key = "<S-h>";
+              mode = "n";
+              action = "<cmd>BufferLineCyclePrev<cr>";
+              desc = "Previous buffer";
+            }
+            {
+              key = "<S-l>";
+              mode = "n";
+              action = "<cmd>BufferLineCycleNext<cr>";
+              desc = "Next buffer";
+            }
+            {
+              key = "<leader>bd";
+              mode = "n";
+              action = "<cmd>bdelete<cr>";
+              desc = "Delete buffer";
+            }
 
             # Window navigation
-            { key = "<C-h>"; mode = "n"; action = "<C-w>h"; desc = "Left window"; }
-            { key = "<C-j>"; mode = "n"; action = "<C-w>j"; desc = "Down window"; }
-            { key = "<C-k>"; mode = "n"; action = "<C-w>k"; desc = "Up window"; }
-            { key = "<C-l>"; mode = "n"; action = "<C-w>l"; desc = "Right window"; }
+            {
+              key = "<C-h>";
+              mode = "n";
+              action = "<C-w>h";
+              desc = "Left window";
+            }
+            {
+              key = "<C-j>";
+              mode = "n";
+              action = "<C-w>j";
+              desc = "Down window";
+            }
+            {
+              key = "<C-k>";
+              mode = "n";
+              action = "<C-w>k";
+              desc = "Up window";
+            }
+            {
+              key = "<C-l>";
+              mode = "n";
+              action = "<C-w>l";
+              desc = "Right window";
+            }
 
             # LSP
-            { key = "gd"; mode = "n"; action = lspDefinitions; desc = "Go to definition"; }
-            { key = "gr"; mode = "n"; action = lspReferences; desc = "References"; }
-            { key = "gi"; mode = "n"; action = lspImpls; desc = "Implementations"; }
-            { key = "K"; mode = "n"; action = "<cmd>lua vim.lsp.buf.hover()<cr>"; desc = "Hover docs"; }
-            { key = "<leader>ca"; mode = "n"; action = codeAction; desc = "Code action"; }
-            { key = "<leader>rn"; mode = "n"; action = "<cmd>lua vim.lsp.buf.rename()<cr>"; desc = "Rename symbol"; }
+            {
+              key = "gd";
+              mode = "n";
+              action = lspDefinitions;
+              desc = "Go to definition";
+            }
+            {
+              key = "gr";
+              mode = "n";
+              action = lspReferences;
+              desc = "References";
+            }
+            {
+              key = "gi";
+              mode = "n";
+              action = lspImpls;
+              desc = "Implementations";
+            }
+            {
+              key = "K";
+              mode = "n";
+              action = "<cmd>lua vim.lsp.buf.hover()<cr>";
+              desc = "Hover docs";
+            }
+            {
+              key = "<leader>ca";
+              mode = "n";
+              action = codeAction;
+              desc = "Code action";
+            }
+            {
+              key = "<leader>rn";
+              mode = "n";
+              action = "<cmd>lua vim.lsp.buf.rename()<cr>";
+              desc = "Rename symbol";
+            }
 
             # Diagnostics
-            { key = "<leader>xx"; mode = "n"; action = "<cmd>Trouble diagnostics toggle<cr>"; desc = "Diagnostics list"; }
-            { key = "<leader>xd"; mode = "n"; action = "<cmd>Trouble diagnostics toggle filter.buf=0<cr>"; desc = "Buffer diagnostics"; }
+            {
+              key = "<leader>xx";
+              mode = "n";
+              action = "<cmd>Trouble diagnostics toggle<cr>";
+              desc = "Diagnostics list";
+            }
+            {
+              key = "<leader>xd";
+              mode = "n";
+              action = "<cmd>Trouble diagnostics toggle filter.buf=0<cr>";
+              desc = "Buffer diagnostics";
+            }
 
             # Git
-            { key = "<leader>gg"; mode = "n"; action = "<cmd>LazyGit<cr>"; desc = "LazyGit"; }
-            { key = "<leader>gb"; mode = "n"; action = "<cmd>Gitsigns blame_line<cr>"; desc = "Git blame line"; }
+            {
+              key = "<leader>gg";
+              mode = "n";
+              action = "<cmd>LazyGit<cr>";
+              desc = "LazyGit";
+            }
+            {
+              key = "<leader>gb";
+              mode = "n";
+              action = "<cmd>Gitsigns blame_line<cr>";
+              desc = "Git blame line";
+            }
 
             # Terminal
-            { key = "<leader>tt"; mode = "n"; action = "<cmd>ToggleTerm direction=float<cr>"; desc = "Float terminal"; }
-            { key = "<leader>th"; mode = "n"; action = "<cmd>ToggleTerm direction=horizontal<cr>"; desc = "Horizontal terminal"; }
+            {
+              key = "<leader>tt";
+              mode = "n";
+              action = "<cmd>ToggleTerm direction=float<cr>";
+              desc = "Float terminal";
+            }
+            {
+              key = "<leader>th";
+              mode = "n";
+              action = "<cmd>ToggleTerm direction=horizontal<cr>";
+              desc = "Horizontal terminal";
+            }
 
             # Save and quit
-            { key = "<leader>w"; mode = "n"; action = "<cmd>write<cr>"; desc = "Save"; }
-            { key = "<leader>q"; mode = "n"; action = "<cmd>quit<cr>"; desc = "Quit"; }
+            {
+              key = "<leader>w";
+              mode = "n";
+              action = "<cmd>write<cr>";
+              desc = "Save";
+            }
+            {
+              key = "<leader>q";
+              mode = "n";
+              action = "<cmd>quit<cr>";
+              desc = "Quit";
+            }
 
             # Clear search highlight
-            { key = "<Esc>"; mode = "n"; action = "<cmd>nohlsearch<cr>"; desc = "Clear highlight"; }
+            {
+              key = "<Esc>";
+              mode = "n";
+              action = "<cmd>nohlsearch<cr>";
+              desc = "Clear highlight";
+            }
 
             # Reserved for voice-driven bindings
             # { key = "<leader>vs"; mode = "n"; action = "..."; desc = "Speak selection"; }

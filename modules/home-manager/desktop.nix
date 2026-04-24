@@ -1,5 +1,10 @@
 # Home desktop configuration: GTK dark mode, cursor, GNOME Forge dconf, Firefox default
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 let
@@ -18,7 +23,8 @@ let
       gsettings set org.gnome.desktop.background picture-options "zoom"
     fi
   '';
-in {
+in
+{
   options.modules.desktop = {
     enable = mkEnableOption "home desktop configuration";
   };

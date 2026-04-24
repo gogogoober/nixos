@@ -1,33 +1,40 @@
 # Personal developer tooling: editor LSPs, formatters, linters, and utilities
 # that only this user needs on PATH. System-level toolchain (docker, compilers,
 # language runtimes) lives in the NixOS developer module.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.devtools;
-in {
+let
+  cfg = config.modules.devtools;
+in
+{
   options.modules.devtools = {
     enable = mkEnableOption "personal developer tooling";
   };
 
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
-      lazygit              # TUI git client
-      claude-code          # Anthropic's CLI coding agent
+      lazygit # TUI git client
+      claude-code # Anthropic's CLI coding agent
 
-      nixd                 # Nix LSP
-      nixfmt               # Nix formatter
+      nixd # Nix LSP
+      nixfmt # Nix formatter
 
-      shfmt                # Shell formatter
-      shellcheck           # Shell linter
+      shfmt # Shell formatter
+      shellcheck # Shell linter
 
-      stylua               # Lua formatter
-      lua-language-server  # Lua LSP
+      stylua # Lua formatter
+      lua-language-server # Lua LSP
 
-      prettier             # Markdown, JSON, YAML, HTML, CSS, TS, JS formatter
+      prettier # Markdown, JSON, YAML, HTML, CSS, TS, JS formatter
 
-      typos                # Typo linter for code and prose
-      typos-lsp            # Editor LSP wrapper for typos
+      typos # Typo linter for code and prose
+      typos-lsp # Editor LSP wrapper for typos
     ];
   };
 }

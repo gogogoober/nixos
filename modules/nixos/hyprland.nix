@@ -1,9 +1,17 @@
 # Dormant - no host enables this currently. Kept for future use.
-{ config, lib, pkgs, inputs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  inputs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.hyprland;
-in {
+let
+  cfg = config.modules.hyprland;
+in
+{
   options.modules.hyprland = {
     enable = mkEnableOption "Hyprland compositor";
   };
@@ -25,14 +33,14 @@ in {
 
     # Hyprland ships lean and you add packages as needed
     environment.systemPackages = with pkgs; [
-      waybar         # Status bar
-      wofi            # App Launcher
-      mako           # Notification daemon
-      hyprpaper       # Wallpaper daemon - Hyprland Plugin
-      hyprlock        # Screen locker - Hyprland Plugin
-      grim            # Screenshot Tool
-      slurp           # Grim Tool for Screenshots
-      jq              # Util to parse script output
+      waybar # Status bar
+      wofi # App Launcher
+      mako # Notification daemon
+      hyprpaper # Wallpaper daemon - Hyprland Plugin
+      hyprlock # Screen locker - Hyprland Plugin
+      grim # Screenshot Tool
+      slurp # Grim Tool for Screenshots
+      jq # Util to parse script output
     ];
 
     # PAM service for hyprlock to authenticate unlock

@@ -18,7 +18,12 @@
 # does not add any user to it. Any host with `modules.tts.enable = true`
 # must also include "ydotool" in its user's `extraGroups`, otherwise the
 # clipboard fallback (synthetic Ctrl+C for browsers / Electron) will fail.
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
 let
@@ -30,7 +35,7 @@ let
   settings = {
     # Voice model. Browse voices at https://huggingface.co/rhasspy/piper-voices
     # After switching voices, replace the two sha256 hashes below.
-    voiceName    = "en_US-lessac-high";
+    voiceName = "en_US-lessac-high";
     voiceBaseUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high";
     voiceOnnxSha = "02cyrp5xsr5pr4y892i270zzxm1j4191c5aaycvp209qlv1zgasc";
     voiceJsonSha = "0bs1j8d97v6bsvfp82h50a23kckz1scfvf312ny5gwjrk1yvjhnv";
@@ -40,29 +45,29 @@ let
     port = "5174";
 
     # Synthesis defaults, applied server-side — single source of truth.
-    lengthScale     = "0.85";   # <1 speaks faster, >1 slower
-    noiseScale      = "0.667";
-    noiseWScale     = "0.8";
-    sentenceSilence = "0.2";    # seconds of silence between sentences
+    lengthScale = "0.85"; # <1 speaks faster, >1 slower
+    noiseScale = "0.667";
+    noiseWScale = "0.8";
+    sentenceSilence = "0.2"; # seconds of silence between sentences
 
     # Set to true on machines with a CUDA GPU for hardware synthesis.
     useCuda = false;
 
     # Client-side behaviour.
-    selectionSleep = "0.08";    # seconds to wait after the synthetic Ctrl+C
-    maxChars       = "50000";   # hard cap on chars sent to the synthesizer
+    selectionSleep = "0.08"; # seconds to wait after the synthetic Ctrl+C
+    maxChars = "50000"; # hard cap on chars sent to the synthesizer
   };
 
   # ─────────────────────────────────────────────────────────────────────────
   # Voice model — fetched once into the Nix store.
   # ─────────────────────────────────────────────────────────────────────────
   voiceOnnx = pkgs.fetchurl {
-    url    = "${settings.voiceBaseUrl}/${settings.voiceName}.onnx";
+    url = "${settings.voiceBaseUrl}/${settings.voiceName}.onnx";
     sha256 = settings.voiceOnnxSha;
   };
 
   voiceJson = pkgs.fetchurl {
-    url    = "${settings.voiceBaseUrl}/${settings.voiceName}.onnx.json";
+    url = "${settings.voiceBaseUrl}/${settings.voiceName}.onnx.json";
     sha256 = settings.voiceJsonSha;
   };
 
@@ -90,15 +95,18 @@ let
     chmod +x $out/bin/piper-server
   '';
 
-  piperArgs = concatStringsSep " " ([
-    "-m ${voice}/${settings.voiceName}.onnx"
-    "--host ${settings.host}"
-    "--port ${settings.port}"
-    "--length-scale ${settings.lengthScale}"
-    "--noise-scale ${settings.noiseScale}"
-    "--noise-w-scale ${settings.noiseWScale}"
-    "--sentence-silence ${settings.sentenceSilence}"
-  ] ++ optional settings.useCuda "--cuda");
+  piperArgs = concatStringsSep " " (
+    [
+      "-m ${voice}/${settings.voiceName}.onnx"
+      "--host ${settings.host}"
+      "--port ${settings.port}"
+      "--length-scale ${settings.lengthScale}"
+      "--noise-scale ${settings.noiseScale}"
+      "--noise-w-scale ${settings.noiseWScale}"
+      "--sentence-silence ${settings.sentenceSilence}"
+    ]
+    ++ optional settings.useCuda "--cuda"
+  );
 
   # ─────────────────────────────────────────────────────────────────────────
   # speak-selection client.
@@ -119,13 +127,14 @@ let
       alsa-utils
       curl
       jq
-      util-linux     # setsid, flock
+      util-linux # setsid, flock
       wl-clipboard
       ydotool
     ];
     text = settingsPreamble + "\n" + builtins.readFile ./scripts/speak-selection.sh;
   };
-in {
+in
+{
   options.modules.tts = {
     enable = mkEnableOption "Piper TTS daemon + speak-selection hotkey helper";
   };
@@ -139,10 +148,10 @@ in {
 
     systemd.user.services.piper-server = {
       description = "Piper TTS HTTP daemon (voice model kept warm in memory)";
-      wantedBy    = [ "default.target" ];
+      wantedBy = [ "default.target" ];
       serviceConfig = {
-        ExecStart  = "${piperServer}/bin/piper-server ${piperArgs}";
-        Restart    = "on-failure";
+        ExecStart = "${piperServer}/bin/piper-server ${piperArgs}";
+        Restart = "on-failure";
         RestartSec = 5;
       };
     };

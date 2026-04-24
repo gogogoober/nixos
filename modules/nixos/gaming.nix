@@ -1,9 +1,16 @@
 # Gaming: Steam, gamemode, mangohud, protontricks
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 with lib;
-let cfg = config.modules.gaming;
-in {
+let
+  cfg = config.modules.gaming;
+in
+{
   options.modules.gaming = {
     enable = mkEnableOption "gaming support";
   };

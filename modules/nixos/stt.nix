@@ -1,7 +1,8 @@
 # Speech-to-text system dependencies
 # VocalLinux is installed and managed by the user.
-# wtype is required for typing into focused windows.
-{ config, lib, pkgs, ... }:
+# wtype and wl-clipboard (required for STT typing + clipboard) live in
+# desktop.nix since they're baseline Wayland tools shared with TTS.
+{ config, lib, ... }:
 
 with lib;
 let cfg = config.modules.stt;
@@ -11,9 +12,6 @@ in {
   };
 
   config = mkIf cfg.enable {
-    environment.systemPackages = with pkgs; [
-      wtype
-      wl-clipboard
-    ];
+    environment.systemPackages = [ ];
   };
 }

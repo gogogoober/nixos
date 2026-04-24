@@ -64,6 +64,12 @@ in {
       networkmanagerapplet
       brightnessctl
       playerctl
+      # wl-copy / wl-paste CLI — used by TTS (speak-selection) and any
+      # clipboard scripting; not shipped by GNOME or Hyprland by default.
+      wl-clipboard
+      # Synthesizes keystrokes on Wayland; required by STT to type
+      # recognized text into the focused window on any Wayland DE.
+      wtype
     ];
   };
 }

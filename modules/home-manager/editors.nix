@@ -4,6 +4,20 @@ with lib;
 
 let
   cfg = config.modules.editors;
+
+  # Wraps the raw seed script with the Nix-store path to the seed JSON baked in.
+  # The raw script is kept as a regular file (modules/home-manager/scripts/) so
+  # it stays editable and runnable outside the Nix build; this wrapper is what
+  # lands on PATH and is what the activation hook invokes.
+  vscodeSettingsSeed = pkgs.writeShellApplication {
+    name = "vscode-settings-seed";
+    runtimeInputs = [ pkgs.coreutils ];
+    text = ''
+      export VSCODE_SEED=${./../../utils/vscode-settings-seed.json}
+      # shellcheck source=/dev/null
+      source ${./scripts/vscode-settings-seed.sh}
+    '';
+  };
 in
 {
   options.modules.editors = {
@@ -69,78 +83,25 @@ in
           editorconfig.editorconfig
         ];
 
-        userSettings = {
-          # Appearance
-          "workbench.colorTheme" = "Tokyo Night";
-          "editor.fontFamily" = "'JetBrainsMono Nerd Font', monospace";
-          "editor.fontSize" = 13;
-          "editor.fontLigatures" = true;
-          "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
-
-          # Format on save - the whole reason this module exists
-          "editor.formatOnSave" = true;
-          "editor.formatOnPaste" = false;
-          "editor.codeActionsOnSave" = {
-            "source.fixAll" = "explicit";
-            "source.organizeImports" = "explicit";
-          };
-
-          # Prettier as default formatter for JS/TS/JSON/CSS/HTML/Markdown
-          "[javascript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[typescript]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[javascriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[typescriptreact]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[json]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[jsonc]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[css]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[scss]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[html]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[markdown]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-          "[yaml]"."editor.defaultFormatter" = "esbenp.prettier-vscode";
-
-          # Language-specific formatters
-          "[nix]"."editor.defaultFormatter" = "jnoortheen.nix-ide";
-          "[python]"."editor.defaultFormatter" = "ms-python.python";
-          "[rust]"."editor.defaultFormatter" = "rust-lang.rust-analyzer";
-          "[go]"."editor.defaultFormatter" = "golang.go";
-
-          # Editor behavior
-          "editor.tabSize" = 2;
-          "editor.insertSpaces" = true;
-          "editor.rulers" = [ 100 ];
-          "editor.minimap.enabled" = false;
-          "editor.bracketPairColorization.enabled" = true;
-          "editor.guides.bracketPairs" = "active";
-          "editor.stickyScroll.enabled" = true;
-          "editor.linkedEditing" = true;
-
-          # Files
-          "files.trimTrailingWhitespace" = true;
-          "files.insertFinalNewline" = true;
-          "files.trimFinalNewlines" = true;
-          "files.autoSave" = "onFocusChange";
-
-          # Telemetry off
-          "telemetry.telemetryLevel" = "off";
-          "redhat.telemetry.enabled" = false;
-
-          # Git
-          "git.autofetch" = true;
-          "git.confirmSync" = false;
-          "git.enableSmartCommit" = true;
-
-          # Terminal
-          "terminal.integrated.defaultProfile.linux" = "zsh";
-
-          # Explorer
-          "explorer.confirmDelete" = false;
-          "explorer.confirmDragAndDrop" = false;
-
-          # Nix IDE - point at nixd which is installed at the system level
-          "nix.enableLanguageServer" = true;
-          "nix.serverPath" = "nixd";
-        };
+        # settings.json is NOT managed as a nix-store symlink here. Home Manager
+        # would make it read-only, which breaks any extension that writes to it
+        # (e.g. Claude Code persisting preferredLocation). Instead, the seed
+        # lives at utils/vscode-settings-seed.json and gets copied onto the real
+        # file on every rebuild by the activation hook below. Drift between
+        # rebuilds is inspected with `vscode-settings-diff`.
       };
+    };
+
+    # Install the seeder on PATH so it can be re-run by hand at any time.
+    home.packages = lib.optionals cfg.vscode.enable [ vscodeSettingsSeed ];
+
+    # Overwrite ~/.config/Code/User/settings.json with the seed on every
+    # home-manager switch. Runs after writeBoundary so the Code/User/ directory
+    # exists and any stale symlink from a previous generation has been cleaned.
+    home.activation = lib.optionalAttrs cfg.vscode.enable {
+      seedVSCodeSettings = hm.dag.entryAfter [ "writeBoundary" ] ''
+        $DRY_RUN_CMD ${vscodeSettingsSeed}/bin/vscode-settings-seed
+      '';
     };
   };
 }

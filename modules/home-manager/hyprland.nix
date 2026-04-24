@@ -177,14 +177,12 @@ in {
           "waybar" # top bar
         ];
 
-        # Continuous 3-finger horizontal swipe drags workspaces.
+        # Continuous 3-finger horizontal swipe drags workspaces. Hyprland
+        # 0.54's built-in `gesture` keyword only accepts motion-capable
+        # dispatchers (workspace/move/…); discrete "swipe-up → launch app"
+        # needs the hyprgrass plugin or an external gesture daemon — deferred.
         gesture = [
           "3, horizontal, workspace"
-        ];
-
-        # Discrete 3-finger swipe up launches the app picker.
-        bindgesture = [
-          ", swipe:3:u, exec, wofi --show drun"
         ];
 
         general = {

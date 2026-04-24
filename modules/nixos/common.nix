@@ -80,6 +80,10 @@ in {
       fzf
       zoxide
       jq
+
+      # Spell check dictionaries picked up by GTK, Qt, and Chromium-based apps
+      hunspell
+      hunspellDicts.en_US-large
     ];
   };
 }

@@ -31,10 +31,10 @@
       perSystem = { pkgs, ... }: {
         packages = import ./packages { inherit pkgs; };
 
-        formatter = pkgs.nixpkgs-fmt;
+        formatter = pkgs.nixfmt;
 
         devShells.default = pkgs.mkShell {
-          packages = with pkgs; [ nixpkgs-fmt nil git ];
+          packages = with pkgs; [ nixfmt nil git ];
         };
       };
 

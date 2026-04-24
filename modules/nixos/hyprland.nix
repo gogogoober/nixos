@@ -23,23 +23,16 @@ in {
       NIXOS_OZONE_WL = "1";
     };
 
+    # Hyprland ships lean and you add packages as needed
     environment.systemPackages = with pkgs; [
-      # Hyprland ships no status bar of its own.
-      waybar
-      # Hyprland ships no app launcher of its own.
-      wofi
-      # Hyprland ships no notification daemon of its own.
-      mako
-      # Wallpaper daemon from the Hyprland project.
-      hyprpaper
-      # Screen locker from the Hyprland project.
-      hyprlock
-      # Hyprland ships no screenshot tool of its own.
-      grim
-      # Region picker that pairs with grim for area screenshots.
-      slurp
-      # Used by helper scripts here to parse `hyprctl -j` output.
-      jq
+      waybar         # Status bar
+      wofi            # App Launcher
+      mako           # Notification daemon
+      hyprpaper       # Wallpaper daemon - Hyprland Plugin
+      hyprlock        # Screen locker - Hyprland Plugin
+      grim            # Screenshot Tool
+      slurp           # Grim Tool for Screenshots
+      jq              # Util to parse script output
     ];
 
     # PAM service for hyprlock to authenticate unlock

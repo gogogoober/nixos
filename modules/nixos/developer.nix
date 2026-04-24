@@ -23,7 +23,25 @@ in {
       pnpm
       claude-code
       vscode
+
+      # Nix
       nixd
+      nixfmt
+
+      # Shell
+      shfmt
+      shellcheck
+
+      # Lua
+      stylua
+      lua-language-server
+
+      # Polyglot formatter (markdown, json, yaml, html, css, ts, js)
+      nodePackages.prettier
+
+      # Spell check for code and prose, shared by VS Code and Neovim
+      typos
+      typos-lsp
     ];
   };
 }

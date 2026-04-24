@@ -170,6 +170,32 @@ in
           lspSignature.enable = false;
           otter-nvim.enable = true;
           nvim-docs-view.enable = false;
+
+          servers.typos_lsp = {
+            cmd = [ (lib.getExe pkgs.typos-lsp) ];
+            filetypes = [
+              "markdown"
+              "text"
+              "gitcommit"
+              "nix"
+              "lua"
+              "bash"
+              "sh"
+              "python"
+              "javascript"
+              "javascriptreact"
+              "typescript"
+              "typescriptreact"
+              "html"
+              "css"
+              "yaml"
+              "json"
+              "toml"
+              "rust"
+              "go"
+            ];
+            root_markers = [ ".git" "typos.toml" ".typos.toml" "_typos.toml" ];
+          };
         };
 
         # Completion - blink.cmp, modern and fast

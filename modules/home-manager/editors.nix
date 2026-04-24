@@ -63,8 +63,9 @@ in
           # Theme
           enkia.tokyo-night
 
-          # Formatters
+          # Formatters and code quality
           esbenp.prettier-vscode
+          tekumara.typos-vscode
 
           # Language support
           bradlc.vscode-tailwindcss

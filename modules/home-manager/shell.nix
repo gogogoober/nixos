@@ -26,6 +26,9 @@ let
         truncation_length = 5;
         truncate_to_repo = false;
       };
+      status = preset.status // {
+        disabled = false;
+      };
     };
 in
 {
@@ -48,6 +51,7 @@ in
 
     programs.starship = {
       enable = true;
+      enableTransience = true;
       settings = starshipSettings;
     };
   };

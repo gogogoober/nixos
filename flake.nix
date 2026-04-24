@@ -41,7 +41,6 @@
       flake = {
         nixosConfigurations = {
           dell-old = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
             specialArgs = { inherit inputs; };
             modules = [
               ./hosts/dell-old
@@ -57,7 +56,6 @@
           };
 
           surface-go-3 = nixpkgs.lib.nixosSystem {
-            system = "x86_64-linux";
             specialArgs = { inherit inputs; };
             modules = [
               ./hosts/surface-go-3

@@ -11,7 +11,7 @@ in {
   config = mkIf cfg.enable {
     programs.hyprland = {
       enable = true;
-      package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
     };
 
     # programs.hyprland.enable already installs xdg-desktop-portal-hyprland via

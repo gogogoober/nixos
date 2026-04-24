@@ -48,23 +48,23 @@ Two separate rules govern this: when to add short labels at all, and where to pu
 
 **When to add them.** In Nix, short labels on package lists and config blocks are welcome by default, since it is a critical system and package names alone rarely tell you what something does or why. In every other language, skip the labels unless I ask for them or the name truly does not carry the meaning.
 
-**Where to put them, in Nix and only in Nix.** Use column-aligned trailing comments. The Nix formatters in common use do not strip the spacing on save, so the alignment is safe to maintain by hand. Do not carry this style into any other language, even when the data looks similar.
+**Where to put them, in Nix and only in Nix.** Put the comment to the right of the config on the same line. Do not carry this style into any other language, even when the data looks similar.
 
 ```nix
 # Hyprland ships lean and you add packages as needed
 environment.systemPackages = with pkgs; [
-  waybar      # Status bar
-  wofi        # App launcher
-  mako        # Notification daemon
-  hyprpaper   # Wallpaper daemon, Hyprland plugin
-  hyprlock    # Screen locker, Hyprland plugin
-  grim        # Screenshot tool
-  slurp       # Region picker for grim
-  jq          # JSON parser for helper scripts
+  waybar # Status bar
+  wofi # App launcher
+  mako # Notification daemon
+  hyprpaper # Wallpaper daemon, Hyprland plugin
+  hyprlock # Screen locker, Hyprland plugin
+  grim # Screenshot tool
+  slurp # Region picker for grim
+  jq # JSON parser for helper scripts
 ];
 ```
 
-**Where to put them, in every other language.** On the line above the item, never trailing. This covers JSON, YAML, TypeScript, Python, and every other language we work in. Prettier, Black, rustfmt, and gofmt all collapse or ignore trailing comment alignment on save, so any spacing you set up disappears the first time the file is saved. Match what the formatter preserves and spend the effort on better names instead.
+**Where to put them, in every other language.** On the line above the item, never trailing. This covers JSON, YAML, TypeScript, Python, and every other language we work in.
 
 ```yaml
 packages:

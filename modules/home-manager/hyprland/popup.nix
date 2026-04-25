@@ -48,19 +48,23 @@ let
     ${pkgs.procps}/bin/pkill --signal RTMIN+8 waybar 2>/dev/null || true
   '';
 
-  # Sidecar: kill the ephemeral popup when active window moves elsewhere.
-  # Uses the v1 activewindow event because its payload includes the class
-  # directly, so no extra hyprctl query per event.
+  # Sidecar: kill the ephemeral popup on outside-click or workspace switch.
+  # activewindow handles focus changes; workspace handles the case where the
+  # user changes workspace without first changing focus to a window.
   hyprPopupWatcher = pkgs.writeShellScriptBin "hypr-popup-watcher" ''
     sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
+    kill_popup() {
+      ${hyprctl} dispatch killwindow "class:^(${ephemeralClass})$" >/dev/null 2>&1 || true
+    }
     ${pkgs.socat}/bin/socat -U - "UNIX-CONNECT:$sock" | while IFS= read -r line; do
       case "$line" in
         activewindow\>\>*)
           data="''${line#activewindow>>}"
           class="''${data%%,*}"
-          if [ "$class" != "${ephemeralClass}" ]; then
-            ${hyprctl} dispatch killwindow "class:^(${ephemeralClass})$" >/dev/null 2>&1 || true
-          fi
+          [ "$class" != "${ephemeralClass}" ] && kill_popup
+          ;;
+        workspace\>\>*|workspacev2\>\>*)
+          kill_popup
           ;;
       esac
     done

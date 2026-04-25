@@ -90,6 +90,9 @@ let
       case "$line" in
         workspace\>\>*|workspacev2\>\>*)
           ${hyprctl} dispatch killwindow "class:^(${ephemeralClass})$" >/dev/null 2>&1 || true
+          ;;
+      esac
+    done
   '';
 in
 {

@@ -102,7 +102,6 @@ if [ "${1:-}" = "--run" ]; then
 
   sendNotification processing-start
 
-  set -o pipefail
   printf '%s' "$text" \
     | split_into_chunks \
     | while IFS= read -r chunk; do
@@ -123,7 +122,6 @@ if [ "${1:-}" = "--run" ]; then
       done \
     | aplay -q -f S16_LE -r 22050 -c 1
   status=$?
-  set +o pipefail
 
   if [ "$status" -eq 0 ]; then
     log PIPELINE-finished ""
@@ -194,6 +192,8 @@ fi
 
 # 3. Cap to avoid queuing 20 minutes of audio on accidental whole-page selections
 if [ "${#text}" -gt "$MAX_CHARS" ]; then
+  log SELECTION-truncated "from=${#text} to=$MAX_CHARS"
+  sendNotification "Over max character count" true
   text="${text:0:$MAX_CHARS}"
 fi
 

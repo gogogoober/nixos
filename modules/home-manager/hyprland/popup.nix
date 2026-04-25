@@ -45,14 +45,15 @@ let
     fi
 
     case "$name" in
-      volume) cmd="${pkgs.wiremix}/bin/wiremix" ;;
+      volume) cmd="${pkgs.wiremix}/bin/wiremix";   refresh_sig=8 ;;
+      wifi)   cmd="${pkgs.wifitui}/bin/wifitui";   refresh_sig=9 ;;
       *)      echo "hypr-popup: unknown name '$name'" >&2; exit 1 ;;
     esac
 
     ${ghostty} --class="${ephemeralClass}" -e "$cmd"
 
-    # Nudge the bar so volume (and any future setting) refreshes immediately
-    ${pkgs.procps}/bin/pkill --signal RTMIN+8 waybar 2>/dev/null || true
+    # Nudge the bar so the relevant module refreshes immediately on dismiss
+    ${pkgs.procps}/bin/pkill --signal "RTMIN+$refresh_sig" waybar 2>/dev/null || true
   '';
 
   # bindmn fires on every left-click and lets the click pass through to the
@@ -98,6 +99,7 @@ in
       hyprPopupClickHandler
       hyprPopupWatcher
       pkgs.wiremix
+      pkgs.wifitui
       pkgs.socat
     ];
 

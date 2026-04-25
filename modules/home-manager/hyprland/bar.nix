@@ -178,7 +178,8 @@ in
           exec = wifiScript;
           return-type = "json";
           interval = 5;
-          on-click = "hypr-quick-settings wifi";
+          signal = 9; # popup sends SIGRTMIN+9 on dismiss for instant refresh
+          on-click = "hypr-popup wifi";
         };
 
         battery = {

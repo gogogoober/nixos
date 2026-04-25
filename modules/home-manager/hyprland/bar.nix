@@ -30,7 +30,7 @@ let
   # Stub for not-yet-wired clicks
   todo = "${pkgs.libnotify}/bin/notify-send 'Quick settings' 'Not wired yet'";
 
-  # Custom WIFI: distinguishes off / on-no-conn / connected
+  # Custom WIFI: off / on-no-conn / low / mid / high (block-bar icons)
   wifiScript = pkgs.writeShellScript "bar-wifi" ''
     set -eu
     nmcli=${pkgs.networkmanager}/bin/nmcli
@@ -41,12 +41,19 @@ let
     fi
     line=$($nmcli -t -f active,signal,ssid dev wifi | awk -F: '$1=="yes" {print; exit}')
     if [ -z "$line" ]; then
-      printf '{"text":"WIFI","class":"idle"}\n'
+      printf '{"text":"WIFI ▁▁▁▁","class":"idle"}\n'
       exit 0
     fi
     signal=$(printf '%s' "$line" | awk -F: '{print $2}')
     ssid=$(printf '%s' "$line" | cut -d: -f3-)
-    printf '{"text":"WIFI %s%%","tooltip":"%s","class":"connected"}\n' "$signal" "$ssid"
+    if [ "$signal" -lt 34 ]; then
+      icon='▂▁▁▁'
+    elif [ "$signal" -lt 67 ]; then
+      icon='▂▃▄▁'
+    else
+      icon='▂▃▄▅'
+    fi
+    printf '{"text":"WIFI %s","tooltip":"%s · %s%%","class":"connected"}\n' "$icon" "$ssid" "$signal"
   '';
 
   brightnessScript = pkgs.writeShellScript "bar-brightness" ''

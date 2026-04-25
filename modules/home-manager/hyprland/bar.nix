@@ -63,7 +63,7 @@ in
         "custom/power" = {
           format = "⏻";
           tooltip = false;
-          on-click = "hypr-power-menu";
+          on-click = "hypr-quick-settings";
         };
       };
 

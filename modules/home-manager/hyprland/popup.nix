@@ -84,14 +84,21 @@ let
 
   # Sidecar: workspace switches still need to dismiss the popup. Click-outside
   # is handled by the bindn handler above, not here.
+  # Reconnect on every socat exit. The compositor tears the script down when
+  # the session ends, so the loop has no own termination condition.
+  reconnectDelaySec = 1;
+
   hyprPopupWatcher = pkgs.writeShellScriptBin "hypr-popup-watcher" ''
     sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
-    ${pkgs.socat}/bin/socat -U - "UNIX-CONNECT:$sock" | while IFS= read -r line; do
-      case "$line" in
-        workspace\>\>*|workspacev2\>\>*)
-          ${hyprctl} dispatch killwindow "class:^(${ephemeralClass})$" >/dev/null 2>&1 || true
-          ;;
-      esac
+    while true; do
+      ${pkgs.socat}/bin/socat -U - "UNIX-CONNECT:$sock" 2>/dev/null | while IFS= read -r line; do
+        case "$line" in
+          workspace\>\>*|workspacev2\>\>*)
+            ${hyprctl} dispatch killwindow "class:^(${ephemeralClass})$" >/dev/null 2>&1 || true
+            ;;
+        esac
+      done
+      sleep ${toString reconnectDelaySec}
     done
   '';
 in

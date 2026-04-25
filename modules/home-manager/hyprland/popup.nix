@@ -70,12 +70,12 @@ in
 
     wayland.windowManager.hyprland.settings = {
       windowrule = [
-        "float,        class:^(${ephemeralClass})$"
-        "size ${toString popupWidth} ${toString popupHeight}, class:^(${ephemeralClass})$"
-        "center,       class:^(${ephemeralClass})$"
-        "noblur,       class:^(${ephemeralClass})$"
-        "noshadow,     class:^(${ephemeralClass})$"
-        "rounding 0,   class:^(${ephemeralClass})$"
+        "float on,    match:class ^(${ephemeralClass})$"
+        "size ${toString popupWidth} ${toString popupHeight}, match:class ^(${ephemeralClass})$"
+        "center on,   match:class ^(${ephemeralClass})$"
+        "no_blur on,  match:class ^(${ephemeralClass})$"
+        "no_shadow on,match:class ^(${ephemeralClass})$"
+        "rounding 0,  match:class ^(${ephemeralClass})$"
       ];
 
       exec-once = [

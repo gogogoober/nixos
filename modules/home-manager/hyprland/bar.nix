@@ -64,13 +64,15 @@ let
       metric) flag="m" ;;
       *)      flag="u" ;;
     esac
-    out=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$city,$state?format=%t+%C&$flag" || true)
-    if [ -z "$out" ]; then
+    # main text: temp only (stable width); tooltip carries the condition
+    temp=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$city,$state?format=%t&$flag" || true)
+    cond=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$city,$state?format=%C&$flag" || true)
+    if [ -z "$temp" ]; then
       printf '{"text":"WX --","class":"offline"}\n'
       exit 0
     fi
-    out=$(printf '%s' "$out" | tr -d '+')
-    printf '{"text":"WX %s"}\n' "$out"
+    temp=$(printf '%s' "$temp" | tr -d '+')
+    printf '{"text":"WX %s","tooltip":"%s"}\n' "$temp" "$cond"
   '';
 in
 {
@@ -215,6 +217,14 @@ in
         #custom-power {
           border-left: 1px solid ${surface0};
         }
+
+        /* fixed widths so right-cluster values do not bounce on update */
+        #custom-weather    { min-width: 56px; }
+        #custom-brightness { min-width: 64px; }
+        #pulseaudio        { min-width: 64px; }
+        #bluetooth         { min-width: 56px; }
+        #custom-wifi       { min-width: 72px; }
+        #battery           { min-width: 80px; }
 
         #workspaces button {
           color: ${overlay1};

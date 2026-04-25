@@ -9,12 +9,16 @@ with lib;
 let
   cfg = config.modules.hyprland;
 
-  # Two classes for the two lifecycle modes; v2 PoC ships ephemeral only
-  ephemeralClass = "hypr-popup-ephemeral";
+  # GTK requires reverse-DNS app IDs; ghostty rejects anything else and falls
+  # back to its default class, which would skip our windowrules and tile.
+  ephemeralClass = "dev.hypr-popup.ephemeral";
 
-  # Default popup geometry; revisit after seeing wiremix in action
+  # Default popup geometry and offsets from the top-right corner.
+  # topOffset clears the 28px bar plus a small gap.
   popupWidth = 800;
   popupHeight = 500;
+  rightOffset = 20;
+  topOffset = 40;
 
   hyprctl = "${pkgs.hyprland}/bin/hyprctl";
   jq = "${pkgs.jq}/bin/jq";
@@ -70,12 +74,12 @@ in
 
     wayland.windowManager.hyprland.settings = {
       windowrule = [
-        "float on,    match:class ^(${ephemeralClass})$"
-        "size ${toString popupWidth} ${toString popupHeight}, match:class ^(${ephemeralClass})$"
-        "center on,   match:class ^(${ephemeralClass})$"
-        "no_blur on,  match:class ^(${ephemeralClass})$"
-        "no_shadow on,match:class ^(${ephemeralClass})$"
-        "rounding 0,  match:class ^(${ephemeralClass})$"
+        "float on,                                                                       match:class ^(${ephemeralClass})$"
+        "size ${toString popupWidth} ${toString popupHeight},                            match:class ^(${ephemeralClass})$"
+        "move (monitor_w-window_w-${toString rightOffset}) ${toString topOffset},        match:class ^(${ephemeralClass})$"
+        "no_blur on,                                                                     match:class ^(${ephemeralClass})$"
+        "no_shadow on,                                                                   match:class ^(${ephemeralClass})$"
+        "rounding 0,                                                                     match:class ^(${ephemeralClass})$"
       ];
 
       exec-once = [

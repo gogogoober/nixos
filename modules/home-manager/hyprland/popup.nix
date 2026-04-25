@@ -69,7 +69,7 @@ in
     ];
 
     wayland.windowManager.hyprland.settings = {
-      windowrulev2 = [
+      windowrule = [
         "float,        class:^(${ephemeralClass})$"
         "size ${toString popupWidth} ${toString popupHeight}, class:^(${ephemeralClass})$"
         "center,       class:^(${ephemeralClass})$"

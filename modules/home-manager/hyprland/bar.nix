@@ -207,9 +207,9 @@ in
         #custom-wifi,
         #custom-weather,
         #custom-brightness {
-          padding: 0 10px;
+          padding: 0 8px;
           margin: 0;
-          background: ${crust};
+          background: transparent;
           color: ${text};
           border-radius: 0;
         }

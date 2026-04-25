@@ -18,7 +18,7 @@ in
       enable = true;
       enableZshIntegration = true;
       settings = {
-        theme = "catppuccin-mocha";
+        theme = "Catppuccin Mocha";
         font-family = "JetBrainsMono Nerd Font";
         font-size = 12;
         bell-features = "no-audio,no-system";

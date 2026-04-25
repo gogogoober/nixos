@@ -11,6 +11,7 @@ let
 
   # Layout knobs
   barHeight = 28;
+  barMargin = 3;
   fontFamily = "JetBrainsMono Nerd Font, monospace";
   fontSize = 12;
 
@@ -84,6 +85,9 @@ in
         position = "top";
         height = barHeight;
         spacing = 0;
+        margin-top = barMargin;
+        margin-left = barMargin;
+        margin-right = barMargin;
 
         modules-left = [ "hyprland/workspaces" ];
         modules-center = [ "clock" ];
@@ -181,7 +185,7 @@ in
         window#waybar {
           background: ${crust};
           color: ${text};
-          border-bottom: 1px solid ${surface0};
+          border: 1px solid ${surface0};
         }
 
         #workspaces button,
@@ -199,11 +203,17 @@ in
           background: ${crust};
           color: ${text};
           border-radius: 0;
-          border-left: 1px solid ${surface0};
         }
 
-        #workspaces button:first-child {
-          border-left: none;
+        /* dividers between right-cluster modules only */
+        #custom-brightness,
+        #pulseaudio,
+        #bluetooth,
+        #custom-wifi,
+        #battery,
+        #tray,
+        #custom-power {
+          border-left: 1px solid ${surface0};
         }
 
         #workspaces button {

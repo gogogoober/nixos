@@ -56,7 +56,7 @@ let
     ${pkgs.procps}/bin/pkill --signal "RTMIN+$refresh_sig" waybar 2>/dev/null || true
   '';
 
-  # bindmn fires on every left-click and lets the click pass through to the
+  # bindn fires on every left-click and lets the click pass through to the
   # underlying app. This handler dismisses the popup only when the cursor is
   # outside its bounds, leaving in-popup clicks alone for wiremix to handle.
   hyprPopupClickHandler = pkgs.writeShellScriptBin "hypr-popup-click-handler" ''
@@ -83,7 +83,7 @@ let
   '';
 
   # Sidecar: workspace switches still need to dismiss the popup. Click-outside
-  # is handled by the bindmn handler above, not here.
+  # is handled by the bindn handler above, not here.
   hyprPopupWatcher = pkgs.writeShellScriptBin "hypr-popup-watcher" ''
     sock="$XDG_RUNTIME_DIR/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2.sock"
     ${pkgs.socat}/bin/socat -U - "UNIX-CONNECT:$sock" | while IFS= read -r line; do
@@ -117,7 +117,7 @@ in
         "rounding 0,                                                                     match:class ^(${ephemeralClass})$"
       ];
 
-      bindmn = [
+      bindn = [
         ", mouse:272, exec, hypr-popup-click-handler"
       ];
 

@@ -62,6 +62,24 @@ let
     printf '{"text":"BRT %s%%"}\n' "$pct"
   '';
 
+  # Custom VOL module: polls wpctl so wiremix-driven changes show up too.
+  # Built-in pulseaudio module is event-driven via libpulse, but wiremix talks
+  # straight to PipeWire and those events do not always reach the compat layer.
+  volumeScript = pkgs.writeShellScript "bar-volume" ''
+    set -eu
+    wpctl=${pkgs.wireplumber}/bin/wpctl
+    out=$($wpctl get-volume @DEFAULT_AUDIO_SINK@ 2>/dev/null) || {
+      printf '{"text":"VOL ?"}\n'
+      exit 0
+    }
+    vol=$(printf '%s' "$out" | awk '{print int($2 * 100 + 0.5)}')
+    if printf '%s' "$out" | grep -q MUTED; then
+      printf '{"text":"VOL mute","class":"muted"}\n'
+    else
+      printf '{"text":"VOL %s%%"}\n' "$vol"
+    fi
+  '';
+
   weatherScript = pkgs.writeShellScript "bar-weather" ''
     set -eu
     city=$(quick-settings-get location.city 2>/dev/null || echo "New York")
@@ -103,7 +121,7 @@ in
         modules-right = [
           "custom/weather"
           "custom/brightness"
-          "pulseaudio"
+          "custom/volume"
           "bluetooth"
           "custom/wifi"
           "battery"
@@ -138,9 +156,11 @@ in
           on-scroll-down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
         };
 
-        pulseaudio = {
-          format = "VOL {volume}%";
-          format-muted = "VOL mute";
+        "custom/volume" = {
+          exec = volumeScript;
+          return-type = "json";
+          interval = 1;
+          signal = 8; # popup sends SIGRTMIN+8 on dismiss for instant refresh
           on-click = "hypr-popup volume";
           on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
           on-scroll-down = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
@@ -199,7 +219,7 @@ in
 
         #workspaces button,
         #clock,
-        #pulseaudio,
+        #custom-volume,
         #bluetooth,
         #battery,
         #tray,
@@ -216,7 +236,7 @@ in
 
         /* dividers between right-cluster modules only */
         #custom-brightness,
-        #pulseaudio,
+        #custom-volume,
         #bluetooth,
         #custom-wifi,
         #battery,
@@ -228,7 +248,7 @@ in
         /* fixed widths so right-cluster values do not bounce on update */
         #custom-weather    { min-width: 56px; }
         #custom-brightness { min-width: 64px; }
-        #pulseaudio        { min-width: 64px; }
+        #custom-volume        { min-width: 64px; }
         #bluetooth         { min-width: 56px; }
         #custom-wifi       { min-width: 72px; }
         #battery           { min-width: 80px; }
@@ -246,7 +266,7 @@ in
         }
 
         #clock:hover,
-        #pulseaudio:hover,
+        #custom-volume:hover,
         #bluetooth:hover,
         #custom-wifi:hover,
         #custom-weather:hover,
@@ -257,7 +277,7 @@ in
         }
 
         #custom-wifi.off,
-        #pulseaudio.muted,
+        #custom-volume.muted,
         #custom-weather.offline {
           color: ${overlay0};
         }

@@ -42,7 +42,10 @@ let
       *)      echo "hypr-popup: unknown name '$name'" >&2; exit 1 ;;
     esac
 
-    exec ${ghostty} --class="${ephemeralClass}" -e "$cmd"
+    ${ghostty} --class="${ephemeralClass}" -e "$cmd"
+
+    # Nudge the bar so volume (and any future setting) refreshes immediately
+    ${pkgs.procps}/bin/pkill --signal RTMIN+8 waybar 2>/dev/null || true
   '';
 
   # Sidecar: kill the ephemeral popup when active window moves elsewhere.

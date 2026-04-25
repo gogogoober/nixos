@@ -13,7 +13,8 @@ in
     ./gestures.nix # touchpad gestures
     ./bar.nix # waybar config + styling
     ./overlay.nix # app drawer + power menu (shared popover UI/UX)
-    ./quick-settings.nix # quick settings panel (placeholder)
+    ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)
+    ./popup.nix # v2 reusable floating-terminal popup host
   ];
 
   options.modules.hyprland = {

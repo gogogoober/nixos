@@ -141,7 +141,7 @@ in
         pulseaudio = {
           format = "VOL {volume}%";
           format-muted = "VOL mute";
-          on-click = todo; # TODO: volume slider
+          on-click = "hypr-popup volume";
           on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
           on-scroll-down = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
         };

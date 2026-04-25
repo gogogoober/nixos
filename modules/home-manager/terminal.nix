@@ -18,7 +18,7 @@ in
       enable = true;
       enableZshIntegration = true;
       settings = {
-        theme = "GitHub Dark Default";
+        theme = "catppuccin-mocha";
         font-family = "JetBrainsMono Nerd Font";
         font-size = 12;
         bell-features = "no-audio,no-system";

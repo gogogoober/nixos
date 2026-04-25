@@ -27,6 +27,7 @@
     touchscreen.enable = false;
     developer.enable = true;
     tts.enable = true;
+    tts.devMode = true;
     stt.enable = true;
     gaming.enable = true;
   };

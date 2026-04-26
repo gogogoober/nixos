@@ -18,6 +18,7 @@ in
     home.packages = with pkgs; [
       lazygit # TUI git client
       claude-code # Anthropic's CLI coding agent
+      just # Command runner, reads ./Justfile
       nixd # Nix LSP
       nixfmt # Nix formatter
       shfmt # Shell formatter

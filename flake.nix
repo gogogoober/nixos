@@ -47,6 +47,7 @@
               nixfmt
               nil
               git
+              just
             ];
           };
         };

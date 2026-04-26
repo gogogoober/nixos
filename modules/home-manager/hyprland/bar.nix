@@ -220,7 +220,7 @@ in
         "custom/power" = {
           format = "[ ⏻ ]";
           tooltip = false;
-          on-click = "hypr-quick-settings";
+          on-click = "hypr-quick-settings power";
         };
       };
 

@@ -27,31 +27,37 @@ target_class="$CLASS_PREFIX.$name"
 target_workspace="popup-$name"
 
 # If the click handler just dismissed this popup, do not respawn it from
-# the same user click reaching waybar's on-click.
+# the same user click reaching waybar's on-click. The lock is one-shot,
+# so delete it up front; malformed contents (e.g. partial write from a
+# concurrent invocation) fall through and proceed normally.
 if [ -f "$DISMISS_LOCK" ]; then
-  locked_class=$(sed -n '1p' "$DISMISS_LOCK" 2>/dev/null)
-  ts=$(sed -n '2p' "$DISMISS_LOCK" 2>/dev/null || echo 0)
-  now=$(date +%s%N)
-  if [ "$((now - ts))" -lt "$((DISMISS_GUARD_MS * 1000000))" ] \
-      && [ "$locked_class" = "$target_class" ]; then
-    rm -f "$DISMISS_LOCK"
-    exit 0
-  fi
+  locked_class=$(sed -n '1p' "$DISMISS_LOCK" 2>/dev/null || true)
+  ts=$(sed -n '2p' "$DISMISS_LOCK" 2>/dev/null || true)
   rm -f "$DISMISS_LOCK"
+  case "$ts" in
+    '' | *[!0-9]*) ;;
+    *)
+      now=$(date +%s%N)
+      if [ "$((now - ts))" -lt "$((DISMISS_GUARD_MS * 1000000))" ] \
+          && [ "$locked_class" = "$target_class" ]; then
+        exit 0
+      fi
+      ;;
+  esac
 fi
 
 active_special=$(hyprctl monitors -j | jq -r '.[].specialWorkspace.name' | head -1)
 clients_json=$(hyprctl clients -j)
 
-# Dismiss any popup currently visible. Persistent popups are visible only
-# when their special workspace is the active overlay; ephemerals are
-# visible whenever their client exists.
-visible_classes=$(printf '%s' "$clients_json" \
+# Every popup-class client that exists right now, visible or not. Persistent
+# popups are visible only when their special workspace is the active overlay;
+# ephemerals are always visible if their client exists.
+popup_classes=$(printf '%s' "$clients_json" \
   | jq -r --arg p "$CLASS_PREFIX" '.[] | select(.class | startswith($p + ".")) | .class' \
   | sort -u)
 
 target_was_visible=0
-for c in $visible_classes; do
+for c in $popup_classes; do
   c_id="${c#"$CLASS_PREFIX".}"
   c_persistent=0
   case "$c_id" in

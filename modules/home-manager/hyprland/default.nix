@@ -12,9 +12,9 @@ in
     ./windows.nix # per-window aesthetic: rounding, blur, shadow
     ./gestures.nix # touchpad gestures
     ./bar.nix # waybar config + styling
-    ./overlay.nix # app drawer + power menu (shared popover UI/UX)
     ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)
     ./quick-popups/host.nix # reusable floating-terminal popup host
+    ./quick-popups/launcher.nix # fsel TUI app launcher
     ./quick-popups/music.nix
     ./quick-popups/volume.nix
     ./quick-popups/wifi.nix

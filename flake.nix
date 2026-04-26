@@ -22,6 +22,11 @@
       url = "github:notashelf/nvf";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    fsel = {
+      url = "github:Mjoyufull/fsel";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =

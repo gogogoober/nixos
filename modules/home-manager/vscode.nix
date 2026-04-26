@@ -118,6 +118,7 @@ in
           "telemetry.telemetryLevel" = "off";
           "terminal.integrated.defaultProfile.linux" = "zsh";
           "terminal.integrated.fontFamily" = "'JetBrainsMono Nerd Font'";
+          "window.zoomLevel" = 0.5;
           "workbench.colorTheme" = "Catppuccin Mocha";
           "workbench.editorAssociations" = {
             "*.md" = "vscode.markdown.preview.editor";

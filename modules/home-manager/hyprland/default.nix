@@ -14,7 +14,11 @@ in
     ./bar.nix # waybar config + styling
     ./overlay.nix # app drawer + power menu (shared popover UI/UX)
     ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)
-    ./popup.nix # v2 reusable floating-terminal popup host
+    ./quick-popups/host.nix # reusable floating-terminal popup host
+    ./quick-popups/music.nix
+    ./quick-popups/volume.nix
+    ./quick-popups/wifi.nix
+    ./quick-popups/bluetooth.nix
     ./notifications.nix # mako notification daemon config
   ];
 

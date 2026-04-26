@@ -148,7 +148,7 @@ in
         };
 
         clock = {
-          format = "{:%a %b %d %H:%M}";
+          format = "{:%a %b %d %I:%M %p}";
           tooltip-format = "<tt>{calendar}</tt>";
           on-click = todo; # TODO: open calendar overlay
         };

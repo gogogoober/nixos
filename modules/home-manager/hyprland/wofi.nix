@@ -17,7 +17,7 @@ let
       border: ${px ds.structure.border-width.thin} solid ${ds.colors.border.default};
       border-radius: ${px ds.structure.radius.md};
       font-family: ${ds.fonts.family.ui};
-      font-size: ${px ds.fonts.role.body.size};
+      font-size: 18px;
       color: ${ds.colors.text.primary};
     }
 

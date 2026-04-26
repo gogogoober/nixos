@@ -19,6 +19,22 @@ let
   rightOffset = 20;
   topOffset = 40;
 
+  launcherWidth = popupWidth * 80 / 100;
+
+  # Per-type geometry. Move expressions use Hyprland's runtime monitor_w /
+  # monitor_h / window_w / window_h so placement stays correct on any
+  # resolution or scale.
+  typeGeometry = {
+    quick-view = {
+      size = "${toString popupWidth} ${toString popupHeight}";
+      move = "(monitor_w-window_w-${toString rightOffset}) ${toString topOffset}";
+    };
+    launcher = {
+      size = "${toString launcherWidth} 50%";
+      move = "(monitor_w-window_w)/2 (monitor_h-window_h)/2";
+    };
+  };
+
   # Mirrors barHeight (28) + barMargin (3) from bar.nix with a 1px buffer.
   # Clicks above this y belong to waybar's on-click and should not dismiss.
   barReservedY = 32;
@@ -31,16 +47,22 @@ let
 
   # Generated case branches mapping popup id to its launch metadata. Used
   # by the launcher to resolve `hypr-popup <name>`.
-  metaCase = concatStringsSep "\n  " (mapAttrsToList (id: p:
-    "${id}) cmd=${escapeShellArg p.command}; persistent=${if p.persistent then "1" else "0"}; refresh_sig=${toString (if p.refreshSignal == null then 0 else p.refreshSignal)} ;;"
-  ) enabledPopups);
+  metaCase = concatStringsSep "\n  " (
+    mapAttrsToList (
+      id: p:
+      "${id}) cmd=${escapeShellArg p.command}; persistent=${
+        if p.persistent then "1" else "0"
+      }; refresh_sig=${toString (if p.refreshSignal == null then 0 else p.refreshSignal)} ;;"
+    ) enabledPopups
+  );
 
   # Generated case branches marking which popup ids are persistent. Used by
   # every script that needs to act on an arbitrary popup window. Ephemerals
   # contribute nothing — they fall through to the catchall and stay at the
   # default c_persistent=0.
-  persistentBranches = mapAttrsToList (id: _: "${id}) c_persistent=1 ;;")
-    (filterAttrs (_: p: p.persistent) enabledPopups);
+  persistentBranches = mapAttrsToList (id: _: "${id}) c_persistent=1 ;;") (
+    filterAttrs (_: p: p.persistent) enabledPopups
+  );
   persistentCase = concatStringsSep "\n    " (persistentBranches ++ [ "*) ;;" ]);
 
   scriptPath = makeBinPath [
@@ -63,56 +85,84 @@ let
     RECONNECT_DELAY_SEC = toString reconnectDelaySec;
   };
 
-  mkPrelude = vars: ''
-    PATH=${scriptPath}:$PATH
-  '' + concatStringsSep "\n" (map (v: "${v}=${constants.${v}}") vars) + "\n";
+  mkPrelude =
+    vars:
+    ''
+      PATH=${scriptPath}:$PATH
+    ''
+    + concatStringsSep "\n" (map (v: "${v}=${constants.${v}}") vars)
+    + "\n";
 
   # Read the script body, drop the shebang (writeShellScriptBin re-adds one),
   # inject the prelude, and replace the case-body markers with the generated
   # branches.
-  mkScript = { src, vars }:
+  mkScript =
+    { src, vars }:
     let
       body = builtins.readFile src;
       shebang = "#!/usr/bin/env bash\n";
       withoutShebang = removePrefix shebang body;
-      substituted = replaceStrings
-        [ "# @POPUP_META_CASE@" "# @PERSISTENT_CASE@" ]
-        [ metaCase persistentCase ]
-        withoutShebang;
+      substituted =
+        replaceStrings [ "# @POPUP_META_CASE@" "# @PERSISTENT_CASE@" ] [ metaCase persistentCase ]
+          withoutShebang;
     in
-      mkPrelude vars + substituted;
+    mkPrelude vars + substituted;
 
   hyprPopup = pkgs.writeShellScriptBin "hypr-popup" (mkScript {
     src = ./scripts/launcher.sh;
-    vars = [ "CLASS_PREFIX" "DISMISS_LOCK" "DISMISS_GUARD_MS" ];
+    vars = [
+      "CLASS_PREFIX"
+      "DISMISS_LOCK"
+      "DISMISS_GUARD_MS"
+    ];
   });
 
   hyprPopupClickHandler = pkgs.writeShellScriptBin "hypr-popup-click-handler" (mkScript {
     src = ./scripts/click-handler.sh;
-    vars = [ "CLASS_PREFIX" "DISMISS_LOCK" "BAR_RESERVED_Y" ];
+    vars = [
+      "CLASS_PREFIX"
+      "DISMISS_LOCK"
+      "BAR_RESERVED_Y"
+    ];
   });
 
   hyprPopupWatcher = pkgs.writeShellScriptBin "hypr-popup-watcher" (mkScript {
     src = ./scripts/watcher.sh;
-    vars = [ "CLASS_PREFIX" "RECONNECT_DELAY_SEC" ];
+    vars = [
+      "CLASS_PREFIX"
+      "RECONNECT_DELAY_SEC"
+    ];
   });
 
-  # Geometry rules apply uniformly to every popup via class regex. Workspace
+  # Aesthetic rules apply to every popup regardless of type. Workspace
   # assignment is per-popup since each persistent popup owns its own special
   # workspace, so only one persistent is visible at a time.
   classRegex = "^(dev\\.hypr-popup\\..*)$";
 
-  geometryRules = [
-    "float on,                                                                       match:class ${classRegex}"
-    "size ${toString popupWidth} ${toString popupHeight},                            match:class ${classRegex}"
-    "move (monitor_w-window_w-${toString rightOffset}) ${toString topOffset},        match:class ${classRegex}"
-    "no_blur on,                                                                     match:class ${classRegex}"
-    "no_shadow on,                                                                   match:class ${classRegex}"
-    "no_anim on,                                                                     match:class ${classRegex}"
-    "rounding 0,                                                                     match:class ${classRegex}"
+  aestheticRules = [
+    "no_blur on,    match:class ${classRegex}"
+    "no_shadow on,  match:class ${classRegex}"
+    "no_anim on,    match:class ${classRegex}"
+    "rounding 0,    match:class ${classRegex}"
   ];
 
-  workspaceRules = mapAttrsToList (id: _:
+  geometryRules = concatLists (
+    mapAttrsToList (
+      id: p:
+      let
+        g = typeGeometry.${p.type};
+        classMatch = "match:class ^(${classOf id})$";
+      in
+      [
+        "float on,         ${classMatch}"
+        "size ${g.size},   ${classMatch}"
+        "move ${g.move},   ${classMatch}"
+      ]
+    ) enabledPopups
+  );
+
+  workspaceRules = mapAttrsToList (
+    id: _:
     "workspace special:${workspaceOf id} silent,                                     match:class ^(${classOf id})$"
   ) (filterAttrs (_: p: p.persistent) enabledPopups);
 
@@ -124,34 +174,48 @@ in
   options.modules.hyprland.popups = mkOption {
     description = "Per-popup definitions consumed by the quick-popup host.";
     default = { };
-    type = types.attrsOf (types.submodule {
-      options = {
-        enable = mkOption {
-          type = types.bool;
-          default = true;
-          description = "Whether this popup is registered with the host.";
+    type = types.attrsOf (
+      types.submodule {
+        options = {
+          enable = mkOption {
+            type = types.bool;
+            default = true;
+            description = "Whether this popup is registered with the host.";
+          };
+          type = mkOption {
+            type = types.enum [
+              "quick-view"
+              "launcher"
+            ];
+            default = "quick-view";
+            description = ''
+              Layout preset.
+              quick-view: top-right tile at popupWidth x popupHeight.
+              launcher: dynamically centered, 80% of popupWidth wide, 50% monitor height.
+            '';
+          };
+          command = mkOption {
+            type = types.str;
+            description = "Shell command run inside the popup terminal.";
+          };
+          persistent = mkOption {
+            type = types.bool;
+            default = false;
+            description = "Keep the process alive in a special workspace when hidden.";
+          };
+          refreshSignal = mkOption {
+            type = types.nullOr types.int;
+            default = null;
+            description = "SIGRTMIN+N sent to waybar on dismiss for instant module refresh.";
+          };
+          packages = mkOption {
+            type = types.listOf types.package;
+            default = [ ];
+            description = "Packages installed alongside this popup.";
+          };
         };
-        command = mkOption {
-          type = types.str;
-          description = "Shell command run inside the popup terminal.";
-        };
-        persistent = mkOption {
-          type = types.bool;
-          default = false;
-          description = "Keep the process alive in a special workspace when hidden.";
-        };
-        refreshSignal = mkOption {
-          type = types.nullOr types.int;
-          default = null;
-          description = "SIGRTMIN+N sent to waybar on dismiss for instant module refresh.";
-        };
-        packages = mkOption {
-          type = types.listOf types.package;
-          default = [ ];
-          description = "Packages installed alongside this popup.";
-        };
-      };
-    });
+      }
+    );
   };
 
   config = mkIf cfg.enable {
@@ -164,10 +228,11 @@ in
       hyprPopup
       hyprPopupClickHandler
       hyprPopupWatcher
-    ] ++ popupPackages;
+    ]
+    ++ popupPackages;
 
     wayland.windowManager.hyprland.settings = {
-      windowrule = geometryRules ++ workspaceRules;
+      windowrule = aestheticRules ++ geometryRules ++ workspaceRules;
       bindn = [ ", mouse:272, exec, hypr-popup-click-handler" ];
       exec-once = [ "hypr-popup-watcher" ];
     };

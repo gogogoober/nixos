@@ -41,7 +41,7 @@ in
 {
   modules.hyprland.popups.launcher = {
     type = "launcher";
-    command = "${fsel}/bin/fsel";
+    command = "${fsel}/bin/fsel -d";
     packages = [ fsel ];
   };
 

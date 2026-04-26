@@ -162,7 +162,7 @@ in
           interval = 1;
           signal = 8; # popup sends SIGRTMIN+8 on dismiss for instant refresh
           on-click = "hypr-popup volume";
-          on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+";
+          on-scroll-up = "${pkgs.wireplumber}/bin/wpctl set-volume -l 0.8 @DEFAULT_AUDIO_SINK@ 5%+";
           on-scroll-down = "${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-";
         };
 
@@ -171,7 +171,7 @@ in
           format-off = "BT off";
           format-connected = "BT ({num_connections})";
           tooltip-format-connected = "{device_enumerate}";
-          on-click = "hypr-quick-settings bluetooth";
+          on-click = "hypr-popup bluetooth";
         };
 
         "custom/wifi" = {

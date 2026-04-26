@@ -112,14 +112,14 @@ let
     }
 
     show_power() {
-      choice=$(printf '%s\n' Lock Sleep Restart Shutdown \
-        | $wofi --hide-search --prompt="Power" --width=260 --height=220)
+      choice=$(printf '%s\n' '✕ Close' Lock Sleep Restart Shutdown \
+        | $wofi --hide-search --prompt="Power" --width=260 --height=260)
       case "$choice" in
-        "")       exit 0 ;;
-        Lock)     exec $hyprlock ;;
-        Sleep)    $sysctl suspend ;;
-        Restart)  $sysctl reboot ;;
-        Shutdown) $sysctl poweroff ;;
+        ""|"✕ Close") exit 0 ;;
+        Lock)         exec $hyprlock ;;
+        Sleep)        $sysctl suspend ;;
+        Restart)      $sysctl reboot ;;
+        Shutdown)     $sysctl poweroff ;;
       esac
     }
 

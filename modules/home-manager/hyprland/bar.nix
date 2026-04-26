@@ -62,6 +62,18 @@ let
     printf '{"text":"BRT %s%%"}\n' "$pct"
   '';
 
+  # Music: Nerd Font glyph stays put; class swaps based on whether the
+  # spotify-player process is alive so the icon shows green when running in
+  # the background (popup hidden) and dim otherwise.
+  musicScript = pkgs.writeShellScript "bar-music" ''
+    set -eu
+    if ${pkgs.procps}/bin/pgrep -x spotify_player >/dev/null 2>&1; then
+      printf '{"text":"󰝚","class":"alive","tooltip":"spotify-player running"}\n'
+    else
+      printf '{"text":"󰝚","class":"idle","tooltip":"music"}\n'
+    fi
+  '';
+
   # Custom VOL module: polls wpctl so wiremix-driven changes show up too.
   # Built-in pulseaudio module is event-driven via libpulse, but wiremix talks
   # straight to PipeWire and those events do not always reach the compat layer.
@@ -121,6 +133,7 @@ in
         modules-right = [
           "custom/weather"
           "custom/brightness"
+          "custom/music"
           "custom/volume"
           "bluetooth"
           "custom/wifi"
@@ -154,6 +167,13 @@ in
           on-click = todo; # TODO: brightness slider
           on-scroll-up = "${pkgs.brightnessctl}/bin/brightnessctl set +5%";
           on-scroll-down = "${pkgs.brightnessctl}/bin/brightnessctl set 5%-";
+        };
+
+        "custom/music" = {
+          exec = musicScript;
+          return-type = "json";
+          interval = 2;
+          on-click = "hypr-popup music";
         };
 
         "custom/volume" = {
@@ -220,6 +240,7 @@ in
 
         #workspaces button,
         #clock,
+        #custom-music,
         #custom-volume,
         #bluetooth,
         #battery,
@@ -237,6 +258,7 @@ in
 
         /* dividers between right-cluster modules only */
         #custom-brightness,
+        #custom-music,
         #custom-volume,
         #bluetooth,
         #custom-wifi,
@@ -267,6 +289,7 @@ in
         }
 
         #clock:hover,
+        #custom-music:hover,
         #custom-volume:hover,
         #bluetooth:hover,
         #custom-wifi:hover,
@@ -278,9 +301,13 @@ in
         }
 
         #custom-wifi.off,
+        #custom-music.idle,
         #custom-volume.muted,
         #custom-weather.offline {
           color: ${overlay0};
+        }
+        #custom-music.alive {
+          color: ${green};
         }
         #battery.warning {
           color: ${yellow};

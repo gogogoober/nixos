@@ -1,7 +1,7 @@
 { pkgs, inputs, ... }:
 
 let
-  fsel = inputs.fsel.packages.${pkgs.system}.default;
+  fsel = inputs.fsel.packages.${pkgs.stdenv.hostPlatform.system}.default;
   toml = pkgs.formats.toml { };
 
   inherit (import ../../design-system) colors;

@@ -23,6 +23,8 @@ in
       defaultEditor = true;
       viAlias = true;
       vimAlias = true;
+      withPython3 = false; # No python plugins, drop provider
+      withRuby = false; # No ruby plugins, drop provider
 
       extraPackages = with pkgs; [
         bash-language-server # Bash LSP

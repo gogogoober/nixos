@@ -164,7 +164,6 @@ in
       hyprPopup
       hyprPopupClickHandler
       hyprPopupWatcher
-      pkgs.socat
     ] ++ popupPackages;
 
     wayland.windowManager.hyprland.settings = {

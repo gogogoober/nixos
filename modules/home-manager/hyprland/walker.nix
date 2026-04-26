@@ -48,11 +48,19 @@ let
 in
 {
   config = mkIf cfg.enable {
-    home.packages = [ pkgs.walker ];
+    home.packages = [ pkgs.walker pkgs.elephant ];
 
     xdg.configFile."walker/config.toml".source =
       toml.generate "walker-config.toml" walkerConfig;
 
     xdg.configFile."walker/themes/design-system/style.css".text = walkerStyle;
+
+    # Elephant is walker's provider backend and must be running before
+    # walker connects. Walker's gapplication-service then keeps the UI
+    # process warm so the keybind opens instantly.
+    wayland.windowManager.hyprland.settings.exec-once = [
+      "elephant"
+      "walker --gapplication-service"
+    ];
   };
 }

@@ -8,24 +8,13 @@
 with lib;
 let
   cfg = config.modules.hyprland;
+  ds = import ../design-system;
 
   # Layout knobs
   barHeight = 28;
   barMargin = 3;
   fontFamily = "JetBrainsMono Nerd Font, monospace";
   fontSize = 12;
-
-  # Catppuccin Mocha tokens — see docs/design-system/colors.md
-  crust = "#11111b";
-  surface0 = "#313244";
-  text = "#cdd6f4";
-  overlay0 = "#6c7086";
-  overlay1 = "#7f849c";
-  blue = "#89b4fa";
-  green = "#a6e3a1";
-  yellow = "#f9e2af";
-  red = "#f38ba8";
-  lavender = "#b4befe";
 
   # Stub for not-yet-wired clicks
   todo = "${pkgs.libnotify}/bin/notify-send 'Quick settings' 'Not wired yet'";
@@ -233,9 +222,9 @@ in
         }
 
         window#waybar {
-          background: ${crust};
-          color: ${text};
-          border: 1px solid ${surface0};
+          background: ${ds.colors.background.deepest};
+          color: ${ds.colors.text.primary};
+          border: 1px solid ${ds.colors.surface.default};
         }
 
         #workspaces button,
@@ -252,7 +241,7 @@ in
           padding: 0 8px;
           margin: 0;
           background: transparent;
-          color: ${text};
+          color: ${ds.colors.text.primary};
           border-radius: 0;
         }
 
@@ -265,7 +254,7 @@ in
         #battery,
         #tray,
         #custom-power {
-          border-left: 1px solid ${surface0};
+          border-left: 1px solid ${ds.colors.surface.default};
         }
 
         /* fixed widths so right-cluster values do not bounce on update */
@@ -277,15 +266,15 @@ in
         #battery           { min-width: 80px; }
 
         #workspaces button {
-          color: ${overlay1};
+          color: ${ds.colors.text.muted};
           padding: 0 6px;
         }
         #workspaces button.active {
-          color: ${lavender};
+          color: ${ds.colors.state.focus-ring};
         }
         #workspaces button:hover {
-          background: ${surface0};
-          color: ${text};
+          background: ${ds.colors.surface.default};
+          color: ${ds.colors.text.primary};
         }
 
         #clock:hover,
@@ -297,30 +286,30 @@ in
         #custom-brightness:hover,
         #custom-power:hover,
         #battery:hover {
-          background: ${surface0};
+          background: ${ds.colors.surface.default};
         }
 
         #custom-wifi.off,
         #custom-music.idle,
         #custom-volume.muted,
         #custom-weather.offline {
-          color: ${overlay0};
+          color: ${ds.colors.text.disabled};
         }
         #custom-music.alive {
-          color: ${green};
+          color: ${ds.colors.text.success};
         }
         #battery.warning {
-          color: ${yellow};
+          color: ${ds.colors.text.warn};
         }
         #battery.critical {
-          color: ${red};
+          color: ${ds.colors.text.error};
         }
         #bluetooth.connected,
         #custom-wifi.connected {
-          color: ${blue};
+          color: ${ds.colors.text.link};
         }
         #battery.charging {
-          color: ${green};
+          color: ${ds.colors.text.success};
         }
       '';
     };

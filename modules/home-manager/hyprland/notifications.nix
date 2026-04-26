@@ -3,16 +3,7 @@
 with lib;
 let
   cfg = config.modules.hyprland;
-
-  # Catppuccin Mocha tokens — see docs/design-system/colors.md.
-  # Mirrors the palette used in bar.nix so notifications read as part of the
-  # same chrome rather than landing in mako's default beige.
-  crust = "#11111b";
-  surface0 = "#313244";
-  text = "#cdd6f4";
-  overlay0 = "#6c7086";
-  blue = "#89b4fa";
-  red = "#f38ba8";
+  ds = import ../design-system;
 in
 {
   config = mkIf cfg.enable {
@@ -25,9 +16,9 @@ in
       font=JetBrainsMono Nerd Font 11
       anchor=top-right
 
-      background-color=${crust}
-      text-color=${text}
-      border-color=${surface0}
+      background-color=${ds.colors.background.deepest}
+      text-color=${ds.colors.text.primary}
+      border-color=${ds.colors.surface.default}
       border-size=1
       border-radius=0
 
@@ -36,13 +27,13 @@ in
       max-icon-size=32
 
       [urgency=low]
-      border-color=${overlay0}
+      border-color=${ds.colors.border.subtle}
 
       [urgency=normal]
-      border-color=${blue}
+      border-color=${ds.colors.text.link}
 
       [urgency=critical]
-      border-color=${red}
+      border-color=${ds.colors.border.error}
       default-timeout=0
     '';
   };

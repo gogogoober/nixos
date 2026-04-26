@@ -14,7 +14,7 @@ in
     ./bar.nix # waybar config + styling
     ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)
     ./quick-popups/host.nix # reusable floating-terminal popup host
-    ./quick-popups/launcher.nix # fsel TUI app launcher
+    ./walker.nix # walker GUI app launcher
     ./quick-popups/music.nix
     ./quick-popups/volume.nix
     ./quick-popups/wifi.nix

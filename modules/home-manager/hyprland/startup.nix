@@ -21,6 +21,7 @@ in
       exec-once = [
         "mako" # Notification daemon
         "waybar" # Top bar
+        "walker --gapplication-service" # Launcher persistent service for instant open
       ];
     };
   };

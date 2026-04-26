@@ -19,6 +19,7 @@ in
     ./quick-popups/volume.nix
     ./quick-popups/wifi.nix
     ./quick-popups/bluetooth.nix
+    ./quick-popups/battery.nix
     ./notifications.nix # mako notification daemon config
   ];
 

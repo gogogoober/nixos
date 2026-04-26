@@ -210,7 +210,7 @@ in
             warning = 20;
             critical = 10;
           };
-          on-click = todo; # TODO: power profile picker
+          on-click = "hypr-popup battery";
         };
 
         tray = {

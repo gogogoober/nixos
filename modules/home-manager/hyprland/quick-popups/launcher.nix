@@ -5,6 +5,7 @@ let
 in
 {
   modules.hyprland.popups.launcher = {
+    type = "launcher";
     command = "${fsel}/bin/fsel";
     packages = [ fsel ];
   };

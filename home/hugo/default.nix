@@ -13,7 +13,7 @@
     shell.enable = true;
     vscode.enable = true;
     devtools.enable = true;
-    lazy-nvf.enable = true;
+    neovim.enable = true;
     terminal.enable = true;
     desktop.enable = true;
     claude.enable = true;

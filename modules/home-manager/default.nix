@@ -5,7 +5,7 @@
     ./shell.nix
     ./vscode.nix
     ./devtools.nix
-    ./lazy-nvf.nix
+    ./neovim.nix
     ./terminal.nix
     ./desktop.nix
     ./hyprland

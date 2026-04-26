@@ -16,17 +16,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    # submodules required for plugins like Hyprspace to build
-    hyprland = {
-      type = "git";
-      url = "https://github.com/hyprwm/Hyprland";
-      submodules = true;
-    };
-
-    Hyprspace = {
-      url = "github:KZDKM/Hyprspace";
-      inputs.hyprland.follows = "hyprland";
-    };
+    hyprland.url = "github:hyprwm/Hyprland";
 
     nvf = {
       url = "github:notashelf/nvf";

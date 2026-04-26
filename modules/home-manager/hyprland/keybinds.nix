@@ -73,7 +73,6 @@ in
         "$mod,       W,      Close window,          killactive,"
         "$mod,       F,      Toggle fullscreen,     fullscreen, 0"
         "$mod,       SPACE,  App launcher,          exec, hypr-popup launcher"
-        "$mod,       TAB,    Toggle overview,       overview:toggle,"
         "$mod,       K,      Show keybindings,      exec, hypr-cheatsheet"
         "$mod,       L,      Lock and sleep,        exec, hypr-lock-sleep"
         "$mod,       C,      Universal copy,        exec, hypr-clipboard copy"

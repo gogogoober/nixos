@@ -11,7 +11,6 @@ in
     ./tiling.nix # gaps, borders, layout engine, fullscreen rules
     ./windows.nix # per-window aesthetic: rounding, blur, shadow
     ./gestures.nix # touchpad gestures
-    ./hyprspace.nix # workspace overview plugin
     ./bar.nix # waybar config + styling
     ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)
     ./quick-popups/host.nix # reusable floating-terminal popup host

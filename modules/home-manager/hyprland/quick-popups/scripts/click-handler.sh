@@ -34,11 +34,13 @@ write_lock() {
 active_special=$(hyprctl monitors -j | jq -r '.[].specialWorkspace.name' | head -1)
 clients_json=$(hyprctl clients -j)
 
-visible_classes=$(printf '%s' "$clients_json" \
+# Every popup-class client that exists right now. Persistent visibility is
+# determined later by checking the active special workspace.
+popup_classes=$(printf '%s' "$clients_json" \
   | jq -r --arg p "$CLASS_PREFIX" '.[] | select(.class | startswith($p + ".")) | .class' \
   | sort -u)
 
-for c in $visible_classes; do
+for c in $popup_classes; do
   c_id="${c#"$CLASS_PREFIX".}"
   c_persistent=0
   case "$c_id" in

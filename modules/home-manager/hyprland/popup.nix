@@ -29,11 +29,6 @@ let
   jq = "${pkgs.jq}/bin/jq";
   ghostty = "${pkgs.ghostty}/bin/ghostty";
 
-  # blugo is not in nixpkgs; build from source with the project's pinned go
-  blugo = pkgs.callPackage ../../../packages/blugo.nix {
-    buildGoModule = pkgs.buildGoModule.override { go = pkgs.go_1_25; };
-  };
-
   hyprPopup = pkgs.writeShellScriptBin "hypr-popup" ''
     name="$1"
 
@@ -52,7 +47,7 @@ let
     case "$name" in
       volume)    cmd="${pkgs.wiremix}/bin/wiremix";   refresh_sig=8  ;;
       wifi)      cmd="${pkgs.wifitui}/bin/wifitui";   refresh_sig=9  ;;
-      bluetooth) cmd="${blugo}/bin/blugo";            refresh_sig=10 ;;
+      bluetooth) cmd="${pkgs.bluetui}/bin/bluetui";   refresh_sig=10 ;;
       *)         echo "hypr-popup: unknown name '$name'" >&2; exit 1 ;;
     esac
 
@@ -116,7 +111,7 @@ in
       hyprPopupWatcher
       pkgs.wiremix
       pkgs.wifitui
-      blugo
+      pkgs.bluetui
       pkgs.socat
     ];
 

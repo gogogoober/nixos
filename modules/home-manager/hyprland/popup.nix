@@ -27,6 +27,11 @@ let
   rightOffset = 20;
   topOffset = 40;
 
+  # Clicks at y < barReservedY are bar clicks; the handler skips them so
+  # waybar's on-click owns the toggle without racing with our dispatch.
+  # Mirrors barHeight (28) + barMargin (3) from bar.nix with a 1px buffer.
+  barReservedY = 32;
+
   # Lock records which class the click handler just dismissed, so the bar
   # icon's on-click that fired the dismiss does not also respawn it. The lock
   # carries the class so a click that kills volume does not block opening
@@ -98,6 +103,10 @@ let
     cursor=$(${hyprctl} cursorpos)
     cx=$(printf '%s' "$cursor" | cut -d, -f1 | tr -d ' ')
     cy=$(printf '%s' "$cursor" | cut -d, -f2 | tr -d ' ')
+
+    # Bar clicks are owned by waybar's on-click; skipping here avoids racing
+    # the on-click that just toggled the special workspace.
+    [ "$cy" -lt ${toString barReservedY} ] && exit 0
 
     inside() {
       ax=$(printf '%s' "$1" | ${jq} '.at[0]')

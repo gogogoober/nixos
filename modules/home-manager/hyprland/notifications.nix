@@ -7,12 +7,12 @@ let
   # Catppuccin Mocha tokens — see docs/design-system/colors.md.
   # Mirrors the palette used in bar.nix so notifications read as part of the
   # same chrome rather than landing in mako's default beige.
-  crust    = "#11111b";
+  crust = "#11111b";
   surface0 = "#313244";
-  text     = "#cdd6f4";
+  text = "#cdd6f4";
   overlay0 = "#6c7086";
-  blue     = "#89b4fa";
-  red      = "#f38ba8";
+  blue = "#89b4fa";
+  red = "#f38ba8";
 in
 {
   config = mkIf cfg.enable {

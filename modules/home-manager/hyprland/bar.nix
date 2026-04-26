@@ -16,15 +16,15 @@ let
   fontSize = 12;
 
   # Catppuccin Mocha tokens — see docs/design-system/colors.md
-  crust    = "#11111b";
+  crust = "#11111b";
   surface0 = "#313244";
-  text     = "#cdd6f4";
+  text = "#cdd6f4";
   overlay0 = "#6c7086";
   overlay1 = "#7f849c";
-  blue     = "#89b4fa";
-  green    = "#a6e3a1";
-  yellow   = "#f9e2af";
-  red      = "#f38ba8";
+  blue = "#89b4fa";
+  green = "#a6e3a1";
+  yellow = "#f9e2af";
+  red = "#f38ba8";
   lavender = "#b4befe";
 
   # Stub for not-yet-wired clicks

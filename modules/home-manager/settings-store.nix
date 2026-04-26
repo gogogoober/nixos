@@ -10,7 +10,12 @@ let
 
   defaults = {
     location = {
-      inherit (loc) city state country units;
+      inherit (loc)
+        city
+        state
+        country
+        units
+        ;
     };
   };
 
@@ -33,6 +38,5 @@ in
 {
   home.packages = [ reader ];
 
-  xdg.configFile."quick-settings/defaults.json".text =
-    builtins.toJSON defaults;
+  xdg.configFile."quick-settings/defaults.json".text = builtins.toJSON defaults;
 }

@@ -19,7 +19,10 @@ with lib;
       description = "ISO 3166-1 alpha-2 country code.";
     };
     units = mkOption {
-      type = types.enum [ "imperial" "metric" ];
+      type = types.enum [
+        "imperial"
+        "metric"
+      ];
       default = "imperial";
       description = "Unit system for weather, distance, and other physical quantities.";
     };

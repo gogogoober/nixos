@@ -2,6 +2,6 @@
 default:
     @just --list
 
-# Format all nix files using the flake's formatter
+# Format all nix files with nixfmt-tree (the flake's formatter)
 format:
     nix fmt

@@ -1,4 +1,3 @@
-# Hyprland gesture only supports motion dispatchers; discrete gestures need hyprgrass
 { config, lib, ... }:
 
 with lib;
@@ -8,9 +7,11 @@ in
 {
   config = mkIf cfg.enable {
     wayland.windowManager.hyprland.settings = {
-      # 3-finger horizontal swipe drags workspaces
       gesture = [
+        # 3-finger horizontal swipe drags workspaces
         "3, horizontal, workspace"
+        # 4-finger up opens Hyprspace overview
+        "4, up, dispatcher, overview:toggle"
       ];
     };
   };

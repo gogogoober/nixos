@@ -114,6 +114,7 @@ in
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix/"
         ];
       };
 
@@ -121,6 +122,12 @@ in
         name = "Speak selection";
         binding = "<Super>Escape";
         command = "speak-selection";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix" = {
+        name = "Reset touchscreen";
+        binding = "<Super><Shift>t";
+        command = "touchscreen-fix";
       };
     };
 

@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}:
+{ pkgs, ... }:
 
 {
   imports = [
@@ -30,23 +24,20 @@
     tts.devMode = true;
     stt.enable = true;
     gaming.enable = true;
-  };
 
-  # Mirror to home-manager so user Hyprland config matches the session
-  home-manager.users.hugo.modules.hyprland.enable = config.modules.hyprland.enable;
-
-  users.users.hugo = {
-    isNormalUser = true;
-    description = "Hugo";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "input"
-      "docker"
-      "ydotool"
-    ];
-    shell = pkgs.zsh;
+    user = {
+      name = "hugo";
+      description = "Hugo";
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "video"
+        "input"
+        "docker"
+        "ydotool"
+      ];
+      homeConfig = ../../home/hugo;
+    };
   };
 
   hardware.firmware = [ pkgs.linux-firmware ];

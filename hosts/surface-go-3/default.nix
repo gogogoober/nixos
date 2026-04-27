@@ -1,10 +1,4 @@
-{
-  config,
-  lib,
-  pkgs,
-  inputs,
-  ...
-}:
+{ ... }:
 
 {
   imports = [
@@ -25,18 +19,18 @@
     tts.enable = true;
     stt.enable = true;
     gaming.enable = false;
-  };
 
-  users.users.hugo = {
-    isNormalUser = true;
-    description = "Hugo";
-    extraGroups = [
-      "wheel"
-      "networkmanager"
-      "video"
-      "input"
-      "docker"
-    ];
-    shell = pkgs.zsh;
+    user = {
+      name = "hugo";
+      description = "Hugo";
+      extraGroups = [
+        "wheel"
+        "networkmanager"
+        "video"
+        "input"
+        "docker"
+      ];
+      homeConfig = ../../home/hugo;
+    };
   };
 }

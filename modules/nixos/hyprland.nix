@@ -38,5 +38,7 @@ in
     ];
 
     security.pam.services.hyprlock = { };
+
+    home-manager.users.${config.modules.user.name}.modules.hyprland.enable = true;
   };
 }

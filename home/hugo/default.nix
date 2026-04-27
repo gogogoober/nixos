@@ -1,12 +1,15 @@
-{ ... }:
+{ osConfig, ... }:
 
+let
+  username = osConfig.modules.user.name;
+in
 {
   imports = [
     ../../modules/home-manager
   ];
 
-  home.username = "hugo";
-  home.homeDirectory = "/home/hugo";
+  home.username = username;
+  home.homeDirectory = "/home/${username}";
 
   modules = {
     common.enable = true;

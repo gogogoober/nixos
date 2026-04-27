@@ -1,6 +1,7 @@
 {
   imports = [
     ./common.nix
+    ./user.nix
     ./location.nix
     ./desktop.nix
     ./hyprland.nix

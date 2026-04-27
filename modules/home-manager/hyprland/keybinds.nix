@@ -5,8 +5,8 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib) mkIf;
   cfg = config.modules.hyprland;
 
   hyprClipboard = pkgs.writeShellScriptBin "hypr-clipboard" ''

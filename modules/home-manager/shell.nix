@@ -5,8 +5,8 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib) mkEnableOption mkIf;
   cfg = config.modules.shell;
 
   # Pin preset to match installed starship; newer presets carry modules

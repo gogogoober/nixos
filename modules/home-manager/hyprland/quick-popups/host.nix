@@ -5,8 +5,20 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib)
+    mkIf
+    mkOption
+    types
+    filterAttrs
+    concatStringsSep
+    mapAttrsToList
+    escapeShellArg
+    concatLists
+    removePrefix
+    replaceStrings
+    makeBinPath
+    ;
   cfg = config.modules.hyprland;
   enabledPopups = filterAttrs (_: p: p.enable) cfg.popups;
 

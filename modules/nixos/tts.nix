@@ -5,8 +5,18 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    concatStringsSep
+    optional
+    concatMapStringsSep
+    escapeShellArg
+    boolToString
+    ;
   cfg = config.modules.tts;
 
   settings = {

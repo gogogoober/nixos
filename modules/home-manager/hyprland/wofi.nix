@@ -4,8 +4,8 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib) mkIf;
   cfg = config.modules.hyprland;
   ds = import ../design-system;
 

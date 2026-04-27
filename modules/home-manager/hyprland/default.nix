@@ -1,7 +1,7 @@
 { config, lib, ... }:
 
-with lib;
 let
+  inherit (lib) mkEnableOption mkIf mkDefault;
   cfg = config.modules.hyprland;
 in
 {

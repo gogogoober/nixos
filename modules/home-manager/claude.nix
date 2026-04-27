@@ -5,9 +5,8 @@
   ...
 }:
 
-with lib;
-
 let
+  inherit (lib) mkEnableOption mkIf;
   cfg = config.modules.claude;
 
   # Wrap seed script with the seed tree path baked in
@@ -32,7 +31,7 @@ in
     home.packages = [ claudeSkillsSeed ];
 
     # Re-seed ~/.claude each rebuild; only files in assets/claude/ are touched
-    home.activation.seedClaudeSkills = hm.dag.entryAfter [ "writeBoundary" ] ''
+    home.activation.seedClaudeSkills = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD ${claudeSkillsSeed}/bin/claude-skills-seed
     '';
   };

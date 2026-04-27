@@ -283,8 +283,8 @@ in
       "e  ${settings.logDir}  -     -  -  ${settings.logRetentionDays}d  -"
     ];
 
-    # Creates "ydotool" group; host must add user to it for Ctrl+C fallback
     programs.ydotool.enable = true;
+    users.users.${config.modules.user.name}.extraGroups = [ "ydotool" ];
 
     systemd.user.services.piper-server = {
       description = "Piper TTS HTTP daemon (voice model kept warm in memory)";

@@ -34,7 +34,6 @@
         "video"
         "input"
         "docker"
-        "ydotool"
       ];
       homeConfig = ../../home/hugo;
     };

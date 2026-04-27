@@ -5,8 +5,8 @@
   ...
 }:
 
-with lib;
 let
+  inherit (lib) mkOption types;
   cfg = config.modules.user;
 in
 {
@@ -41,6 +41,6 @@ in
       shell = pkgs.zsh;
     };
 
-    home-manager.users.${cfg.name} = import cfg.homeConfig;
+    home-manager.users.${cfg.name} = cfg.homeConfig;
   };
 }

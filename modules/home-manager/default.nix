@@ -7,6 +7,7 @@
     ./devtools.nix
     ./neovim.nix
     ./terminal.nix
+    ./firefox.nix
     ./gnome.nix
     ./file-manager.nix
     ./hyprland

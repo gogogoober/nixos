@@ -4,6 +4,7 @@
     ./user.nix
     ./location.nix
     ./desktop.nix
+    ./firefox.nix
     ./hyprland.nix
     ./gnome.nix
     ./touchscreen.nix

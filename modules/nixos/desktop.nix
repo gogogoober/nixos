@@ -55,7 +55,6 @@ in
     services.blueman.enable = true;
 
     environment.systemPackages = with pkgs; [
-      firefox # Web browser
       pavucontrol # PulseAudio volume GUI
       networkmanagerapplet # NetworkManager tray applet
       brightnessctl # Backlight control CLI

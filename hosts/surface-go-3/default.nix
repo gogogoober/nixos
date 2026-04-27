@@ -6,6 +6,9 @@
     ../../modules/nixos
   ];
 
+  boot.loader.systemd-boot.enable = true;
+  boot.loader.efi.canTouchEfiVariables = true;
+
   networking.hostName = "surface-go-3";
   system.stateVersion = "25.05";
 

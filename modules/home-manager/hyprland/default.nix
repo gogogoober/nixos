@@ -23,6 +23,7 @@ in
     ./quick-popups/bluetooth.nix
     ./quick-popups/battery.nix
     ./notifications.nix # mako notification daemon config
+    ./hypridle.nix # idle daemon: suspend-then-hibernate after 7 min
   ];
 
   options.modules.hyprland = {

@@ -103,6 +103,14 @@ in
         cycle-windows-backward = [ ];
       };
 
+      # 7 min idle → suspend; sleep.conf hibernates 8 min later (15 min total)
+      "org/gnome/settings-daemon/plugins/power" = {
+        sleep-inactive-ac-type = "suspend";
+        sleep-inactive-ac-timeout = 420;
+        sleep-inactive-battery-type = "suspend";
+        sleep-inactive-battery-timeout = 420;
+      };
+
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"

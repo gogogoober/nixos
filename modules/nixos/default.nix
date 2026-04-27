@@ -7,6 +7,7 @@
     ./firefox.nix
     ./hyprland.nix
     ./gnome.nix
+    ./power.nix
     ./touchscreen.nix
     ./developer.nix
     ./gaming.nix

@@ -15,6 +15,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.modules.desktop.enable;
+        message = "modules.gnome.enable requires modules.desktop.enable (xserver, GDM, and pipewire live there).";
+      }
+    ];
+
     services.desktopManager.gnome.enable = true;
 
     environment.gnome.excludePackages = with pkgs; [

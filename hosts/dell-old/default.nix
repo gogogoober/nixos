@@ -30,10 +30,8 @@
       description = "Hugo";
       extraGroups = [
         "wheel"
-        "networkmanager"
         "video"
         "input"
-        "docker"
       ];
       homeConfig = ../../home/hugo;
     };

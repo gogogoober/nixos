@@ -16,6 +16,13 @@ in
   };
 
   config = mkIf cfg.enable {
+    assertions = [
+      {
+        assertion = config.modules.desktop.enable;
+        message = "modules.hyprland.enable requires modules.desktop.enable (xserver, GDM, and pipewire live there).";
+      }
+    ];
+
     programs.hyprland = {
       enable = true;
       package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;

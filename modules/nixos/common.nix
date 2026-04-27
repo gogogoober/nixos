@@ -53,6 +53,7 @@ in
     nixpkgs.config.allowUnfree = true;
 
     networking.networkmanager.enable = true;
+    users.users.${config.modules.user.name}.extraGroups = [ "networkmanager" ];
 
     # Silence PC speaker beeps
     boot.blacklistedKernelModules = [

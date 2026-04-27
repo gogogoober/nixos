@@ -8,6 +8,7 @@
     ./neovim.nix
     ./terminal.nix
     ./desktop.nix
+    ./file-manager.nix
     ./hyprland
     ./claude.nix
   ];

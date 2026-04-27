@@ -35,5 +35,7 @@ in
       package = null;
       portalPackage = null;
     };
+
+    modules.file-manager.enable = mkDefault true;
   };
 }

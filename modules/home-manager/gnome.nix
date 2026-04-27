@@ -90,6 +90,8 @@ in
 
       "org/gnome/mutter" = {
         experimental-features = [ "scale-monitor-framebuffer" ];
+        # Super becomes a plain modifier, otherwise it eats Super+key chords
+        overlay-key = "";
       };
 
       "org/gnome/shell/extensions/forge" = {

@@ -34,5 +34,7 @@ in
     ];
 
     services.udev.packages = [ pkgs.gnome-settings-daemon ];
+
+    home-manager.users.${config.modules.user.name}.modules.gnome.enable = true;
   };
 }

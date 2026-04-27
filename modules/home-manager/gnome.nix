@@ -7,7 +7,7 @@
 
 let
   inherit (lib) mkEnableOption mkIf;
-  cfg = config.modules.desktop;
+  cfg = config.modules.gnome;
 
   wallpaperDir = ../../assets/wallpapers;
 
@@ -24,8 +24,8 @@ let
   '';
 in
 {
-  options.modules.desktop = {
-    enable = mkEnableOption "home desktop configuration";
+  options.modules.gnome = {
+    enable = mkEnableOption "GNOME home-manager configuration";
   };
 
   config = mkIf cfg.enable {
@@ -71,6 +71,14 @@ in
 
       "org/gnome/desktop/a11y" = {
         always-show-universal-access-status = false;
+      };
+
+      "org/gnome/desktop/peripherals/touchpad" = {
+        natural-scroll = true;
+      };
+
+      "org/gnome/desktop/peripherals/mouse" = {
+        natural-scroll = true;
       };
 
       "org/gnome/shell" = {

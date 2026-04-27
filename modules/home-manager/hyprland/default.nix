@@ -11,6 +11,7 @@ in
     ./tiling.nix # gaps, borders, layout engine, fullscreen rules
     ./windows.nix # per-window aesthetic: rounding, blur, shadow
     ./gestures.nix # touchpad gestures
+    ./input.nix # mouse + touchpad device settings
     ./bar.nix # waybar config + styling
     ./wofi.nix # wofi config + design-system styling
     ./quick-settings.nix # v1 wofi quick settings (wifi/bluetooth/power)

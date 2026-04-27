@@ -18,7 +18,6 @@ in
     devtools.enable = true;
     neovim.enable = true;
     terminal.enable = true;
-    desktop.enable = true;
     claude.enable = true;
   };
 }

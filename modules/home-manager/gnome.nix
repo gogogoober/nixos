@@ -88,6 +88,10 @@ in
         ];
       };
 
+      "org/gnome/mutter" = {
+        experimental-features = [ "scale-monitor-framebuffer" ];
+      };
+
       "org/gnome/shell/extensions/forge" = {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;

@@ -98,8 +98,8 @@ in
       fzf # Fuzzy finder
       zoxide # Smarter cd
       jq # JSON processor
-      hunspell # Spell checker, picked up by GTK, Qt, Chromium apps
-      hunspellDicts.en_US-large # US English dictionary for hunspell
+      hunspell # Spell checker, picked up by GTK, Qt, Chromium apps - nicetohave dependency
+      hunspellDicts.en_US-large # US English dictionary for hunspell - nicetohave dependency
     ];
   };
 }

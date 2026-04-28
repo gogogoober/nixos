@@ -97,8 +97,6 @@ in
       "org/gnome/shell/extensions/forge" = {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;
-        focus-border-color = "rgba(180, 190, 254, 1)"; # design-system border.focus, lavender #b4befe
-        split-border-color = "rgba(249, 226, 175, 1)"; # design-system status.warn, yellow #f9e2af
       };
 
       # Free Alt+Esc for TTS

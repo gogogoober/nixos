@@ -84,7 +84,6 @@ in
       "org/gnome/shell" = {
         enabled-extensions = [
           "forge@jmmaranan.com"
-          "appindicatorsupport@rgcjonas.gmail.com"
         ];
       };
 

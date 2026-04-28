@@ -37,7 +37,6 @@ in
       gnome-tweaks # GUI for GNOME tweaks
       dconf-editor # Low-level dconf editor
       gnomeExtensions.forge # Tiling window manager extension
-      gnomeExtensions.appindicator # Legacy tray icon support
     ];
 
     services.udev.packages = [ pkgs.gnome-settings-daemon ];

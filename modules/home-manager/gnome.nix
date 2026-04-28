@@ -24,7 +24,7 @@ let
   '';
 
   # Forge reads colors from this stylesheet, not from dconf — dconf keys are just prefs-UI state
-  forgeFocusRgb = "203, 166, 247"; # design-system text.accent, mauve #cba6f7
+  forgeFocusRgb = "180, 190, 254"; # design-system border.focus, lavender #b4befe
   forgeSplitRgb = "249, 226, 175"; # design-system status.warn, yellow #f9e2af
 
   forgeStylesheet = ''

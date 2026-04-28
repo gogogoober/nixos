@@ -32,8 +32,8 @@ in
     gtk = {
       enable = true;
       iconTheme = {
-        name = "Marwaita-Dark";
-        package = pkgs.marwaita-icons;
+        name = "Reversal-dark";
+        package = pkgs.reversal-icon-theme;
       };
     };
 
@@ -56,7 +56,7 @@ in
     dconf.settings = {
       "org/gnome/desktop/interface" = {
         color-scheme = "prefer-dark";
-        icon-theme = "Marwaita-Dark";
+        icon-theme = "Reversal-dark";
       };
 
       "org/gnome/desktop/sound" = {

@@ -1,6 +1,7 @@
 {
   config,
   lib,
+  pkgs,
   ...
 }:
 
@@ -24,5 +25,9 @@ in
         bell-features = "no-audio,no-system";
       };
     };
+
+    # Provide a com.mitchellh.ghostty icon so the launcher uses Reversal-dark's generic terminal glyph
+    home.file.".local/share/icons/hicolor/scalable/apps/com.mitchellh.ghostty.svg".source =
+      "${pkgs.reversal-icon-theme}/share/icons/Reversal-dark/apps/scalable/terminal.svg";
   };
 }

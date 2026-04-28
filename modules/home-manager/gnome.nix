@@ -22,6 +22,153 @@ let
       gsettings set org.gnome.desktop.background picture-options "zoom"
     fi
   '';
+
+  # Forge reads colors from this stylesheet, not from dconf — dconf keys are just prefs-UI state
+  forgeFocusRgb = "180, 190, 254"; # design-system border.focus, lavender #b4befe
+  forgeSplitRgb = "249, 226, 175"; # design-system status.warn, yellow #f9e2af
+
+  forgeStylesheet = ''
+    .tiled {
+      color: rgba(${forgeFocusRgb}, 1);
+      opacity: 1;
+      border-width: 3px;
+    }
+
+    .split {
+      color: rgba(${forgeSplitRgb}, 1);
+      opacity: 1;
+      border-width: 3px;
+    }
+
+    .stacked {
+      color: rgba(247, 162, 43, 1);
+      opacity: 1;
+      border-width: 3px;
+    }
+
+    .tabbed {
+      color: rgba(17, 199, 224, 1);
+      opacity: 1;
+      border-width: 3px;
+    }
+
+    .floated {
+      color: rgba(180, 167, 214, 1);
+      border-width: 3px;
+      opacity: 1;
+    }
+
+    .window-tiled-border {
+      border-width: 3px;
+      border-color: rgba(${forgeFocusRgb}, 1);
+      border-style: solid;
+      border-radius: 14px;
+    }
+
+    .window-split-border {
+      border-width: 3px;
+      border-color: rgba(${forgeSplitRgb}, 1);
+      border-style: solid;
+      border-radius: 14px;
+    }
+
+    .window-split-horizontal {
+      border-left-width: 0;
+      border-top-width: 0;
+      border-bottom-width: 0;
+    }
+
+    .window-split-vertical {
+      border-left-width: 0;
+      border-top-width: 0;
+      border-right-width: 0;
+    }
+
+    .window-stacked-border {
+      border-width: 3px;
+      border-color: rgba(247, 162, 43, 1);
+      border-style: solid;
+      border-radius: 14px;
+    }
+
+    .window-tabbed-border {
+      border-width: 3px;
+      border-color: rgba(17, 199, 224, 1);
+      border-style: solid;
+      border-radius: 14px;
+    }
+
+    .window-tabbed-bg {
+      border-radius: 8px;
+    }
+
+    .window-tabbed-tab {
+      background-color: rgba(54, 47, 45, 1);
+      border-color: rgba(17, 199, 224, 0.6);
+      border-width: 1px;
+      border-radius: 8px;
+      color: white;
+      margin: 1px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .window-tabbed-tab-active {
+      background-color: rgba(17, 199, 224, 1);
+      color: black;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+    }
+
+    .window-tabbed-tab-close {
+      padding: 3px;
+      margin: 4px;
+      border-radius: 16px;
+      width: 16px;
+      background-color: #e06666;
+    }
+
+    .window-tabbed-tab-icon {
+      margin: 3px;
+    }
+
+    .window-floated-border {
+      border-width: 3px;
+      border-color: rgba(180, 167, 214, 1);
+      border-style: solid;
+      border-radius: 14px;
+    }
+
+    .window-tilepreview-tiled {
+      border-width: 1px;
+      border-color: rgba(${forgeFocusRgb}, 0.4);
+      border-style: solid;
+      border-radius: 14px;
+      background-color: rgba(${forgeFocusRgb}, 0.3);
+    }
+
+    .window-tilepreview-stacked {
+      border-width: 1px;
+      border-color: rgba(247, 162, 43, 0.4);
+      border-style: solid;
+      border-radius: 14px;
+      background-color: rgba(247, 162, 43, 0.3);
+    }
+
+    .window-tilepreview-swap {
+      border-width: 1px;
+      border-color: rgba(162, 247, 43, 0.4);
+      border-style: solid;
+      border-radius: 14px;
+      background-color: rgba(162, 247, 43, 0.4);
+    }
+
+    .window-tilepreview-tabbed {
+      border-width: 1px;
+      border-color: rgba(18, 199, 224, 0.4);
+      border-style: solid;
+      border-radius: 14px;
+      background-color: rgba(17, 199, 224, 0.3);
+    }
+  '';
 in
 {
   options.modules.gnome = {
@@ -51,6 +198,12 @@ in
         "x-scheme-handler/http" = "firefox.desktop";
         "x-scheme-handler/https" = "firefox.desktop";
       };
+    };
+
+    # Forge copies its upstream stylesheet here on first run and never touches it again
+    xdg.configFile."forge/stylesheet/forge/stylesheet.css" = {
+      text = forgeStylesheet;
+      force = true; # overwrite the stale copy Forge dropped in
     };
 
     dconf.settings = {
@@ -97,8 +250,6 @@ in
       "org/gnome/shell/extensions/forge" = {
         tiling-mode-enabled = true;
         stacked-tiling-mode-enabled = true;
-        focus-border-color = "rgba(180, 190, 254, 1)"; # design-system border.focus, lavender #b4befe
-        split-border-color = "rgba(249, 226, 175, 1)"; # design-system status.warn, yellow #f9e2af
       };
 
       # Free Alt+Esc for TTS

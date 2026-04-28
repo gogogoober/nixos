@@ -50,7 +50,7 @@ in
     home.activation.copyNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
       $DRY_RUN_CMD rm -rf "$HOME/.config/nvim"
       $DRY_RUN_CMD mkdir -p "$HOME/.config/nvim"
-      $DRY_RUN_CMD cp -rT ${../../home/hugo/nvim} "$HOME/.config/nvim"
+      $DRY_RUN_CMD cp -rT ${../../assets/nvim} "$HOME/.config/nvim"
       $DRY_RUN_CMD chmod -R u+w "$HOME/.config/nvim"
     '';
   };

@@ -62,7 +62,7 @@ split_into_chunks() {
         } else {
           buf = candidate
         }
-        if (match(buf, /[.!?]$/) && length(buf) >= 40) {
+        if (match(buf, /[.!?,]$/) && length(buf) >= 40) {
           print buf " "
           buf = ""
         }

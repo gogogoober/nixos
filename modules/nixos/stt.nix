@@ -82,6 +82,11 @@ in
   config = mkIf cfg.enable {
     environment.systemPackages = [ dictate ];
 
+    systemd.user.tmpfiles.rules = [
+      "d  %S/dictate  0700  -  -  -  -"
+      "e  %S/dictate  -     -  -  3d  -"
+    ];
+
     systemd.user.services.whisper-server = {
       description = "whisper.cpp STT HTTP daemon (model kept warm in memory)";
       wantedBy = [ "default.target" ];

@@ -116,6 +116,7 @@ in
         custom-keybindings = [
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate/"
+          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate-alt/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix/"
         ];
       };
@@ -129,6 +130,12 @@ in
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate" = {
         name = "Dictate";
         binding = "<Super_L>Escape";
+        command = "dictate";
+      };
+
+      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate-alt" = {
+        name = "Dictate (test bind)";
+        binding = "<Alt><Shift>Escape";
         command = "dictate";
       };
 

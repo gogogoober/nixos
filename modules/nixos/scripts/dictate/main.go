@@ -28,8 +28,25 @@ const (
 )
 
 var rt = cmp.Or(os.Getenv("XDG_RUNTIME_DIR"), "/tmp")
+var stateHome = cmp.Or(os.Getenv("XDG_STATE_HOME"), filepath.Join(os.Getenv("HOME"), ".local/state"))
 var pgidLock = filepath.Join(rt, "dictate.pgid")
 var mainLock = filepath.Join(rt, "dictate.main.lock")
+var logDir = filepath.Join(stateHome, "dictate")
+var logPath = filepath.Join(logDir, "dictate-"+time.Now().UTC().Format("2006-01-02")+".log")
+
+func logf(label, format string, args ...any) {
+	os.MkdirAll(logDir, 0700)
+	f, err := os.OpenFile(logPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	pid := os.Getpid()
+	pgid, _ := syscall.Getpgid(pid)
+	msg := fmt.Sprintf(format, args...)
+	fmt.Fprintf(f, "[%s] %-18s pid=%d pgid=%d %s\n",
+		time.Now().Format("15:04:05.000"), label, pid, pgid, msg)
+}
 
 func notify(label string, critical bool) {
 	args := []string{"-t", "2000", "-a", "dictate"}
@@ -41,6 +58,9 @@ func notify(label string, critical bool) {
 }
 
 func transcribe(wavPath string) (string, error) {
+	info, _ := os.Stat(wavPath)
+	logf("TRANSCRIBE-start", "wav=%s bytes=%d", wavPath, info.Size())
+
 	f, err := os.Open(wavPath)
 	if err != nil {
 		return "", err
@@ -59,33 +79,39 @@ func transcribe(wavPath string) (string, error) {
 	req, _ := http.NewRequest("POST", "http://"+whisperHost+":"+whisperPort+"/inference", body)
 	req.Header.Set("Content-Type", w.FormDataContentType())
 
+	start := time.Now()
 	resp, err := (&http.Client{Timeout: httpTimeout}).Do(req)
 	if err != nil {
+		logf("TRANSCRIBE-http-err", "%v", err)
 		return "", err
 	}
 	defer resp.Body.Close()
 	if resp.StatusCode != 200 {
+		logf("TRANSCRIBE-status", "status=%d", resp.StatusCode)
 		return "", fmt.Errorf("status %d", resp.StatusCode)
 	}
 	out, err := io.ReadAll(resp.Body)
+	logf("TRANSCRIBE-done", "elapsed=%s chars=%d", time.Since(start).Truncate(time.Millisecond), len(out))
 	return strings.TrimSpace(string(out)), err
 }
 
-// Clipboard is the safety net; wtype is the best-effort auto-paste.
 func deliver(text string) {
 	cp := exec.Command("wl-copy")
 	cp.Stdin = strings.NewReader(text)
-	cp.Run()
+	cpErr := cp.Run()
+	logf("DELIVER-clip", "err=%v", cpErr)
 
 	t := exec.Command("wtype", "-")
 	t.Stdin = strings.NewReader(text)
-	t.Run()
+	tErr := t.Run()
+	logf("DELIVER-wtype", "err=%v", tErr)
 }
 
 func recordMode() {
 	pid := os.Getpid()
 	pgid, _ := syscall.Getpgid(pid)
 	os.WriteFile(pgidLock, []byte(strconv.Itoa(pgid)), 0600)
+	logf("RECORD-enter", "lock=%s", pgidLock)
 
 	wav := filepath.Join(rt, fmt.Sprintf("dictate-%d.wav", pid))
 
@@ -101,24 +127,32 @@ func recordMode() {
 		"--file-format=wav", wav)
 	rec.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := rec.Start(); err != nil {
+		logf("RECORD-parecord-fail", "%v", err)
 		cleanup()
 		notify("dictate: parecord failed", true)
 		return
 	}
-
-	notify("dictate: recording", false)
+	logf("RECORD-parecord", "pid=%d wav=%s", rec.Process.Pid, wav)
+	notify("dictate: recording (press again to stop)", false)
 
 	started := time.Now()
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGTERM, syscall.SIGINT)
-	timer := time.AfterFunc(maxSeconds*time.Second, func() { sig <- syscall.SIGTERM })
+	timer := time.AfterFunc(maxSeconds*time.Second, func() {
+		logf("RECORD-cap", "max=%ds", maxSeconds)
+		sig <- syscall.SIGTERM
+	})
 	defer timer.Stop()
 
 	<-sig
 	rec.Process.Signal(syscall.SIGTERM)
 	rec.Wait()
+	elapsed := time.Since(started)
+	logf("RECORD-stop", "elapsed=%s", elapsed.Truncate(time.Millisecond))
 
-	if time.Since(started) < minMillis*time.Millisecond {
+	if elapsed < minMillis*time.Millisecond {
+		logf("RECORD-too-short", "min=%dms", minMillis)
+		notify("dictate: too short", false)
 		cleanup()
 		return
 	}
@@ -132,29 +166,46 @@ func recordMode() {
 		return
 	}
 	if text == "" {
+		logf("RESULT-empty", "")
 		notify("dictate: empty result", true)
 		return
 	}
+	logf("RESULT", "chars=%d preview=%q", len(text), preview(text))
 	deliver(text)
+	notify(fmt.Sprintf("dictate: %d chars", len(text)), false)
+}
+
+func preview(s string) string {
+	const cap = 60
+	if len(s) <= cap {
+		return s
+	}
+	return s[:cap] + "..."
 }
 
 func mainMode() {
+	logf("MAIN-enter", "args=%v", os.Args)
 	f, err := os.OpenFile(mainLock, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
+		logf("MAIN-lockfile-err", "%v", err)
 		return
 	}
 	defer f.Close()
 	if syscall.Flock(int(f.Fd()), syscall.LOCK_EX|syscall.LOCK_NB) != nil {
+		logf("MAIN-flock-busy", "another instance running")
 		return
 	}
 
 	if data, err := os.ReadFile(pgidLock); err == nil {
-		if pgid, err := strconv.Atoi(strings.TrimSpace(string(data))); err == nil && pgid > 0 {
+		pgid, _ := strconv.Atoi(strings.TrimSpace(string(data)))
+		logf("MAIN-stopping", "target_pgid=%d", pgid)
+		if pgid > 0 {
 			syscall.Kill(-pgid, syscall.SIGTERM)
 		}
 		return
 	}
 
+	logf("MAIN-spawning", "")
 	cmd := exec.Command(os.Args[0], "--record")
 	cmd.SysProcAttr = &syscall.SysProcAttr{Setsid: true}
 	devNull, _ := os.OpenFile(os.DevNull, os.O_RDWR, 0)

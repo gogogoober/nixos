@@ -11,7 +11,7 @@ in
         # 3-finger horizontal swipe drags workspaces
         "3, horizontal, workspace"
         # 3-finger swipe up opens the app launcher
-        "3, up, exec, hypr-popup launcher"
+        "3, up, dispatcher, exec, hypr-popup launcher"
       ];
     };
   };

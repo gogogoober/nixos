@@ -89,7 +89,7 @@ in
         "$mod,       up,     Focus window up,       movefocus, u"
         "$mod,       down,   Focus window down,     movefocus, d"
 
-        "$mod SHIFT, Q,      Exit Hyprland,         exit,"
+        "$mod CTRL ALT SHIFT, Q, Exit Hyprland,    exit,"
       ]
       ++ workspaceBinds;
     };

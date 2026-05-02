@@ -20,11 +20,12 @@ import (
 )
 
 const (
-	whisperHost = "127.0.0.1"
-	whisperPort = "5175"
-	maxSeconds  = 300
-	minMillis   = 800
-	httpTimeout = 5 * time.Minute
+	whisperHost          = "127.0.0.1"
+	whisperPort          = "5175"
+	maxSeconds           = 300
+	minMillis            = 800
+	httpTimeout          = 5 * time.Minute
+	modifierReleaseDelay = 250 * time.Millisecond
 )
 
 var rt = cmp.Or(os.Getenv("XDG_RUNTIME_DIR"), "/tmp")
@@ -108,6 +109,8 @@ func deliver(text string) {
 	cpErr := cp.Run()
 	logf("DELIVER-clip", "err=%v", cpErr)
 
+	time.Sleep(modifierReleaseDelay)
+
 	t := exec.Command("wtype", "-")
 	t.Stdin = strings.NewReader(text)
 	tErr := t.Run()
@@ -122,12 +125,12 @@ func recordMode() {
 
 	wav := filepath.Join(rt, fmt.Sprintf("dictate-%d.wav", pid))
 
-	cleanup := func() {
+	defer func() {
 		if cur, err := os.ReadFile(pgidLock); err == nil && strings.TrimSpace(string(cur)) == strconv.Itoa(pgid) {
 			os.Remove(pgidLock)
 		}
 		os.Remove(wav)
-	}
+	}()
 
 	rec := exec.Command("parecord",
 		"--rate=16000", "--channels=1", "--format=s16le",
@@ -135,7 +138,6 @@ func recordMode() {
 	rec.SysProcAttr = &syscall.SysProcAttr{Setpgid: true}
 	if err := rec.Start(); err != nil {
 		logf("RECORD-parecord-fail", "%v", err)
-		cleanup()
 		notifyFail("dictate: parecord failed")
 		return
 	}
@@ -161,12 +163,10 @@ func recordMode() {
 		logf("RECORD-too-short", "min=%dms", minMillis)
 		writeState("")
 		notifyFail("dictate: too short")
-		cleanup()
 		return
 	}
 
 	text, err := transcribe(wav)
-	cleanup()
 
 	if err != nil {
 		writeState("")

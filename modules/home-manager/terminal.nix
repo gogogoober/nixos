@@ -22,6 +22,9 @@ in
         font-family = "JetBrainsMono Nerd Font";
         font-size = 12;
         bell-features = "no-audio,no-system";
+        keybind = [
+          "super+shift+t=new_tab"
+        ];
       };
     };
   };

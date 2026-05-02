@@ -141,7 +141,7 @@ in
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix" = {
         name = "Reset touchscreen";
-        binding = "<Super><Shift>t";
+        binding = "<Alt><Shift>t";
         command = "touchscreen-fix";
       };
     };

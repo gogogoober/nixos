@@ -81,7 +81,7 @@ in
         "$mod,       X,      Universal cut,         exec, hypr-clipboard cut"
         "SUPER,      escape, Speak selection,       exec, speak-selection"
         "$mod SHIFT, escape, Dictate (STT),         exec, dictate"
-        "$mod SHIFT, T,      Reset touchscreen,     exec, touchscreen-fix"
+        "ALT SHIFT,  T,      Reset touchscreen,     exec, touchscreen-fix"
 
         # Focus movement
         "$mod,       left,   Focus window left,     movefocus, l"

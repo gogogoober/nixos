@@ -21,7 +21,7 @@ rebuild host:
     #!/usr/bin/env bash
     case "{{host}}" in
       surface) flake_host="surface-go-3" ;;
-      dell)    flake_host="old-dell" ;;
+      dell)    flake_host="dell-old" ;;
       *)       flake_host="{{host}}" ;;
     esac
     sudo nixos-rebuild switch --flake /home/hugo/nixos#$flake_host

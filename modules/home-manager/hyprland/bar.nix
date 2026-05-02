@@ -81,6 +81,31 @@ let
     fi
   '';
 
+  # Dictate indicator: hidden when idle, green dot for 3s after delivery.
+  # State file is written by the dictate Go helper; pkill -SIGRTMIN+10 nudges
+  # waybar so the icon appears without waiting for the next poll.
+  dictateScript = pkgs.writeShellScript "bar-dictate" ''
+    set -eu
+    state_file="''${XDG_RUNTIME_DIR:-/tmp}/dictate.state"
+    if [ ! -f "$state_file" ]; then
+      printf '{"text":"","class":"idle"}\n'
+      exit 0
+    fi
+    state=$(cat "$state_file" 2>/dev/null || true)
+    case "$state" in
+      recording) printf '{"text":"●","class":"recording","tooltip":"dictating"}\n' ;;
+      ready)
+        age=$(( $(date +%s) - $(${pkgs.coreutils}/bin/stat -c %Y "$state_file") ))
+        if [ "$age" -lt 3 ]; then
+          printf '{"text":"●","class":"ready","tooltip":"ready to paste"}\n'
+        else
+          printf '{"text":"","class":"idle"}\n'
+        fi
+        ;;
+      *) printf '{"text":"","class":"idle"}\n' ;;
+    esac
+  '';
+
   weatherScript = pkgs.writeShellScript "bar-weather" ''
     set -eu
     city=$(quick-settings-get location.city 2>/dev/null || echo "New York")
@@ -126,6 +151,7 @@ in
           "custom/volume"
           "bluetooth"
           "custom/wifi"
+          "custom/dictate"
           "battery"
           "tray"
           "custom/power"
@@ -191,6 +217,13 @@ in
           on-click = "hypr-popup wifi";
         };
 
+        "custom/dictate" = {
+          exec = dictateScript;
+          return-type = "json";
+          interval = 1;
+          signal = 10; # dictate sends SIGRTMIN+10 on state change
+        };
+
         battery = {
           format = "BAT {capacity}%";
           format-charging = "BAT {capacity}% +";
@@ -236,6 +269,7 @@ in
         #tray,
         #custom-power,
         #custom-wifi,
+        #custom-dictate,
         #custom-weather,
         #custom-brightness {
           padding: 0 8px;
@@ -251,10 +285,24 @@ in
         #custom-volume,
         #bluetooth,
         #custom-wifi,
+        #custom-dictate,
         #battery,
         #tray,
         #custom-power {
           border-left: 1px solid ${ds.colors.surface.default};
+        }
+
+        /* dictate sits between wifi and battery; collapse fully when idle so
+           the bar layout does not bounce as the indicator appears */
+        #custom-dictate.idle {
+          padding: 0;
+          border-left: none;
+        }
+        #custom-dictate.recording {
+          color: ${ds.colors.text.error};
+        }
+        #custom-dictate.ready {
+          color: ${ds.colors.text.success};
         }
 
         /* fixed widths so right-cluster values do not bounce on update */

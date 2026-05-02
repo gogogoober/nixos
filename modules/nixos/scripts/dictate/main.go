@@ -31,8 +31,11 @@ var rt = cmp.Or(os.Getenv("XDG_RUNTIME_DIR"), "/tmp")
 var stateHome = cmp.Or(os.Getenv("XDG_STATE_HOME"), filepath.Join(os.Getenv("HOME"), ".local/state"))
 var pgidLock = filepath.Join(rt, "dictate.pgid")
 var mainLock = filepath.Join(rt, "dictate.main.lock")
+var statePath = filepath.Join(rt, "dictate.state")
 var logDir = filepath.Join(stateHome, "dictate")
 var logPath = filepath.Join(logDir, "dictate-"+time.Now().UTC().Format("2006-01-02")+".log")
+
+const readyDuration = 3 * time.Second
 
 func logf(label, format string, args ...any) {
 	os.MkdirAll(logDir, 0700)
@@ -48,13 +51,17 @@ func logf(label, format string, args ...any) {
 		time.Now().Format("15:04:05.000"), label, pid, pgid, msg)
 }
 
-func notify(label string, critical bool) {
-	args := []string{"-t", "2000", "-a", "dictate"}
-	if critical {
-		args = append(args, "-u", "critical", "-t", "4000")
+func notifyFail(label string) {
+	exec.Command("notify-send", "-a", "dictate", "-u", "critical", "-t", "4000", label).Run()
+}
+
+func writeState(state string) {
+	if state == "" {
+		os.Remove(statePath)
+	} else {
+		os.WriteFile(statePath, []byte(state), 0600)
 	}
-	args = append(args, label)
-	exec.Command("notify-send", args...).Run()
+	exec.Command("pkill", "-SIGRTMIN+10", "waybar").Run()
 }
 
 func transcribe(wavPath string) (string, error) {
@@ -129,11 +136,11 @@ func recordMode() {
 	if err := rec.Start(); err != nil {
 		logf("RECORD-parecord-fail", "%v", err)
 		cleanup()
-		notify("dictate: parecord failed", true)
+		notifyFail("dictate: parecord failed")
 		return
 	}
 	logf("RECORD-parecord", "pid=%d wav=%s", rec.Process.Pid, wav)
-	notify("dictate: recording (press again to stop)", false)
+	writeState("recording")
 
 	started := time.Now()
 	sig := make(chan os.Signal, 1)
@@ -152,27 +159,34 @@ func recordMode() {
 
 	if elapsed < minMillis*time.Millisecond {
 		logf("RECORD-too-short", "min=%dms", minMillis)
-		notify("dictate: too short", false)
+		writeState("")
+		notifyFail("dictate: too short")
 		cleanup()
 		return
 	}
 
-	notify("dictate: transcribing", false)
 	text, err := transcribe(wav)
 	cleanup()
 
 	if err != nil {
-		notify("dictate: transcribe failed", true)
+		writeState("")
+		notifyFail("dictate: transcribe failed")
 		return
 	}
 	if text == "" {
 		logf("RESULT-empty", "")
-		notify("dictate: empty result", true)
+		writeState("")
+		notifyFail("dictate: empty result")
 		return
 	}
 	logf("RESULT", "chars=%d preview=%q", len(text), preview(text))
 	deliver(text)
-	notify(fmt.Sprintf("dictate: %d chars", len(text)), false)
+
+	writeState("ready")
+	time.Sleep(readyDuration)
+	if data, err := os.ReadFile(statePath); err == nil && strings.TrimSpace(string(data)) == "ready" {
+		writeState("")
+	}
 }
 
 func preview(s string) string {

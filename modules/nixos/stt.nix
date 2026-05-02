@@ -67,7 +67,8 @@ let
             pkgs.pulseaudio # parecord
             pkgs.wtype # type into focused window
             pkgs.wl-clipboard # wl-copy clipboard fallback
-            pkgs.libnotify # notify-send lifecycle
+            pkgs.libnotify # notify-send for failure popups
+            pkgs.procps # pkill to nudge waybar on state change
           ]
         }
     '';

@@ -14,6 +14,7 @@ in
   modules = {
     common.enable = true;
     shell.enable = true;
+    just.enable = true;
     vscode.enable = true;
     devtools.enable = true;
     neovim.enable = true;

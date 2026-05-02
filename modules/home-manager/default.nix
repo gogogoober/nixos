@@ -3,6 +3,7 @@
     ./common.nix
     ./settings-store.nix
     ./shell.nix
+    ./just.nix
     ./vscode.nix
     ./devtools.nix
     ./neovim.nix

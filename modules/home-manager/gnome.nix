@@ -128,7 +128,7 @@ in
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate" = {
         name = "Dictate";
-        binding = "<Super>Escape";
+        binding = "<Super_L>Escape";
         command = "dictate";
       };
 

@@ -134,8 +134,8 @@ in
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate-alt" = {
-        name = "Dictate (test bind)";
-        binding = "<Alt><Shift>Escape";
+        name = "Dictate (Super+Shift+Esc)";
+        binding = "<Super><Shift>Escape";
         command = "dictate";
       };
 

@@ -61,8 +61,8 @@ let
 
   # Layout knobs. labelPad is the column the trailing icon lands at,
   # tuned against menuWidth + the entry padding in `style`.
-  labelPad = 16;
-  listLabelPad = 22;
+  labelPad = 22;
+  listLabelPad = 30;
   menuWidth = 280;
   listWidth = 380;
 

@@ -17,7 +17,7 @@ let
   style = ''
     * {
       font-family: "JetBrainsMono Nerd Font", monospace;
-      font-size: 14px;
+      font-size: 18px;
       outline: none;
     }
 
@@ -46,7 +46,7 @@ let
       padding: 0;
       background-color: transparent;
       border-radius: ${px ds.structure.radius.sm};
-      min-height: ${px ds.structure.row-height.default};
+      min-height: ${px ds.structure.row-height.comfortable};
     }
 
     #entry:selected {
@@ -61,10 +61,10 @@ let
 
   # Layout knobs. labelPad is the column the trailing icon lands at,
   # tuned against menuWidth + the entry padding in `style`.
-  labelPad = 28;
-  listLabelPad = 32;
-  menuWidth = 360;
-  listWidth = 460;
+  labelPad = 16;
+  listLabelPad = 22;
+  menuWidth = 280;
+  listWidth = 380;
 
   hyprQuickSettings = pkgs.writeShellScriptBin "hypr-quick-settings" ''
     set -eu
@@ -86,7 +86,7 @@ let
 
     ask_password() {
       "$wofi" --dmenu --password --allow-markup --style "$style" \
-        --prompt "$1" --width 380 --height 80
+        --prompt "$1" --width 380 --height 100
     }
 
     # Pad an ASCII label so the trailing icon sits in a fixed column
@@ -97,7 +97,7 @@ let
         "$(fmt 'Wi-Fi'     '󰖩')" \
         "$(fmt 'Bluetooth' '󰂯')" \
         "$(fmt 'Power'     '󰐥')" \
-        | pick 'Quick Settings' ${toString menuWidth} 230)
+        | pick 'Quick Settings' ${toString menuWidth} 200)
       case "$choice" in
         Wi-Fi*)     exec "$self" wifi ;;
         Bluetooth*) exec "$self" bluetooth ;;
@@ -124,7 +124,7 @@ let
             printf '%-${toString listLabelPad}s %s  %s\n' "$ssid" "$glyph" "$lock"
           done)
       [ -z "$rows" ] && exit 0
-      choice=$(printf '%s\n' "$rows" | pick 'Wi-Fi' ${toString listWidth} 460)
+      choice=$(printf '%s\n' "$rows" | pick 'Wi-Fi' ${toString listWidth} 420)
       [ -z "$choice" ] && exit 0
       ssid=$(printf '%s' "$choice" | sed -E 's/[[:space:]]+(󰤨|󰤥|󰤢|󰤟).*$//; s/[[:space:]]+$//')
       if printf '%s' "$choice" | grep -q '󰌾'; then
@@ -159,7 +159,7 @@ let
         menu=$(printf '%s%s\n' "$menu" "$row")
       done < <($btctl devices)
       [ -z "$menu" ] && exit 0
-      choice=$(printf '%s' "$menu" | pick 'Bluetooth' ${toString listWidth} 460)
+      choice=$(printf '%s' "$menu" | pick 'Bluetooth' ${toString listWidth} 420)
       [ -z "$choice" ] && exit 0
       mac=$(printf '%s' "$choice" | awk -F'\t' '{print $2}')
       [ -z "$mac" ] && exit 0
@@ -186,7 +186,7 @@ let
           "$(fmt 'Forget'     '󰅖')")
       fi
 
-      choice=$(printf '%s\n' "$rows" | pick 'Device' ${toString menuWidth} 200)
+      choice=$(printf '%s\n' "$rows" | pick 'Device' ${toString menuWidth} 160)
       case "$choice" in
         Pair*)       $btctl pair "$mac" && $btctl connect "$mac" ;;
         Connect*)    $btctl connect "$mac" ;;
@@ -202,7 +202,7 @@ let
         "$(fmt 'Log Out'  '󰍃')" \
         "$(fmt 'Restart'  '󰜉')" \
         "$(fmt 'Shutdown' '󰐥')" \
-        | pick 'Power' ${toString menuWidth} 320)
+        | pick 'Power' ${toString menuWidth} 280)
       case "$choice" in
         Lock*)     exec $hyprlock ;;
         Sleep*)    $sysctl suspend ;;

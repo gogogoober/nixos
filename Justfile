@@ -16,15 +16,11 @@ ssh-key name="id_ed25519" comment="juicebox.salinas@gmail.com":
 commit +message:
     git commit -m "{{message}}"
 
-# Rebuild a host by short name (surface or dell)
-rebuild host:
-    #!/usr/bin/env bash
-    case "{{host}}" in
-      surface) flake_host="surface-go-3" ;;
-      dell)    flake_host="dell-old" ;;
-      *)       flake_host="{{host}}" ;;
-    esac
-    sudo nixos-rebuild switch --flake /home/hugo/nixos#$flake_host
+# Stage everything, commit with the given message, and rebuild the active host
+rebuild +message:
+    git add .
+    -git commit -m "{{message}}"
+    sudo nixos-rebuild switch --flake . --show-trace
 
 # Run flake checks
 test:

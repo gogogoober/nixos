@@ -1,4 +1,9 @@
-{ config, lib, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 let
   inherit (lib) mkEnableOption mkIf mkDefault;
@@ -24,6 +29,7 @@ in
     ./quick-popups/battery.nix
     ./notifications.nix # mako notification daemon config
     ./hypridle.nix # idle daemon: suspend-then-hibernate after 7 min
+    ./wallpaper.nix # hyprpaper config + 5-minute cycler
   ];
 
   options.modules.hyprland = {
@@ -36,6 +42,13 @@ in
       # NixOS installs Hyprland system-wide; suppress the home-manager copy
       package = null;
       portalPackage = null;
+    };
+
+    home.pointerCursor = {
+      name = "Adwaita";
+      package = pkgs.adwaita-icon-theme;
+      size = 24;
+      gtk.enable = true;
     };
 
     modules.file-manager.enable = mkDefault true;

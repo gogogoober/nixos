@@ -37,13 +37,6 @@ in
       };
     };
 
-    home.pointerCursor = {
-      name = "Adwaita";
-      package = pkgs.adwaita-icon-theme;
-      size = 24;
-      gtk.enable = true;
-    };
-
     xdg.mimeApps = {
       enable = true;
       defaultApplications = {

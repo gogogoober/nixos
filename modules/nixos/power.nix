@@ -16,7 +16,10 @@ in
   };
 
   config = mkIf cfg.enable {
-    # Sleep fires at 7 min idle, hibernate at 15 min total — so 8 min in suspend
-    systemd.sleep.settings.Sleep.HibernateDelaySec = "8m";
+    systemd.sleep.settings.Sleep = {
+      AllowHibernation = false;
+      AllowHybridSleep = false;
+      AllowSuspendThenHibernate = false;
+    };
   };
 }

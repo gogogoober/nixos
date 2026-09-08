@@ -2,6 +2,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -47,7 +48,24 @@ in
     nix.gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-older-than 30d";
+      options = "--delete-generations +3";
+    };
+
+    system.autoUpgrade = {
+      enable = true;
+      flake = inputs.self.outPath;
+      flags = [
+        "--update-input" "nixpkgs"
+        "--update-input" "home-manager"
+        "--update-input" "disko"
+        "--update-input" "hyprland"
+        "--update-input" "fsel"
+        "--update-input" "flake-parts"
+        "-L"
+      ];
+      dates = "Mon 09:00";
+      randomizedDelaySec = "45min";
+      persistent = true;
     };
 
     nixpkgs.config.allowUnfree = true;

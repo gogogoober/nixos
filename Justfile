@@ -25,3 +25,7 @@ rebuild +message:
 # Run flake checks
 test:
     nix flake check
+
+# Trigger the auto-upgrade service immediately
+upgrade:
+    sudo systemctl start nixos-upgrade.service

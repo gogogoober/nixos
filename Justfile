@@ -26,6 +26,14 @@ rebuild +message:
 test:
     nix flake check
 
-# Trigger the auto-upgrade service immediately
-upgrade:
-    sudo systemctl start nixos-upgrade.service
+# Update all flake inputs, rebuild, and stream logs inline and to file
+update:
+    sudo nixos-rebuild switch --flake . \
+      --update-input nixpkgs \
+      --update-input home-manager \
+      --update-input disko \
+      --update-input hyprland \
+      --update-input fsel \
+      --update-input flake-parts \
+      -L \
+      2>&1 | tee /tmp/nixos-upgrade.log

@@ -15,7 +15,19 @@ in
   };
 
   config = mkIf cfg.enable {
-    programs.steam.enable = true;
+    programs.steam = {
+      enable = true;
+      remotePlay.openFirewall = true; # Stream to/from other devices
+      localNetworkGameTransfers.openFirewall = true; # LAN game copies
+      extraCompatPackages = [ pkgs.proton-ge-bin ]; # Better Proton compat
+      gamescopeSession.enable = true; # "Steam (gamescope)" login session
+    };
+
+    programs.gamescope = {
+      enable = true;
+      capSysNice = true; # Let gamescope raise its own priority
+    };
+
     programs.gamemode.enable = true;
 
     environment.systemPackages = with pkgs; [

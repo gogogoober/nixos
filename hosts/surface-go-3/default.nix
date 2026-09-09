@@ -21,7 +21,7 @@
     developer.enable = true;
     tts.enable = true;
     stt.enable = true;
-    gaming.enable = false;
+    gaming.enable = true;
 
     user = {
       name = "hugo";

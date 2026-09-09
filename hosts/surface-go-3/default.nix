@@ -22,6 +22,7 @@
     tts.enable = true;
     stt.enable = true;
     gaming.enable = true;
+    chargerWatch.enable = true;
 
     user = {
       name = "hugo";

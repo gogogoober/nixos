@@ -38,11 +38,22 @@ in
         "nix-command"
         "flakes"
       ];
-      auto-optimise-store = true;
       trusted-users = [
         "root"
         "@wheel"
       ];
+      max-jobs = 1; # One build at a time, still uses every core
+    };
+
+    # Let interactive work preempt Nix builds and the weekly auto-upgrade
+    nix.daemonCPUSchedPolicy = "idle";
+    nix.daemonIOSchedClass = "idle";
+    nix.daemonIOSchedPriority = 7;
+
+    # Weekly store dedup instead of after every build
+    nix.optimise = {
+      automatic = true;
+      dates = [ "weekly" ];
     };
 
     nix.gc = {

@@ -15,9 +15,9 @@ let
   cfg = config.modules.stt;
 
   settings = {
-    # ggml-base.en is the right balance for the 8 GB Surface Go 3; bump to small.en for batch, drop to tiny.en if pressed for latency
-    modelUrl = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin";
-    modelHash = "sha256-oDd5yG3zMjB19eeWyyzlAp8A7Ihp7uP9+4l6/jbG0AI=";
+    # ggml-tiny.en keeps latency and RAM low on the fanless Surface Go 3; bump to base.en or small.en if accuracy suffers
+    modelUrl = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin";
+    modelHash = "sha256-kh5M+Ghv3Zk9zQgaXaW2w2W/3hFi5ysI11rHUomSCx8=";
 
     vadModelUrl = "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin";
     vadModelHash = "sha256-KZQNmNQrkfvQXOSJ8+z3xy8KQvAn5IdZGaKPtMBOos8=";

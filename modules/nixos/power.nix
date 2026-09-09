@@ -10,7 +10,7 @@ let
 in
 {
   options.modules.power = {
-    enable = mkEnableOption "auto sleep and hibernate timeouts" // {
+    enable = mkEnableOption "sleep, thermal, and swap behaviour" // {
       default = true;
     };
   };
@@ -21,5 +21,14 @@ in
       AllowHybridSleep = false;
       AllowSuspendThenHibernate = false;
     };
+
+    # Compressed RAM swap, faster overflow than the disk partition
+    zramSwap = {
+      enable = true;
+      algorithm = "zstd";
+      memoryPercent = 50;
+    };
+
+    services.thermald.enable = true;
   };
 }

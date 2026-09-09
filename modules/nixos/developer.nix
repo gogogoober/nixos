@@ -16,6 +16,7 @@ in
 
   config = mkIf cfg.enable {
     virtualisation.docker.enable = true;
+    virtualisation.docker.enableOnBoot = false; # Socket-activate on first use
     users.users.${config.modules.user.name}.extraGroups = [ "docker" ];
 
     environment.systemPackages = with pkgs; [

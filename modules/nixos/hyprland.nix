@@ -44,6 +44,8 @@ in
       jq # JSON parser for helper scripts
     ];
 
+    services.blueman.enable = true; # Bluetooth tray, GNOME ships its own
+
     security.pam.services.hyprlock = { };
 
     home-manager.users.${config.modules.user.name}.modules.hyprland.enable = true;

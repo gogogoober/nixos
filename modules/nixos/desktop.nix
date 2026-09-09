@@ -52,7 +52,11 @@ in
 
     hardware.bluetooth.enable = true;
     hardware.bluetooth.powerOnBoot = true;
-    services.blueman.enable = true;
+
+    hardware.graphics.extraPackages = with pkgs; [
+      intel-media-driver # VA-API, Gen9+ hardware video decode
+      intel-vaapi-driver # i965 fallback for older codecs
+    ];
 
     environment.systemPackages = with pkgs; [
       pavucontrol # PulseAudio volume GUI
@@ -61,6 +65,7 @@ in
       playerctl # MPRIS media keys CLI
       wl-clipboard # Wayland clipboard CLI
       wtype # Synthesize keystrokes on Wayland
+      libva-utils # vainfo, verify hardware decode
     ];
   };
 }

@@ -21,10 +21,10 @@ let
 
   settings = {
     # Browse voices at https://huggingface.co/rhasspy/piper-voices; update both shas when switching
-    voiceName = "en_US-lessac-high";
-    voiceBaseUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/high";
-    voiceOnnxSha = "02cyrp5xsr5pr4y892i270zzxm1j4191c5aaycvp209qlv1zgasc";
-    voiceJsonSha = "0bs1j8d97v6bsvfp82h50a23kckz1scfvf312ny5gwjrk1yvjhnv";
+    voiceName = "en_US-lessac-medium";
+    voiceBaseUrl = "https://huggingface.co/rhasspy/piper-voices/resolve/v1.0.0/en/en_US/lessac/medium";
+    voiceOnnxSha = "17q1mzm6xd5i2rxx2xwqkxvfx796kmp1lvk4mwkph602k7k0kzjy";
+    voiceJsonSha = "184hnvd8389xpdm0x2w6phss23v5pb34i0lhd4nmy1gdgd0rrqgg";
 
     host = "127.0.0.1";
     port = "5174";

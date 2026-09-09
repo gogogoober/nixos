@@ -24,6 +24,8 @@ in
 
     services.desktopManager.gnome.enable = true;
 
+    services.gnome.localsearch.enable = false; # File-content indexer, too heavy here
+
     environment.gnome.excludePackages = with pkgs; [
       gnome-tour # Welcome/onboarding
       epiphany # GNOME Web browser

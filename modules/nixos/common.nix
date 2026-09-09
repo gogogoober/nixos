@@ -66,12 +66,7 @@ in
       enable = true;
       flake = inputs.self.outPath;
       flags = [
-        "--update-input" "nixpkgs"
-        "--update-input" "home-manager"
-        "--update-input" "disko"
-        "--update-input" "hyprland"
-        "--update-input" "fsel"
-        "--update-input" "flake-parts"
+        "--recreate-lock-file" # Deprecated, but the only in-place update for a store-path flake
         "-L"
       ];
       dates = "Mon 09:00";
@@ -80,6 +75,7 @@ in
     };
 
     nixpkgs.config.allowUnfree = true;
+    nixpkgs.overlays = import ../../overlays { inherit inputs; };
 
     networking.networkmanager.enable = true;
     users.users.${config.modules.user.name}.extraGroups = [ "networkmanager" ];

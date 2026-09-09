@@ -2,7 +2,6 @@
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 
@@ -23,10 +22,7 @@ in
       }
     ];
 
-    programs.hyprland = {
-      enable = true;
-      package = inputs.hyprland.packages.${pkgs.stdenv.hostPlatform.system}.hyprland;
-    };
+    programs.hyprland.enable = true;
 
     environment.sessionVariables = {
       NIXOS_OZONE_WL = "1";

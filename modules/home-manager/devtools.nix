@@ -17,7 +17,7 @@ in
   config = mkIf cfg.enable {
     home.packages = with pkgs; [
       lazygit # TUI git client
-      claude-code # Anthropic's CLI coding agent
+      unstable.claude-code # Anthropic's CLI coding agent, moves too fast for stable
       just # Command runner, reads ./Justfile
       nixd # Nix LSP
       nixfmt # Nix formatter

@@ -1,3 +1,7 @@
+logfile := "/tmp/nixos-switch.log"
+tick := "30" # Seconds between rebuild progress lines
+extra := "" # Extra nixos-rebuild flags, e.g. --install-bootloader
+
 # Show available recipes
 default:
     @just --list
@@ -16,24 +20,35 @@ ssh-key name="id_ed25519" comment="juicebox.salinas@gmail.com":
 commit +message:
     git commit -m "{{message}}"
 
-# Stage everything, commit with the given message, and rebuild the active host
+# Build first, then commit as "<generation> - <message>" only once the build succeeds
 rebuild +message:
-    git add .
-    -git commit -m "{{message}}"
-    sudo nixos-rebuild switch --flake . --show-trace
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo -v
+    git add -A
+    nix fmt
+    git add -A
+    git diff --cached --stat
+    git diff --cached -U0 -- '*.nix'
+    echo "NixOS rebuilding..."
+    sudo nixos-rebuild switch --flake . {{ extra }} > {{ logfile }} 2>&1 &
+    build=$!
+    while kill -0 $build 2>/dev/null; do
+      sleep {{ tick }}
+      echo "  $(grep -c 'copying path' {{ logfile }} || true) fetched, $(grep -c '^building ' {{ logfile }} || true) built"
+    done
+    wait $build || { grep --color -iE '^\s*(error|failed)' {{ logfile }} || tail -n 20 {{ logfile }}; exit 1; }
+    git commit -m "$(nixos-rebuild list-generations --json | jq -r '.[] | select(.current) | .generation') - {{message}}"
+
+# Tail the log from the last rebuild
+log:
+    tail -f {{ logfile }}
 
 # Run flake checks
 test:
     nix flake check
 
-# Update all flake inputs, rebuild, and stream logs inline and to file
+# Update every flake input, rebuild, and stream logs inline and to file
 update:
-    sudo nixos-rebuild switch --flake . \
-      --update-input nixpkgs \
-      --update-input home-manager \
-      --update-input disko \
-      --update-input hyprland \
-      --update-input fsel \
-      --update-input flake-parts \
-      -L \
-      2>&1 | tee /tmp/nixos-upgrade.log
+    nix flake update
+    sudo nixos-rebuild switch --flake . -L 2>&1 | tee /tmp/nixos-upgrade.log

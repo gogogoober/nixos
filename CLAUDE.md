@@ -36,3 +36,15 @@ through `TZ05`.
 
 Not caused by thermald: the aborts still fire with the service stopped. Nothing
 to fix, and unrelated to charging.
+
+## Bootloader refuses to downgrade after a channel move
+
+Moving to an older nixpkgs (unstable back to a stable release) builds fine and
+then dies on the last step with `Failed to install bootloader`. The ESP holds a
+newer systemd-boot than the release ships, and `bootctl update` will not go
+backwards, so it skips both `.efi` files and exits non-zero. Nothing has
+activated at that point, and the half-built generation has no boot entry.
+
+Rerun with `--install-bootloader`, which forces `bootctl install` instead of
+`update`: `just extra=--install-bootloader rebuild "<message>"`. Needed once
+per downgrade, not on every rebuild.

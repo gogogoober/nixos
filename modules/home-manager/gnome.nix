@@ -92,12 +92,6 @@ in
         stacked-tiling-mode-enabled = true;
       };
 
-      # Free Alt+Esc for TTS
-      "org/gnome/desktop/wm/keybindings" = {
-        cycle-windows = [ ];
-        cycle-windows-backward = [ ];
-      };
-
       # 7 min idle → suspend; sleep.conf hibernates 8 min later (15 min total)
       "org/gnome/settings-daemon/plugins/power" = {
         sleep-inactive-ac-type = "suspend";
@@ -108,29 +102,8 @@ in
 
       "org/gnome/settings-daemon/plugins/media-keys" = {
         custom-keybindings = [
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate/"
-          "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate-alt/"
           "/org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix/"
         ];
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/speak-selection" = {
-        name = "Speak selection";
-        binding = "<Alt>Escape";
-        command = "speak-selection";
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate" = {
-        name = "Dictate";
-        binding = "<Super_L>Escape";
-        command = "dictate";
-      };
-
-      "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/dictate-alt" = {
-        name = "Dictate (Super+Shift+Esc)";
-        binding = "<Super><Shift>Escape";
-        command = "dictate";
       };
 
       "org/gnome/settings-daemon/plugins/media-keys/custom-keybindings/touchscreen-fix" = {

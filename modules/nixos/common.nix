@@ -56,10 +56,13 @@ in
       dates = [ "weekly" ];
     };
 
+    # Boot menu entries, matched to the generations nix.gc keeps
+    boot.loader.systemd-boot.configurationLimit = 5;
+
     nix.gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-generations +3";
+      options = "--delete-generations +5";
     };
 
     system.autoUpgrade = {
@@ -73,6 +76,9 @@ in
       randomizedDelaySec = "45min";
       persistent = true;
     };
+
+    # Skipped weeks wait for the next Monday
+    systemd.services.nixos-upgrade.unitConfig.ConditionACPower = true;
 
     nixpkgs.config.allowUnfree = true;
     nixpkgs.overlays = import ../../overlays { inherit inputs; };

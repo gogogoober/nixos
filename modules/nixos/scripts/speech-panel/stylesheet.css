@@ -1,0 +1,15 @@
+#panel .speech-panel-recording {
+  color: #e01b24;
+}
+
+#panel .speech-panel-busy {
+  color: #f6d32d;
+}
+
+#panel .speech-panel-ready {
+  color: #33d17a;
+}
+
+#panel .speech-panel-speaking {
+  color: #3584e4;
+}

@@ -46,5 +46,12 @@ backwards, so it skips both `.efi` files and exits non-zero. Nothing has
 activated at that point, and the half-built generation has no boot entry.
 
 Rerun with `--install-bootloader`, which forces `bootctl install` instead of
-`update`: `just extra=--install-bootloader rebuild "<message>"`. Needed once
-per downgrade, not on every rebuild.
+`update`: `just extra=--install-bootloader rebuild "<message>"`.
+
+If every later rebuild fails the same way, with `updating systemd-boot from
+260.1 to 260.2` followed by `same boot loader version in place already`, the
+cause is a stale `EFI/systemd/systemd-boot-fallbackx64.efi`. systemd 261's
+`bootctl` writes that fallback copy, and older releases never touch it. The
+NixOS installer takes the first version `bootctl status` lists, which is the
+fallback, so it requests an update that has nothing to do. Delete it once:
+`sudo rm /boot/EFI/systemd/systemd-boot-fallbackx64.efi`.

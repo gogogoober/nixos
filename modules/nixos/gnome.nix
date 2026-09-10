@@ -8,6 +8,11 @@
 let
   inherit (lib) mkEnableOption mkIf;
   cfg = config.modules.gnome;
+
+  speechPanel = pkgs.runCommand "gnome-shell-extension-speech-panel" { } ''
+    mkdir -p $out/share/gnome-shell/extensions
+    cp -r ${./scripts/speech-panel} $out/share/gnome-shell/extensions/speech-panel@nixos
+  '';
 in
 {
   options.modules.gnome = {
@@ -39,6 +44,7 @@ in
       gnome-tweaks # GUI for GNOME tweaks
       dconf-editor # Low-level dconf editor
       gnomeExtensions.forge # Tiling window manager extension
+      speechPanel # Top bar dictate and speak toggles
     ];
 
     services.udev.packages = [ pkgs.gnome-settings-daemon ];

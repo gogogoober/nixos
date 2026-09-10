@@ -77,6 +77,7 @@ in
       "org/gnome/shell" = {
         enabled-extensions = [
           "forge@jmmaranan.com"
+          "speech-panel@nixos"
         ];
       };
 

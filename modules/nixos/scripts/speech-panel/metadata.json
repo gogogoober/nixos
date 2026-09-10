@@ -1,0 +1,6 @@
+{
+  "uuid": "speech-panel@nixos",
+  "name": "Speech Panel",
+  "description": "Top bar toggles for dictate and speak-selection",
+  "shell-version": ["50"]
+}

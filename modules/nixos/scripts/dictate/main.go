@@ -166,6 +166,7 @@ func recordMode() {
 		return
 	}
 
+	writeState("transcribing")
 	text, err := transcribe(wav)
 
 	if err != nil {

@@ -1,6 +1,8 @@
 logfile := "/tmp/nixos-switch.log"
 tick := "30" # Seconds between rebuild progress lines
 extra := "" # Extra nixos-rebuild flags, e.g. --install-bootloader
+keep := "5" # System generations `just clean` keeps
+journal := "30d" # Journal history `just clean` keeps
 
 # Show available recipes
 default:
@@ -44,11 +46,47 @@ rebuild +message:
 log:
     tail -f {{ logfile }}
 
+# Delete all but the newest `keep` system generations and reclaim everything else
+clean:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    sudo -v
+    free() { df --output=avail -BG / | tail -1 | tr -dc 0-9; }
+    before=$(free)
+
+    echo "==> Deleting system generations older than the last {{ keep }}"
+    sudo nix-env --delete-generations +{{ keep }} -p /nix/var/nix/profiles/system
+
+    # Clearing caches first releases their gc roots before the sweep
+    echo "==> Clearing build caches"
+    rm -rf ~/.cache/nix
+    go clean -cache 2>/dev/null || true
+
+    echo "==> Collecting garbage"
+    sudo nix-collect-garbage
+    nix-collect-garbage
+
+    # Hardlinks identical files across the store, slow on a big store
+    echo "==> Deduplicating the store"
+    sudo nix-store --optimise
+
+    echo "==> Vacuuming the journal to {{ journal }}"
+    sudo journalctl --vacuum-time={{ journal }} 2>&1 | tail -1
+
+    # Drops boot entries for the generations just deleted
+    echo "==> Refreshing the boot menu"
+    sudo /run/current-system/bin/switch-to-configuration boot
+
+    after=$(free)
+    echo "==> Reclaimed $((after - before)) GiB, $after GiB free"
+    nixos-rebuild list-generations
+
 # Run flake checks
 test:
     nix flake check
 
-# Update every flake input, rebuild, and stream logs inline and to file
+# Update every flake input, rebuild, then reclaim space
 update:
     nix flake update
     sudo nixos-rebuild switch --flake . -L 2>&1 | tee /tmp/nixos-upgrade.log
+    just clean

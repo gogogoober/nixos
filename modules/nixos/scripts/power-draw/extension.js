@@ -28,6 +28,9 @@ class PowerDrawIndicator extends QuickSettings.SystemIndicator {
         });
         this.add_child(this._label);
 
+        // SystemIndicator starts hidden and only an icon child would unhide it
+        this.visible = true;
+
         this._connectToUPower();
     }
 

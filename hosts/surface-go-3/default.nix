@@ -25,10 +25,22 @@
     chargerWatch.enable = true;
 
     # 5W part the firmware runs at 15W sustained, so it boosts into a throttle
-    powerLimit = {
+    intelPowerLimit = {
       enable = true;
-      sustainedWatts = 7;
-      burstWatts = 15;
+      profiles = {
+        power-saver = {
+          sustainedWatts = 5;
+          burstWatts = 10;
+        };
+        balanced = {
+          sustainedWatts = 5;
+          burstWatts = 15;
+        };
+        performance = {
+          sustainedWatts = 10;
+          burstWatts = 20;
+        };
+      };
     };
 
     user = {

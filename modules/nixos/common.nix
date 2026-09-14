@@ -7,10 +7,11 @@
 }:
 
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib) mkEnableOption mkForce mkIf;
   cfg = config.modules.common;
 
   generationsKept = 5; # Boot menu entries, and what the weekly gc spares
+  scratchpadAge = "2d"; # Idle time before systemd-tmpfiles takes an agent scratchpad
 in
 {
   options.modules.common = {
@@ -58,12 +59,24 @@ in
       dates = [ "weekly" ];
     };
 
+    # Upstream skips this on battery, which on a tablet means never
+    systemd.services.nix-optimise = {
+      unitConfig.ConditionACPower = mkForce null;
+      serviceConfig = {
+        CPUSchedulingPolicy = "idle"; # Yield to anything interactive
+        IOSchedulingClass = "idle";
+      };
+    };
+
     boot.loader.systemd-boot.configurationLimit = generationsKept;
 
     nix.gc = {
       automatic = true;
       dates = "weekly";
     };
+
+    # systemd's own /tmp rule is 10 days, too long for multi-gigabyte scratchpads
+    systemd.tmpfiles.rules = [ "e /tmp/claude-*/* - - - ${scratchpadAge}" ];
 
     # nix-collect-garbage has no keep-newest-N flag, so prune the profile first
     systemd.services.nix-gc.serviceConfig.ExecStartPre =

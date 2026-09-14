@@ -90,6 +90,12 @@ let
               fi
             }
 
+            # Exit lets Restart=always retry until the daemon is on the bus
+            if [ -z "$(active_profile || true)" ]; then
+              echo "power profile daemon not on the bus yet" >&2
+              exit 1
+            fi
+
             apply_limits
 
             # Signals are only a wake-up; apply_limits re-reads the profile authoritatively
@@ -133,8 +139,8 @@ in
 
     systemd.services.intel-power-limit = {
       description = "Track the active power profile and cap the package power limit";
+      # Ordering after the daemon deadlocks: it starts after multi-user.target, which wants this
       wants = [ "power-profiles-daemon.service" ];
-      after = [ "power-profiles-daemon.service" ];
       wantedBy = [ "multi-user.target" ];
       serviceConfig = {
         ExecStart = "${applyLimits}/bin/intel-power-limit-apply";

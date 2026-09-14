@@ -122,6 +122,22 @@ something.
 Host-specific failures live in the host files. This section is only for things
 that bite on any machine.
 
+### A unit wanted by multi-user.target cannot be ordered after a desktop daemon
+
+Several daemons declare `After=multi-user.target` themselves, so a new unit that
+is both `wantedBy = [ "multi-user.target" ]` and `after = [ "<that daemon>" ]`
+closes a loop. Systemd breaks it by silently deleting your unit's start job, so
+the service never runs and nothing fails loudly — the only trace is a line like
+`Found ordering cycle` at boot, and the symptom is that your config appears to
+have had no effect.
+
+`power-profiles-daemon` is one of these. Keep `wants` for the pull-in, drop the
+`after`, and make the service tolerate the daemon not being up yet — exiting
+non-zero so `Restart` retries is enough.
+
+This only ever shows up on a real reboot, so reboot after adding a unit like
+this rather than trusting the running state after a switch.
+
 ### Bootloader refuses to downgrade after a channel move
 
 Moving to an older nixpkgs builds fine and then dies on the last step with

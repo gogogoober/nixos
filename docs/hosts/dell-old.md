@@ -47,6 +47,13 @@ Not implemented yet, and the open questions in that PRD are still open.
 
 ## Open work
 
+- `modules.intelPowerLimit` is not wired here yet. The module is host-agnostic
+  across Intel and this machine is Intel too, so it works unchanged and only the
+  watt values differ. Do not copy the Surface numbers: that host is fanless and
+  thermally bound, while this one has a fan and is bound by a six-year-old cell.
+  Start by reading `/sys/class/powercap/intel-rapl:0/constraint_*_power_limit_uw`
+  against `constraint_0_max_power_uw` to see how far above its rating the
+  firmware runs it, which is how the Surface finding started.
 - PRD 15, declarative charge thresholds plus calibration.
 - PRD 14, multi-monitor behaviour for the quick-popups.
 - PRD 20, replacing the `fsel` launcher with wofi, which would also drop a

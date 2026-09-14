@@ -37,7 +37,7 @@
           burstWatts = 15;
         };
         performance = {
-          sustainedWatts = 10;
+          sustainedWatts = 9;
           burstWatts = 20;
         };
       };

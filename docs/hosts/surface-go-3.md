@@ -65,6 +65,30 @@ Already in place, do not undo without a reason:
   the next Monday rather than compiling on the cell.
 - **GNOME suspends after 7 minutes** on both AC and battery.
 
+- **The package power limit is capped per power profile.**
+  `modules/nixos/intel-power-limit.nix` watches the active power-profiles-daemon
+  profile over D-Bus and writes the matching RAPL limits: power-saver 5/10,
+  balanced 5/15, performance 9/20 (sustained/burst watts). Firmware ships this
+  5 W part at 15 W sustained and 24 W burst, which it cannot thermally hold, so
+  it boosted into a throttle instead of running steadily.
+
+  Measured plateaus under 75 s of all-core load, against a 100 °C limit:
+
+  | Sustained | Die temp | All-core clock | Throttle events |
+  | --- | --- | --- | --- |
+  | 7 W | 71 °C | — | 0 |
+  | 8 W | 65 °C | 2299 MHz | 0 |
+  | 9 W | 72 °C | 2499 MHz | 0 |
+  | 10 W | 91 °C | 2800 MHz | 10 |
+
+  The curve goes vertical after 9 W, so that is where performance sits. Burst
+  stayed at 20 W for every run and never caused a throttle, because burst only
+  governs the opening window and the plateau is set by the sustained limit.
+
+  Chassis skin temperature is far below the die: with the die at 94 °C the board
+  sensors read 53 °C and the case merely feels warm. That gap is normal for a
+  fanless design and is not a sign the reading is wrong.
+
 Not available on this hardware:
 
 - **No charge thresholds.** The Go 3 exposes no `charge_control_*` sysfs files
@@ -129,20 +153,26 @@ Revisit only if pen input becomes a requirement, and only alongside a remote
 builder or binary cache. The correct import would be
 `microsoft-surface-common`, not `microsoft-surface-go`, which targets the Go 1.
 
-## The ACPI error storm, benign
+## The ACPI error storm, was a symptom
 
-Under sustained CPU load the journal fills with:
+Under sustained CPU load the journal used to fill with:
 
 ```
 Could not resolve symbol [\_TZ.TZ00]
 Aborting method \_SB.PCI0.LPCB.EC0._Q14
 ```
 
-Roughly every six seconds, tapering as the machine cools. It is a firmware bug
-and it is harmless: `_Q14` does nothing but `Notify (\_TZ.TZ00, 0x80)`, and the
-DSDT declares that zone `External` while no loaded SSDT defines it. The real
-zones are `\_SB.PCI0.LPCB.TZ01` through `TZ05`. Not caused by thermald; the
-aborts still fire with it stopped. Unrelated to charging. Nothing to fix.
+The abort itself is a harmless firmware bug: `_Q14` does nothing but
+`Notify (\_TZ.TZ00, 0x80)`, and the DSDT declares that zone `External` while no
+loaded SSDT defines it. The real zones are `\_SB.PCI0.LPCB.TZ01` through `TZ05`.
+Not caused by thermald; the aborts fired with it stopped.
+
+What was wrong was the earlier conclusion that there was nothing to fix. The
+storm was the thermal zone notification firing while the machine cooked itself
+against the 15 W firmware power limit, which is why it always tracked load and
+tapered as the machine cooled. Capping the package (below) stopped it: zero
+aborts since, including through deliberate all-core load tests that would
+previously have set it off.
 
 ## Touchscreen
 

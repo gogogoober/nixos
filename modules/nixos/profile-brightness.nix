@@ -29,6 +29,7 @@ let
       coreutils
       glib # gdbus
       jq
+      power-profiles-daemon # powerprofilesctl
       systemd # busctl
     ];
     text = ''
@@ -50,8 +51,21 @@ let
               echo "$1: brightness ''${percent}%"
             }
 
-            # Recorded without applying, so restarting never overrides a manual setting
-            last_profile=$(active_profile || true)
+            # Exit lets Restart=always retry until the daemon is on the bus
+            if [ -z "$(active_profile || true)" ]; then
+              echo "power profile daemon not on the bus yet" >&2
+              exit 1
+            fi
+
+            # Survives a restart, dropped with the session, so a crash never undoes a deliberate switch
+            session_marker="$RUNTIME_DIRECTORY/applied"
+            if [ ! -e "$session_marker" ]; then
+              powerprofilesctl set "${cfg.loginProfile}"
+              apply_brightness "${cfg.loginProfile}"
+              touch "$session_marker"
+            fi
+
+            last_profile=$(active_profile)
 
             gdbus monitor --system --dest org.freedesktop.UPower.PowerProfiles | while read -r _; do
               profile=$(active_profile || true)
@@ -67,12 +81,21 @@ let
 in
 {
   options.modules.profileBrightness = {
-    enable = mkEnableOption "set a default screen brightness when the power profile changes";
+    enable = mkEnableOption "reset the power profile and screen brightness at login, then follow later profile switches";
+
+    greeterPercent = mkOption {
+      type = types.ints.between 1 100;
+      description = "Screen brightness percentage held outside a user session, so the login screen never inherits a level from one.";
+    };
+
+    loginProfile = mkOption {
+      type = types.str;
+      description = "Power profile forced at every login, discarding whatever was active in the last session.";
+    };
 
     profiles = mkOption {
-      type = types.attrsOf types.ints.positive;
-      default = { };
-      description = "Screen brightness percentage applied when each power-profiles-daemon profile becomes active. Adjusting brightness by hand afterwards is never overridden.";
+      type = types.attrsOf (types.ints.between 1 100);
+      description = "Screen brightness percentage applied at session start and whenever a power-profiles-daemon profile becomes active. Adjusting brightness by hand afterwards is never overridden.";
     };
   };
 
@@ -82,16 +105,35 @@ in
         assertion = config.services.power-profiles-daemon.enable;
         message = "modules.profileBrightness.enable requires services.power-profiles-daemon.enable (the active profile is read from its D-Bus interface).";
       }
+      {
+        assertion = cfg.profiles ? ${cfg.loginProfile};
+        message = "modules.profileBrightness.loginProfile is set to \"${cfg.loginProfile}\", which has no entry in modules.profileBrightness.profiles.";
+      }
     ];
 
+    # Restoring the last session's level only fights the profile that sets it
+    systemd.services."systemd-backlight@".enable = false;
+
+    systemd.services.greeter-brightness = {
+      description = "Hold a fixed screen brightness outside a user session";
+      before = [ "display-manager.service" ];
+      wantedBy = [ "display-manager.service" ];
+      serviceConfig = {
+        Type = "oneshot";
+        ExecStart = "${pkgs.brightnessctl}/bin/brightnessctl set ${toString cfg.greeterPercent}%";
+      };
+    };
+
     systemd.user.services.profile-brightness = {
-      description = "Set a default screen brightness when the power profile changes";
+      description = "Reset the power profile at login and match screen brightness to it";
       wantedBy = [ "graphical-session.target" ];
       partOf = [ "graphical-session.target" ];
       serviceConfig = {
         ExecStart = "${followProfile}/bin/profile-brightness";
         Restart = "always";
         RestartSec = 5;
+        RuntimeDirectory = "profile-brightness";
+        RuntimeDirectoryPreserve = "restart";
       };
     };
   };

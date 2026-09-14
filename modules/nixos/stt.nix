@@ -8,28 +8,33 @@
 let
   inherit (lib)
     mkEnableOption
+    mkOption
     mkIf
+    types
     concatStringsSep
     makeBinPath
     ;
   cfg = config.modules.stt;
 
   settings = {
-    # ggml-tiny.en keeps latency and RAM low on the fanless Surface Go 3; bump to base.en or small.en if accuracy suffers
-    modelUrl = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin";
-    modelHash = "sha256-kh5M+Ghv3Zk9zQgaXaW2w2W/3hFi5ysI11rHUomSCx8=";
-
     vadModelUrl = "https://huggingface.co/ggml-org/whisper-vad/resolve/main/ggml-silero-v5.1.2.bin";
     vadModelHash = "sha256-KZQNmNQrkfvQXOSJ8+z3xy8KQvAn5IdZGaKPtMBOos8=";
 
     host = "127.0.0.1";
     port = "5175";
-    threads = "2"; # 2c/4t Amber Lake-Y, fanless: hyperthreading hurts more than helps
+    maxContext = "224"; # zero here silently drops the vocabulary prompt along with the carried context
+    vocabulary = "NixOS, nixpkgs, flake, home-manager, Hyprland, systemd, whisper, piper, lessac, keybinds, RAPL, sysfs.";
+  };
+
+  engines = {
+    whisper-small = {
+      url = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-small.en.bin";
+      hash = "sha256-xhONbVjsyDIgl+D5h8MvG+i7ChhTKj+I9zTRu/nEHl0=";
+    };
   };
 
   whisperModel = pkgs.fetchurl {
-    url = settings.modelUrl;
-    hash = settings.modelHash;
+    inherit (engines.${cfg.engine}) url hash;
   };
   vadModel = pkgs.fetchurl {
     url = settings.vadModelUrl;
@@ -40,10 +45,11 @@ let
     "--model ${whisperModel}"
     "--host ${settings.host}"
     "--port ${settings.port}"
-    "--threads ${settings.threads}"
+    "--threads ${toString cfg.threads}"
     "--vad" # silero VAD trims silence client-side
     "--vad-model ${vadModel}"
-    "-mc 0" # no carry-over context, breaks hallucination chains
+    "-mc ${settings.maxContext}"
+    "--prompt '${settings.vocabulary}'" # teaches the model this repo's proper nouns
     "-sns" # suppress non-speech tokens
     "-nt" # no timestamps in response
   ];
@@ -77,7 +83,17 @@ let
 in
 {
   options.modules.stt = {
-    enable = mkEnableOption "whisper.cpp STT daemon + dictate hotkey helper";
+    enable = mkEnableOption "local STT daemon + dictate helper";
+
+    engine = mkOption {
+      type = types.enum (builtins.attrNames engines);
+      description = "Which speech engine and model size to run. No default: the right one depends on the machine.";
+    };
+
+    threads = mkOption {
+      type = types.ints.positive;
+      description = "Decoder threads. A fanless 2c/4t part wants 2; hyperthreading hurts more than it helps there.";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -89,10 +105,10 @@ in
     ];
 
     systemd.user.services.whisper-server = {
-      description = "whisper.cpp STT HTTP daemon (model kept warm in memory)";
+      description = "whisper.cpp STT HTTP daemon, encoder on the iGPU, model kept warm";
       wantedBy = [ "default.target" ];
       serviceConfig = {
-        ExecStart = "${pkgs.whisper-cpp}/bin/whisper-server ${whisperArgs}";
+        ExecStart = "${pkgs.whisper-cpp-vulkan}/bin/whisper-server ${whisperArgs}";
         Restart = "on-failure";
         RestartSec = 5;
       };

@@ -32,7 +32,11 @@
     touchscreen.enable = true;
     developer.enable = true;
     tts.enable = true;
-    stt.enable = true;
+    stt = {
+      enable = true;
+      engine = "whisper-small"; # encoder runs on the UHD 615, so small costs ~11 s instead of ~56 s
+      threads = 2;
+    };
     gaming.enable = true;
     # The EC latches into a no-adapter state; only a firmware reset clears it
     chargerWatch = {
@@ -63,6 +67,8 @@
 
     profileBrightness = {
       enable = true;
+      greeterPercent = 30;
+      loginProfile = "power-saver";
       profiles = {
         power-saver = 20;
         balanced = 50;

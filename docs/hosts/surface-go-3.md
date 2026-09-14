@@ -65,6 +65,22 @@ Already in place, do not undo without a reason:
   the next Monday rather than compiling on the cell.
 - **GNOME suspends after 7 minutes** on both AC and battery.
 
+- **Every login starts in power-saver, at that profile's brightness.**
+  `modules/nixos/profile-brightness.nix` forces the profile back to
+  `power-saver` when the session starts, then sets 20/50/60 percent for
+  power-saver/balanced/performance and follows every later switch. More power
+  is always available on request; the default is never inherited from last
+  session. Adjusting brightness by hand stands until the next profile switch.
+
+  Brightness is deliberately not persisted across a reboot. The module masks
+  `systemd-backlight@`, which otherwise restored whatever level was on screen
+  at the last shutdown — a value with no relationship to the active profile,
+  and usually a brighter one than a battery-first default wants. In its place a
+  system unit pins 30 percent before the display manager starts, so the login
+  screen has a level of its own rather than inheriting one. Logging out without
+  rebooting leaves the greeter at the session's last level; only a boot resets
+  it.
+
 - **The package power limit is capped per power profile.**
   `modules/nixos/intel-power-limit.nix` watches the active power-profiles-daemon
   profile over D-Bus and writes the matching RAPL limits: power-saver 5/10,
@@ -225,9 +241,22 @@ enabled`. Drop the entry once systemd ships one for `09b5`.
 
 Both the TTS and STT daemons run resident on this host, sized for it:
 
-- **STT** is whisper.cpp with `ggml-tiny.en` at 2 threads. Two, not four:
-  hyperthreading hurts more than it helps on this chip. Bump to `base.en` only
-  if accuracy actually becomes a problem.
+- **STT** is whisper.cpp with `ggml-small.en` at 2 threads, selected by
+  `modules.stt.engine = "whisper-small"`. Two threads, not four: hyperthreading
+  hurts more than it helps on this chip.
+- **The STT encoder runs on the iGPU.** The module uses `pkgs.whisper-cpp-vulkan`,
+  and Mesa finds the UHD 615 with no extra config. That is what makes `small.en`
+  affordable here: 11 s for a 20 s clip against 56 s on the CPU, measured on
+  battery at the 5 W `power-saver` cap. The CPU backend loads alongside it and
+  takes over on a machine with no usable device.
+- **The vocabulary prompt is load-bearing.** `-mc 224` plus `--prompt` is what
+  gets NixOS, Hyprland, home-manager, systemd and lessac right; without it
+  `small.en` returns "Nix OS flag" and "Hypo and Keybinds". A max-context of
+  zero silently discards the prompt, which is how it was configured before
+  generation 44. It costs a quarter of a second and left real speech untouched.
+- **`medium.en` and `large-v3-turbo` were measured and rejected**, at 30 s and
+  52 s respectively for no accuracy gain over `small.en`. See PRD 21 for the
+  full table, including the Parakeet option that was the runner-up.
 - **TTS** is a Piper HTTP daemon keeping `en_US-lessac-medium` warm in memory,
   at 0.85 length scale.
 - **Dev mode is off here.** `tts.devMode` is only set on the Dell, so logging

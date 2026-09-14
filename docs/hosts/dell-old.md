@@ -21,6 +21,9 @@ From `hosts/dell-old/default.nix`:
 - `touchscreen` off
 - `tts.devMode = true`, so speech logging and lifecycle notifications are on
   here and nowhere else
+- `stt.engine = "whisper-small"` at 4 threads rather than the Surface's 2,
+  because this machine has a fan. **The thread count and the iGPU path are both
+  unverified here**; the STT numbers in PRD 21 were all taken on the Surface
 - `developer`, `gaming`, `stt`, `desktop`, `common`
 
 Host-local extras:

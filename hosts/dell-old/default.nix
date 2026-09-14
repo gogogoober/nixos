@@ -22,7 +22,11 @@
     developer.enable = true;
     tts.enable = true;
     tts.devMode = true;
-    stt.enable = true;
+    stt = {
+      enable = true;
+      engine = "whisper-small";
+      threads = 4; # has a fan, unlike the Surface
+    };
     gaming.enable = true;
 
     user = {

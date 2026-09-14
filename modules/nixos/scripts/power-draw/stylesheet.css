@@ -1,0 +1,5 @@
+#panel .power-draw-label {
+  padding-left: 3px;
+  /* Tabular figures stop the panel shifting as digits change */
+  font-feature-settings: "tnum";
+}

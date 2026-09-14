@@ -1,0 +1,6 @@
+{
+  "uuid": "power-draw@nixos",
+  "name": "Power Draw",
+  "description": "System power draw in watts, next to the battery indicator",
+  "shell-version": ["50"]
+}

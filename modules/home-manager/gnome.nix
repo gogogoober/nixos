@@ -78,6 +78,7 @@ in
         enabled-extensions = [
           "forge@jmmaranan.com"
           "speech-panel@nixos"
+          "power-draw@nixos"
         ];
       };
 

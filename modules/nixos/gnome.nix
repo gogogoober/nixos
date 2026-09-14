@@ -13,6 +13,11 @@ let
     mkdir -p $out/share/gnome-shell/extensions
     cp -r ${./scripts/speech-panel} $out/share/gnome-shell/extensions/speech-panel@nixos
   '';
+
+  powerDraw = pkgs.runCommand "gnome-shell-extension-power-draw" { } ''
+    mkdir -p $out/share/gnome-shell/extensions
+    cp -r ${./scripts/power-draw} $out/share/gnome-shell/extensions/power-draw@nixos
+  '';
 in
 {
   options.modules.gnome = {
@@ -45,6 +50,7 @@ in
       dconf-editor # Low-level dconf editor
       gnomeExtensions.forge # Tiling window manager extension
       speechPanel # Top bar dictate and speak toggles
+      powerDraw # Watts drawn, beside the battery indicator
     ];
 
     services.udev.packages = [ pkgs.gnome-settings-daemon ];

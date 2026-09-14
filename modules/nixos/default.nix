@@ -8,6 +8,7 @@
     ./hyprland.nix
     ./gnome.nix
     ./power.nix
+    ./power-limit.nix
     ./charger-watch.nix
     ./touchscreen.nix
     ./developer.nix

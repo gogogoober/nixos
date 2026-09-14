@@ -24,6 +24,13 @@
     gaming.enable = true;
     chargerWatch.enable = true;
 
+    # 5W part the firmware runs at 15W sustained, so it boosts into a throttle
+    powerLimit = {
+      enable = true;
+      sustainedWatts = 7;
+      burstWatts = 15;
+    };
+
     user = {
       name = "hugo";
       description = "Hugo";

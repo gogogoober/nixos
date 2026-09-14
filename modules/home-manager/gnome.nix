@@ -92,7 +92,6 @@ in
         stacked-tiling-mode-enabled = true;
       };
 
-      # 7 min idle → suspend; sleep.conf hibernates 8 min later (15 min total)
       "org/gnome/settings-daemon/plugins/power" = {
         sleep-inactive-ac-type = "suspend";
         sleep-inactive-ac-timeout = 420;

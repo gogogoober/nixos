@@ -9,6 +9,8 @@
 let
   inherit (lib) mkEnableOption mkIf;
   cfg = config.modules.common;
+
+  generationsKept = 5; # Boot menu entries, and what the weekly gc spares
 in
 {
   options.modules.common = {
@@ -56,14 +58,16 @@ in
       dates = [ "weekly" ];
     };
 
-    # Boot menu entries, matched to the generations nix.gc keeps
-    boot.loader.systemd-boot.configurationLimit = 5;
+    boot.loader.systemd-boot.configurationLimit = generationsKept;
 
     nix.gc = {
       automatic = true;
       dates = "weekly";
-      options = "--delete-generations +5";
     };
+
+    # nix-collect-garbage has no keep-newest-N flag, so prune the profile first
+    systemd.services.nix-gc.serviceConfig.ExecStartPre =
+      "${config.nix.package}/bin/nix-env --delete-generations +${toString generationsKept} -p /nix/var/nix/profiles/system";
 
     system.autoUpgrade = {
       enable = true;

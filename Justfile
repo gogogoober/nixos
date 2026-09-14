@@ -3,6 +3,7 @@ tick := "30" # Seconds between rebuild progress lines
 extra := "" # Extra nixos-rebuild flags, e.g. --install-bootloader
 keep := "5" # System generations `just clean` keeps
 journal := "30d" # Journal history `just clean` keeps
+scratch := "4" # Hours an agent scratchpad may sit idle before `just clean` takes it
 
 # Show available recipes
 default:
@@ -61,6 +62,17 @@ clean:
     echo "==> Clearing build caches"
     rm -rf ~/.cache/nix
     go clean -cache 2>/dev/null || true
+
+    echo "==> Clearing agent scratchpads idle more than {{ scratch }}h"
+    idle_minutes=$(( {{ scratch }} * 60 ))
+    for session in /tmp/claude-$(id -u)/*/*/; do
+      [ -d "$session" ] || continue
+      # Nothing touched inside the window means the session is over
+      if [ -z "$(find "$session" -mmin -$idle_minutes -print -quit)" ]; then
+        du -sh "$session" | sed 's/^/    freeing /'
+        rm -rf "$session"
+      fi
+    done
 
     echo "==> Collecting garbage"
     sudo nix-collect-garbage

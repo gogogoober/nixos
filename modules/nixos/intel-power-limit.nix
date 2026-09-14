@@ -16,6 +16,9 @@ let
     ;
   cfg = config.modules.intelPowerLimit;
 
+  recheckSeconds = "60"; # How often to re-check inside the settle window
+  settleSeconds = "300"; # Firmware reclaims the sustained register shortly after start
+
   profileCases = concatStringsSep "\n" (
     mapAttrsToList (
       profile: limits:
@@ -40,8 +43,9 @@ let
               fi
             done
 
+            # The driver registers its domains late in boot; Restart=always retries
             if [ -z "$package_domain" ]; then
-              echo "no Intel RAPL package domain present, nothing to cap" >&2
+              echo "no Intel RAPL package domain present yet" >&2
               exit 1
             fi
 
@@ -53,12 +57,16 @@ let
                 ActiveProfile | jq -r '.data // empty'
             }
 
-            # Firmware can lock these registers, so confirm the value took
+            # Sets `changed` so a quiet recheck stays out of the journal
             write_constraint() {
               constraint=$1
               watts=$2
               file="$package_domain/constraint_''${constraint}_power_limit_uw"
               target=$((watts * 1000000))
+
+              if [ "$(cat "$file")" = "$target" ]; then
+                return 0
+              fi
 
               echo "$target" > "$file" || true
 
@@ -67,6 +75,7 @@ let
                 echo "constraint $constraint rejected: asked ''${target}uW, firmware holds ''${held}uW" >&2
                 return 1
               fi
+              changed=1
             }
 
             apply_limits() {
@@ -85,7 +94,11 @@ let
                   ;;
               esac
 
-              if write_constraint 0 "$sustained_watts" && write_constraint 1 "$burst_watts"; then
+              changed=0
+              write_constraint 0 "$sustained_watts" || return
+              write_constraint 1 "$burst_watts" || return
+
+              if [ "$changed" = 1 ]; then
                 echo "$profile: ''${sustained_watts}W sustained, ''${burst_watts}W burst"
               fi
             }
@@ -98,8 +111,23 @@ let
 
             apply_limits
 
-            # Signals are only a wake-up; apply_limits re-reads the profile authoritatively
-            gdbus monitor --system --dest org.freedesktop.UPower.PowerProfiles | while read -r _; do
+            settle_deadline=$((SECONDS + ${settleSeconds}))
+
+            # Re-check only while the limits are settling; drift after that is a different bug
+            gdbus monitor --system --dest org.freedesktop.UPower.PowerProfiles | while :; do
+              read_status=0
+              if [ "$SECONDS" -lt "$settle_deadline" ]; then
+                read -r -t ${recheckSeconds} _ || read_status=$?
+              else
+                read -r _ || read_status=$?
+              fi
+
+              # Over 128 is the read timeout; anything else non-zero means the monitor died
+              if [ "$read_status" -ne 0 ] && [ "$read_status" -le 128 ]; then
+                echo "profile monitor closed" >&2
+                exit 1
+              fi
+
               apply_limits
             done
     '';

@@ -85,6 +85,19 @@ Already in place, do not undo without a reason:
   stayed at 20 W for every run and never caused a throttle, because burst only
   governs the opening window and the plateau is set by the sustained limit.
 
+  Firmware reclaims the sustained register roughly a minute after boot, and
+  probably after resume too. The write itself succeeds and verifies, so the
+  service logs success and only a later read shows 15 W back in place. The
+  watcher therefore rechecks every 60 s for the first 5 minutes after it starts,
+  and the resume unit restarts it so waking gets a fresh window. It stays silent
+  when the registers already match, so a journal line means something actually
+  moved. Only the sustained limit gets reclaimed — burst survives untouched.
+
+  The window is deliberately bounded. Drift outside the first few minutes has
+  never been observed, and if it ever is, that is a different fault needing a
+  different fix rather than a longer poll. It would surface as the watcher
+  logging a re-application on the next profile switch.
+
   Chassis skin temperature is far below the die: with the die at 94 °C the board
   sensors read 53 °C and the case merely feels warm. That gap is normal for a
   fanless design and is not a sign the reading is wrong.

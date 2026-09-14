@@ -6,17 +6,22 @@
 }:
 
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
   cfg = config.modules.chargerWatch;
 
-  adapterOnline = "/sys/class/power_supply/ACAD/online";
-  batteryStatus = "/sys/class/power_supply/BAT1/status";
+  adapterOnline = "/sys/class/power_supply/${cfg.adapter}/online";
+  batteryStatus = "/sys/class/power_supply/${cfg.battery}/status";
 
   firstCheckDelay = "2min"; # Let the desktop session come up first
   checkInterval = "20min";
 
   alertTitle = "Charger not detected";
-  alertBody = "The charge controller lost the adapter. Hold volume-up + power for 20 seconds, release, then power on.";
+  alertBody = "The charge controller lost the adapter. ${cfg.recovery}";
 
   checkScript = pkgs.writeShellApplication {
     name = "charger-watch";
@@ -49,6 +54,24 @@ in
 {
   options.modules.chargerWatch = {
     enable = mkEnableOption "notify when the charge controller stops seeing the adapter";
+
+    adapter = mkOption {
+      type = types.str;
+      example = "ACAD";
+      description = "Mains adapter device under /sys/class/power_supply.";
+    };
+
+    battery = mkOption {
+      type = types.str;
+      example = "BAT1";
+      description = "Battery device under /sys/class/power_supply.";
+    };
+
+    recovery = mkOption {
+      type = types.str;
+      example = "Hold volume-up + power for 20 seconds, release, then power on.";
+      description = "How to clear the latch on this machine. Appended to the notification, so it must be the recovery this hardware actually needs.";
+    };
   };
 
   config = mkIf cfg.enable {

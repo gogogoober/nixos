@@ -6,7 +6,12 @@
 }:
 
 let
-  inherit (lib) mkEnableOption mkIf;
+  inherit (lib)
+    mkEnableOption
+    mkIf
+    mkOption
+    types
+    ;
   cfg = config.modules.gnome;
 
   speechPanel = pkgs.runCommand "gnome-shell-extension-speech-panel" { } ''
@@ -22,6 +27,51 @@ in
 {
   options.modules.gnome = {
     enable = mkEnableOption "GNOME desktop environment";
+
+    display = mkOption {
+      default = null;
+      description = "Built-in panel written to GNOME's monitors.xml. Null leaves GNOME's own display settings alone and editable in Settings.";
+      type = types.nullOr (
+        types.submodule {
+          options = {
+            connector = mkOption {
+              type = types.str;
+              description = "Output name, as the kernel names it.";
+            };
+            vendor = mkOption {
+              type = types.str;
+              description = "Panel vendor, as reported by EDID.";
+            };
+            product = mkOption {
+              type = types.str;
+              description = "Panel product id, as reported by EDID.";
+            };
+            serial = mkOption {
+              type = types.str;
+              default = "0x00000000";
+              description = "Panel serial, as reported by EDID.";
+            };
+            width = mkOption {
+              type = types.ints.positive;
+              description = "Horizontal resolution in pixels.";
+            };
+            height = mkOption {
+              type = types.ints.positive;
+              description = "Vertical resolution in pixels.";
+            };
+            rate = mkOption {
+              type = types.str;
+              description = "Refresh rate, formatted exactly as the compositor advertises it.";
+            };
+            scale = mkOption {
+              type = types.ints.positive;
+              default = 1;
+              description = "Integer display scale.";
+            };
+          };
+        }
+      );
+    };
   };
 
   config = mkIf cfg.enable {
@@ -55,6 +105,9 @@ in
 
     services.udev.packages = [ pkgs.gnome-settings-daemon ];
 
-    home-manager.users.${config.modules.user.name}.modules.gnome.enable = true;
+    home-manager.users.${config.modules.user.name}.modules.gnome = {
+      enable = true;
+      inherit (cfg) display;
+    };
   };
 }

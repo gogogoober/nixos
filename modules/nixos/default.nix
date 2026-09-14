@@ -9,6 +9,7 @@
     ./gnome.nix
     ./power.nix
     ./intel-power-limit.nix
+    ./profile-brightness.nix
     ./charger-watch.nix
     ./touchscreen.nix
     ./developer.nix

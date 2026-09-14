@@ -15,16 +15,12 @@ const upowerDevice = {
     interface: 'org.freedesktop.UPower.Device',
 };
 
-const iconName = 'power-profile-performance-symbolic';
 const charging = 1;
 
 const PowerDrawIndicator = GObject.registerClass(
 class PowerDrawIndicator extends QuickSettings.SystemIndicator {
     _init() {
         super._init();
-
-        this._icon = this._addIndicator();
-        this._icon.icon_name = iconName;
 
         this._label = new St.Label({
             style_class: 'power-draw-label',

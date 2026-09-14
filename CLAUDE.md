@@ -87,6 +87,36 @@ named `settings` attrset or a `let` binding at the top of the file, never
 threaded as a literal through the body. See `tts.nix`, `stt.nix`, and
 `charger-watch.nix` for the pattern.
 
+### Host-specific values versus generic modules
+
+Modules own the mechanism, hosts own the values. The test: would this value be
+wrong on another machine? If yes it belongs in `hosts/<name>/default.nix`, however
+small it looks.
+
+| Value | Lives in | Why |
+| --- | --- | --- |
+| Package watts per power profile | host | Depends on that chassis's cooling |
+| The D-Bus watcher that applies them | module | Identical on any Intel machine |
+| Panel connector, vendor, refresh rate | host | Physically that machine's screen |
+| The `monitors.xml` template | module | Same shape everywhere |
+| Battery and adapter device names | host | `BAT1`/`ACAD` here, `BAT0` elsewhere |
+| "Hold volume-up + power for 20 seconds" | host | Surface firmware reset, wrong advice anywhere else |
+
+That last row is the one that gets missed: user-facing text can be as
+machine-specific as a sysfs path.
+
+**Omit defaults on values a host must supply.** No default means a host that
+enables the module has to state its own, rather than silently inheriting another
+machine's. Options are only forced inside `mkIf cfg.enable`, so hosts that leave
+the module off never have to answer for them.
+
+**Look for a declarative option before writing a script.** Usually one exists.
+When none does, establish that rather than assuming: `services.power-profiles-daemon`
+exposes only `enable` and `package`, and `undervolt`, `throttled`, `tlp` and
+`auto-cpufreq` all take a single static value, so per-profile behaviour genuinely
+needs a watcher. A script is then the mechanism — every number it acts on still
+comes from the host file.
+
 ### Where user config lives
 
 `modules/nixos/user.nix` defines `modules.user` with the name, description,

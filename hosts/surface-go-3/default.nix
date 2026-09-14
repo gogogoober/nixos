@@ -15,14 +15,32 @@
   modules = {
     common.enable = true;
     desktop.enable = true;
-    gnome.enable = true;
+    gnome = {
+      enable = true;
+      # 48 Hz is offered alongside 60 and costs less on a panel this size
+      display = {
+        connector = "eDP-1";
+        vendor = "BOE";
+        product = "0x088b";
+        width = 1920;
+        height = 1280;
+        rate = "47.998";
+        scale = 2;
+      };
+    };
     hyprland.enable = false;
     touchscreen.enable = true;
     developer.enable = true;
     tts.enable = true;
     stt.enable = true;
     gaming.enable = true;
-    chargerWatch.enable = true;
+    # The EC latches into a no-adapter state; only a firmware reset clears it
+    chargerWatch = {
+      enable = true;
+      adapter = "ACAD";
+      battery = "BAT1";
+      recovery = "Hold volume-up + power for 20 seconds, release, then power on.";
+    };
 
     # 5W part the firmware runs at 15W sustained, so it boosts into a throttle
     intelPowerLimit = {
@@ -40,6 +58,15 @@
           sustainedWatts = 9;
           burstWatts = 20;
         };
+      };
+    };
+
+    profileBrightness = {
+      enable = true;
+      profiles = {
+        power-saver = 20;
+        balanced = 50;
+        performance = 60;
       };
     };
 

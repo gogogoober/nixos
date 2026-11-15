@@ -17,6 +17,7 @@
     desktop.enable = true;
     gnome = {
       enable = true;
+      wallpaperCycle = false; # One wallpaper per login, no timer wakeups
       # 48 Hz is offered alongside 60 and costs less on a panel this size
       display = {
         connector = "eDP-1";

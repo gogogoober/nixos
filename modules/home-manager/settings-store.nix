@@ -29,9 +29,9 @@ let
     overrides="$dir/settings.json"
     key=".$1"
     if [ -f "$overrides" ]; then
-      ${pkgs.jq}/bin/jq -r -s ".[0] * .[1] | $key" "$defaults" "$overrides"
+      ${pkgs.jq}/bin/jq -r -s ".[0] * .[1] | ($key) // empty" "$defaults" "$overrides"
     else
-      ${pkgs.jq}/bin/jq -r "$key" "$defaults"
+      ${pkgs.jq}/bin/jq -r "($key) // empty" "$defaults"
     fi
   '';
 in

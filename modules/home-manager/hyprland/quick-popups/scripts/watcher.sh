@@ -1,14 +1,7 @@
 #!/usr/bin/env bash
-# Long-running sidecar started by exec-once. Listens on Hyprland's IPC
-# socket and dismisses any visible ephemeral popup whenever the user
-# switches workspaces. Persistent popups already auto-hide when their
-# special workspace stops being the active overlay, so they need no
-# action here.
-#
-# host.nix prepends a prelude that sets PATH and these variables:
-#   CLASS_PREFIX, RECONNECT_DELAY_SEC
-# host.nix replaces the PERSISTENT_CASE marker below with id-to-persistent
-# branches generated from modules.hyprland.popups.
+# Dismisses visible ephemeral popups on workspace change (Hyprland IPC socket).
+# host.nix prepends PATH, CLASS_PREFIX, RECONNECT_DELAY_SEC and fills
+# the PERSISTENT_CASE marker.
 
 # shellcheck disable=SC2154
 set -u

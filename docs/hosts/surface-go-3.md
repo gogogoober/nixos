@@ -60,9 +60,8 @@ Already in place, do not undo without a reason:
 - **thermald on**, because a fanless chassis throttles rather than spins up.
 - **Nix builds run at idle priority**, `max-jobs = 1`, so a rebuild does not
   make the tablet unusable.
-- **The weekly auto-upgrade skips battery.** `nixos-upgrade` carries
-  `ConditionACPower = true`, so a Monday 09:00 upgrade on battery waits for
-  the next Monday rather than compiling on the cell.
+- **Upgrades only happen via `just update`.** There is no unattended upgrade,
+  so nothing compiles on the cell unless it is started by hand.
 - **GNOME suspends after 7 minutes** on both AC and battery.
 
 - **Every login starts in power-saver, at that profile's brightness.**
@@ -176,7 +175,7 @@ Researched and rejected 2026-09-09. It adds pen input, hardware buttons, and
 performance mode switching, none of which touch charging. Mainline already
 covers touchscreen, wifi, bluetooth, audio, suspend, sensors, and the Type
 Cover. The cost is a 3+ hour local build with no binary cache, on four threads
-and 8 GB, kicked off by the unattended weekly upgrade on every kernel bump.
+and 8 GB, repeated on every kernel bump.
 
 Revisit only if pen input becomes a requirement, and only alongside a remote
 builder or binary cache. The correct import would be

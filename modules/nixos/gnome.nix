@@ -72,6 +72,11 @@ in
         }
       );
     };
+
+    wallpaperCycle = mkOption {
+      type = types.bool;
+      description = "Whether to rotate the wallpaper every few minutes (true) or pick one at random per login (false).";
+    };
   };
 
   config = mkIf cfg.enable {
@@ -107,7 +112,7 @@ in
 
     home-manager.users.${config.modules.user.name}.modules.gnome = {
       enable = true;
-      inherit (cfg) display;
+      inherit (cfg) display wallpaperCycle;
     };
   };
 }

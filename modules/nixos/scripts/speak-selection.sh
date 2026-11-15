@@ -1,7 +1,5 @@
 # One-hotkey state machine: idle+selection starts read, reading stops.
-# tts.nix prepends PIPER_HOST, PIPER_PORT, SELECTION_SLEEP, MAX_CHARS, LOCK_FILE,
-# MAIN_LOCK, MAX_CHUNK_CHARS, LOG_DIR, LOGGING_ENABLED, NOTIFICATIONS_ENABLED,
-# and the SANITIZE_* parallel arrays.
+# tts.nix prepends the settings (PIPER_*, LOCK_FILE, ...) and the SANITIZE_* arrays.
 
 mkdir -p "$LOG_DIR" 2>/dev/null || true
 DEBUG_LOG="$LOG_DIR/speak-selection-$(date -u +%F).log"

@@ -48,7 +48,7 @@ in
       max-jobs = 1; # One build at a time, still uses every core
     };
 
-    # Let interactive work preempt Nix builds and the weekly auto-upgrade
+    # Let interactive work preempt Nix builds
     nix.daemonCPUSchedPolicy = "idle";
     nix.daemonIOSchedClass = "idle";
     nix.daemonIOSchedPriority = 7;

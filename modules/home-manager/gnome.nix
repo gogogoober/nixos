@@ -14,6 +14,7 @@ let
     ;
   cfg = config.modules.gnome;
 
+  wallpaperInterval = "5min";
   wallpaperDir = ../../assets/wallpapers;
 
   wallpaperCycle = pkgs.writeShellScript "wallpaper-cycle" ''
@@ -37,6 +38,11 @@ in
       type = types.nullOr (types.attrsOf types.anything);
       default = null;
       description = "Built-in panel written to monitors.xml, supplied by modules.gnome.display.";
+    };
+
+    wallpaperCycle = mkOption {
+      type = types.bool;
+      description = "Rotate the wallpaper on a timer instead of once per login, supplied by modules.gnome.wallpaperCycle.";
     };
   };
 
@@ -165,12 +171,12 @@ in
     };
 
     systemd.user.timers.wallpaper-cycle = {
-      Unit.Description = "Cycle GNOME wallpaper every 5 minutes";
+      Unit.Description = "Cycle GNOME wallpaper";
       Timer = {
         OnActiveSec = "10s";
-        OnUnitActiveSec = "5min";
         Unit = "wallpaper-cycle.service";
-      };
+      }
+      // lib.optionalAttrs cfg.wallpaperCycle { OnUnitActiveSec = wallpaperInterval; };
       Install.WantedBy = [ "timers.target" ];
     };
   };

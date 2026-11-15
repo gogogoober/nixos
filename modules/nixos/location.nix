@@ -6,19 +6,19 @@ in
 {
   options.modules.location = {
     city = mkOption {
-      type = types.str;
-      default = "New York";
-      description = "City name. Used by weather and other location-aware modules.";
+      type = types.nullOr types.str;
+      default = null;
+      description = "City name. Null lets services geolocate.";
     };
     state = mkOption {
-      type = types.str;
-      default = "NY";
-      description = "State, province, or region code.";
+      type = types.nullOr types.str;
+      default = null;
+      description = "State, province, or region code. Null lets services geolocate.";
     };
     country = mkOption {
-      type = types.str;
-      default = "US";
-      description = "ISO 3166-1 alpha-2 country code.";
+      type = types.nullOr types.str;
+      default = null;
+      description = "ISO 3166-1 alpha-2 country code. Null lets services geolocate.";
     };
     units = mkOption {
       type = types.enum [

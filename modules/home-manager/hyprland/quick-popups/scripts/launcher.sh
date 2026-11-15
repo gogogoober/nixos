@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 # Spawned by waybar on-click via `hypr-popup <name>`.
-#
-# host.nix prepends a prelude that sets PATH and these variables:
-#   CLASS_PREFIX, DISMISS_LOCK, DISMISS_GUARD_MS
-# host.nix replaces the POPUP_META_CASE marker below with id-to-metadata
-# branches generated from modules.hyprland.popups.
+# host.nix prepends PATH, CLASS_PREFIX, DISMISS_LOCK, DISMISS_GUARD_MS and fills
+# the POPUP_META_CASE marker.
 
 # shellcheck disable=SC2154
 set -eu
@@ -26,10 +23,8 @@ esac
 target_class="$CLASS_PREFIX.$name"
 target_workspace="popup-$name"
 
-# If the click handler just dismissed this popup, do not respawn it from
-# the same user click reaching waybar's on-click. The lock is one-shot,
-# so delete it up front; malformed contents (e.g. partial write from a
-# concurrent invocation) fall through and proceed normally.
+# Skip respawn when the click handler just dismissed this popup.
+# The lock is one-shot; malformed contents fall through.
 if [ -f "$DISMISS_LOCK" ]; then
   locked_class=$(sed -n '1p' "$DISMISS_LOCK" 2>/dev/null || true)
   ts=$(sed -n '2p' "$DISMISS_LOCK" 2>/dev/null || true)

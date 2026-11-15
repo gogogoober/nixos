@@ -68,10 +68,8 @@ let
     ) enabledPopups
   );
 
-  # Generated case branches marking which popup ids are persistent. Used by
-  # every script that needs to act on an arbitrary popup window. Ephemerals
-  # contribute nothing — they fall through to the catchall and stay at the
-  # default c_persistent=0.
+  # Generated case branches marking persistent popup ids; ephemerals fall
+  # through to the catchall (c_persistent=0).
   persistentBranches = mapAttrsToList (id: _: "${id}) c_persistent=1 ;;") (
     filterAttrs (_: p: p.persistent) enabledPopups
   );

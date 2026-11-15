@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
-# Bound to bindn left-click. Dismisses any visible popup when the click
-# lands outside it, and lets the click pass through untouched.
-#
-# host.nix prepends a prelude that sets PATH and these variables:
-#   CLASS_PREFIX, DISMISS_LOCK, BAR_RESERVED_Y
-# host.nix replaces the PERSISTENT_CASE marker below with id-to-persistent
-# branches generated from modules.hyprland.popups.
+# Bound to bindn left-click. Dismisses a visible popup on outside clicks.
+# host.nix prepends PATH, CLASS_PREFIX, DISMISS_LOCK, BAR_RESERVED_Y and fills
+# the PERSISTENT_CASE marker.
 
 # shellcheck disable=SC2154
 set -eu

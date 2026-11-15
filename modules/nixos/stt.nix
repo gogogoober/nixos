@@ -68,6 +68,8 @@ let
     buildInputs = [ pkgs.makeWrapper ];
     postBuild = ''
       wrapProgram $out/bin/dictate \
+        --set WHISPER_HOST ${settings.host} \
+        --set WHISPER_PORT ${settings.port} \
         --prefix PATH : ${
           makeBinPath [
             pkgs.pulseaudio # parecord

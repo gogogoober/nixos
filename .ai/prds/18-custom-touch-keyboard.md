@@ -21,7 +21,7 @@ Not a replacement for the full-width OSK. The full-width OSK handles the keyston
 - How macros that need a real keypress (e.g. Super+Q) get sent to the focused window — `hyprctl dispatch sendshortcut` vs `wtype` vs `ydotool`.
 
 ## Current State
-_Not started. Touchscreen support PRD (17) ships the full-width OSK first; this PRD picks up once that is in daily use and the full-width form factor is felt as a limitation._
+_Shelved 2026-09-14, along with PRD 17, which it depends on. Hyprland runs on no touch host: the Surface stays on GNOME and the Dell has no touch screen. A GNOME equivalent of this idea would be a new PRD, not this one._
 
 ## References
 _GitHub URLs and the specific parts we want from each. To be filled in._

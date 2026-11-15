@@ -125,6 +125,119 @@ let
     temp=$(printf '%s' "$temp" | tr -d '+')
     printf '{"text":"WX %s","tooltip":"%s"}\n' "$temp" "$cond"
   '';
+
+  # Upgrade arrows: spin while nixos-upgrade runs, then rest green or red
+  # until the next boot or a left click. Long-running script because waybar's
+  # one second interval floor is too slow to read as rotation.
+  upgradeFrameSec = "0.12";
+  upgradePollSec = 2;
+  upgradeProgressSec = 10;
+
+  # Runtime dir, so the dismissed result comes back as cleared after a reboot
+  upgradeStamp = ''"''${XDG_RUNTIME_DIR:-/tmp}/nixos-upgrade-seen"'';
+
+  upgradeScript = pkgs.writeShellScript "bar-upgrade" ''
+    set -u
+    systemctl=${pkgs.systemd}/bin/systemctl
+    journalctl=${pkgs.systemd}/bin/journalctl
+    awk=${pkgs.gawk}/bin/awk
+    stat=${pkgs.coreutils}/bin/stat
+    sleep=${pkgs.coreutils}/bin/sleep
+    date=${pkgs.coreutils}/bin/date
+
+    frames=(← ↖ ↑ ↗ → ↘ ↓ ↙)
+    rest_glyph="" # nerd font refresh arrows
+    stamp=${upgradeStamp}
+
+    frame=0
+    polled_at=0
+    progressed_at=0
+    tooltip=""
+
+    property() {
+      $systemctl show nixos-upgrade.service -p "$1" --value 2>/dev/null || true
+    }
+
+    # Both plan headers nix prints up front, against the work logged since
+    plan_lines="^(building '|copying path|these [0-9]+ (derivations will be built|paths will be fetched))"
+
+    percent_done() {
+      $journalctl -u nixos-upgrade.service -b -o cat -g "$plan_lines" 2>/dev/null | $awk '
+        /^these [0-9]+ derivations will be built/ { planned_builds = $2; builds = 0; next }
+        /^these [0-9]+ paths will be fetched/     { planned_fetches = $2; fetches = 0; next }
+        /^building /    { builds++ }
+        /^copying path/ { fetches++ }
+        END {
+          total = planned_builds + planned_fetches
+          if (total < 1) exit
+          pct = (builds + fetches) * 100 / total
+          if (pct > 99) pct = 99
+          printf "%d", pct
+        }
+      '
+    }
+
+    read_progress() {
+      pct=$(percent_done)
+      if [ -n "$pct" ]; then
+        tooltip="NixOS is updating itself · $pct%"
+      else
+        tooltip="NixOS is updating itself"
+      fi
+      progressed_at=$($date +%s)
+    }
+
+    read_result() {
+      # Needs ExecMain to have run: a week skipped by ConditionACPower never
+      # starts, and systemd forgets the whole run at reboot
+      ran=$(property ExecMainStartTimestamp)
+      finished=$($date -d "$(property InactiveEnterTimestamp)" +%s 2>/dev/null || echo 0)
+      dismissed=$($stat -c %Y "$stamp" 2>/dev/null || echo 0)
+      if [ -z "$ran" ] || [ "$finished" -eq 0 ] || [ "$dismissed" -gt "$finished" ]; then
+        text=""
+        class=idle
+        tooltip=""
+      elif [ "$(property Result)" = success ]; then
+        text="$rest_glyph"
+        class=success
+        tooltip="NixOS update successful · reboot to see the update"
+      else
+        text="$rest_glyph"
+        class=error
+        tooltip="NixOS update failed · right click for the log"
+      fi
+    }
+
+    poll() {
+      state=$(property ActiveState)
+      if [ "$state" = active ] || [ "$state" = activating ]; then
+        running=1
+      else
+        running=0
+        read_result
+      fi
+      polled_at=$($date +%s)
+    }
+
+    while true; do
+      now=$($date +%s)
+      if [ $(( now - polled_at )) -ge ${toString upgradePollSec} ]; then
+        poll
+      fi
+      if [ "$running" -eq 1 ]; then
+        if [ $(( now - progressed_at )) -ge ${toString upgradeProgressSec} ]; then
+          read_progress
+        fi
+        frame=$(( (frame + 1) % ''${#frames[@]} ))
+        printf '{"text":"%s","class":"running","tooltip":"%s"}\n' "''${frames[frame]}" "$tooltip"
+        $sleep ${upgradeFrameSec}
+      else
+        printf '{"text":"%s","class":"%s","tooltip":"%s"}\n' "$text" "$class" "$tooltip"
+        $sleep ${toString upgradePollSec}
+      fi
+    done
+  '';
+
 in
 {
   config = mkIf cfg.enable {
@@ -152,6 +265,7 @@ in
           "bluetooth"
           "custom/wifi"
           "custom/dictate"
+          "custom/upgrade"
           "battery"
           "tray"
           "custom/power"
@@ -224,6 +338,14 @@ in
           signal = 10; # dictate sends SIGRTMIN+10 on state change
         };
 
+        "custom/upgrade" = {
+          exec = upgradeScript;
+          return-type = "json";
+          restart-interval = 5; # no interval: the script streams its own frames
+          on-click = "${pkgs.coreutils}/bin/touch ${upgradeStamp}"; # clear a resting result
+          on-click-right = "ghostty -e ${pkgs.systemd}/bin/journalctl -u nixos-upgrade.service -b -f";
+        };
+
         battery = {
           format = "BAT {capacity}%";
           format-charging = "BAT {capacity}% +";
@@ -270,6 +392,7 @@ in
         #custom-power,
         #custom-wifi,
         #custom-dictate,
+        #custom-upgrade,
         #custom-weather,
         #custom-brightness {
           padding: 0 8px;
@@ -286,6 +409,7 @@ in
         #bluetooth,
         #custom-wifi,
         #custom-dictate,
+        #custom-upgrade,
         #battery,
         #tray,
         #custom-power {
@@ -303,6 +427,24 @@ in
         }
         #custom-dictate.ready {
           color: ${ds.colors.text.success};
+        }
+
+        /* same collapse treatment as dictate: no upgrade, no slot */
+        #custom-upgrade.idle {
+          padding: 0;
+          border-left: none;
+        }
+        /* one glyph wide in every state, so neighbours never shift */
+        #custom-upgrade.running,
+        #custom-upgrade.success,
+        #custom-upgrade.error {
+          min-width: 16px;
+        }
+        #custom-upgrade.success {
+          color: ${ds.colors.text.success};
+        }
+        #custom-upgrade.error {
+          color: ${ds.colors.text.error};
         }
 
         /* fixed widths so right-cluster values do not bounce on update */
@@ -332,6 +474,7 @@ in
         #custom-wifi:hover,
         #custom-weather:hover,
         #custom-brightness:hover,
+        #custom-upgrade:hover,
         #custom-power:hover,
         #battery:hover {
           background: ${ds.colors.surface.default};

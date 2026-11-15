@@ -1,5 +1,12 @@
 # Touchscreen Support (Hyprland) PRD
 
+## Status: Shelved, 2026-09-14
+
+No host runs Hyprland on touch hardware. `surface-go-3` stays on GNOME, decided
+2026-09-14, and `dell-old` has `touchscreen.enable = false` and no touch screen.
+Touch work for the Surface is PRD 16. Reopen this only if a touch machine
+starts running Hyprland; the design below is complete and still good.
+
 ## Goal
 Physical-keyboard-first experience, with a small set of essential tasks reachable by touch alone when the Type Cover is detached. Not full touch parity — just enough that the airplane scenario works (connect to WiFi, change volume, switch apps, type into a field, close a window, lock the screen).
 
@@ -293,7 +300,7 @@ config = mkIf (config.modules.touchscreen.enable && config.modules.hyprland.enab
 - This avoids introducing a new option specific to Hyprland touch; we reuse the existing system-level flag.
 
 ### Decisions
-- **Hyprland is the default.** Surface Go 3 host config will flip to `gnome.enable = false; hyprland.enable = true;` as part of Phase 1 ramp-up. GNOME is not retained as a fallback session.
+- **~~Hyprland is the default.~~** Reversed 2026-09-14. The Surface stays on GNOME and this PRD is shelved; see the Status section at the top.
 - **Tablet-mode flag is a state file**, not a systemd target. Simpler for the Waybar polling pattern, no consumers today need target-style activation. Revisit if a non-Waybar consumer needs it.
 
 ## Current State

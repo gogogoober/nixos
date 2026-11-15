@@ -1,6 +1,7 @@
 {
   imports = [
     ./common.nix
+    ./auto-upgrade.nix
     ./user.nix
     ./location.nix
     ./desktop.nix
@@ -13,6 +14,7 @@
     ./charger-watch.nix
     ./touchscreen.nix
     ./developer.nix
+    ./claude-desktop.nix
     ./gaming.nix
     ./tts.nix
     ./stt.nix

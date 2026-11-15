@@ -82,21 +82,6 @@ in
     systemd.services.nix-gc.serviceConfig.ExecStartPre =
       "${config.nix.package}/bin/nix-env --delete-generations +${toString generationsKept} -p /nix/var/nix/profiles/system";
 
-    system.autoUpgrade = {
-      enable = true;
-      flake = inputs.self.outPath;
-      flags = [
-        "--recreate-lock-file" # Deprecated, but the only in-place update for a store-path flake
-        "-L"
-      ];
-      dates = "Mon 09:00";
-      randomizedDelaySec = "45min";
-      persistent = true;
-    };
-
-    # Skipped weeks wait for the next Monday
-    systemd.services.nixos-upgrade.unitConfig.ConditionACPower = true;
-
     nixpkgs.config.allowUnfree = true;
     nixpkgs.overlays = import ../../overlays { inherit inputs; };
 

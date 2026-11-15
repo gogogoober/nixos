@@ -31,6 +31,10 @@
     hyprland.enable = false;
     touchscreen.enable = true;
     developer.enable = true;
+    claudeDesktop = {
+      enable = true;
+      cowork = false; # A QEMU VM is too much for a 5 W part with 8 GB
+    };
     tts.enable = true;
     stt = {
       enable = true;

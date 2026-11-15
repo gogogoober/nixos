@@ -41,6 +41,7 @@ rebuild +message:
       echo "  $(grep -c 'copying path' {{ logfile }} || true) fetched, $(grep -c '^building ' {{ logfile }} || true) built"
     done
     wait $build || { grep --color -iE '^\s*(error|failed)' {{ logfile }} || tail -n 20 {{ logfile }}; exit 1; }
+    if git diff --cached --quiet; then echo "Nothing new to commit"; exit 0; fi
     git commit -m "$(nixos-rebuild list-generations --json | jq -r '.[] | select(.current) | .generation') - {{message}}"
 
 # Tail the log from the last rebuild

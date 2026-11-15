@@ -20,14 +20,14 @@ import (
 )
 
 const (
-	whisperHost          = "127.0.0.1"
-	whisperPort          = "5175"
 	maxSeconds           = 300
 	minMillis            = 800
 	httpTimeout          = 5 * time.Minute
 	modifierReleaseDelay = 250 * time.Millisecond
 )
 
+var whisperHost = os.Getenv("WHISPER_HOST")
+var whisperPort = os.Getenv("WHISPER_PORT")
 var rt = cmp.Or(os.Getenv("XDG_RUNTIME_DIR"), "/tmp")
 var stateHome = cmp.Or(os.Getenv("XDG_STATE_HOME"), filepath.Join(os.Getenv("HOME"), ".local/state"))
 var pgidLock = filepath.Join(rt, "dictate.pgid")
@@ -66,14 +66,22 @@ func writeState(state string) {
 }
 
 func transcribe(wavPath string) (string, error) {
-	info, _ := os.Stat(wavPath)
-	logf("TRANSCRIBE-start", "wav=%s bytes=%d", wavPath, info.Size())
+	if whisperHost == "" || whisperPort == "" {
+		return "", fmt.Errorf("WHISPER_HOST and WHISPER_PORT must be set")
+	}
 
 	f, err := os.Open(wavPath)
 	if err != nil {
+		logf("TRANSCRIBE-open-err", "%v", err)
 		return "", err
 	}
 	defer f.Close()
+
+	info, err := f.Stat()
+	if err != nil {
+		return "", err
+	}
+	logf("TRANSCRIBE-start", "wav=%s bytes=%d", wavPath, info.Size())
 
 	body := &bytes.Buffer{}
 	w := multipart.NewWriter(body)

@@ -8,6 +8,13 @@
 let
   inherit (lib) mkEnableOption mkIf;
   cfg = config.modules.neovim;
+
+  seedDir = ../../assets/nvim;
+  seedInit = seedDir + "/init.lua";
+  seedWithoutInit = lib.fileset.toSource {
+    root = seedDir;
+    fileset = lib.fileset.difference seedDir seedInit;
+  };
 in
 {
   options.modules.neovim = {
@@ -24,6 +31,7 @@ in
       vimAlias = true;
       withPython3 = false; # No python plugins, drop provider
       withRuby = false; # No ruby plugins, drop provider
+      initLua = lib.mkAfter (builtins.readFile seedInit); # Home Manager owns init.lua
 
       extraPackages = with pkgs; [
         bash-language-server # Bash LSP
@@ -46,11 +54,10 @@ in
       ];
     };
 
-    # Copy (not symlink) so lazy.nvim and friends can write next to the config.
+    # Overlay a copy (not symlink), so lazy-lock.json and friends survive rebuilds.
     home.activation.copyNvimConfig = lib.hm.dag.entryAfter [ "writeBoundary" ] ''
-      $DRY_RUN_CMD rm -rf "$HOME/.config/nvim"
       $DRY_RUN_CMD mkdir -p "$HOME/.config/nvim"
-      $DRY_RUN_CMD cp -rT ${../../assets/nvim} "$HOME/.config/nvim"
+      $DRY_RUN_CMD cp -rT ${seedWithoutInit} "$HOME/.config/nvim"
       $DRY_RUN_CMD chmod -R u+w "$HOME/.config/nvim"
     '';
   };

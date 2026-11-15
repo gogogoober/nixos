@@ -33,7 +33,6 @@ overlays/              pkgs.unstable escape hatch
 packages/              per-system packages, currently empty
 assets/                wallpapers, nvim config, claude seed tree
 docs/                  this documentation, including docs/hosts/
-utils/scripts/         one-off helper scripts, not part of the system
 .ai/                   PRDs and reference configs, tracked in git
 ```
 

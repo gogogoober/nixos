@@ -15,6 +15,7 @@
     fsel = {
       url = "github:Mjoyufull/fsel/3.7.0";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.naersk.inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
@@ -47,11 +48,12 @@
         };
 
       flake = {
-        nixosConfigurations = {
-          dell-old = nixpkgs.lib.nixosSystem {
+        nixosConfigurations = nixpkgs.lib.genAttrs [ "dell-old" "surface-go-3" ] (
+          name:
+          nixpkgs.lib.nixosSystem {
             specialArgs = { inherit inputs; };
             modules = [
-              ./hosts/dell-old
+              ./hosts/${name}
               home-manager.nixosModules.home-manager
               {
                 home-manager.useGlobalPkgs = true;
@@ -60,22 +62,8 @@
                 home-manager.extraSpecialArgs = { inherit inputs; };
               }
             ];
-          };
-
-          surface-go-3 = nixpkgs.lib.nixosSystem {
-            specialArgs = { inherit inputs; };
-            modules = [
-              ./hosts/surface-go-3
-              home-manager.nixosModules.home-manager
-              {
-                home-manager.useGlobalPkgs = true;
-                home-manager.useUserPackages = true;
-                home-manager.backupFileExtension = "bak";
-                home-manager.extraSpecialArgs = { inherit inputs; };
-              }
-            ];
-          };
-        };
+          }
+        );
       };
     };
 }

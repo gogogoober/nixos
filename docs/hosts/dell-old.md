@@ -30,8 +30,7 @@ Host-local extras:
 
 - `hardware.firmware = [ pkgs.linux-firmware ]`
 - `services.fprintd.enable = false`
-- Left alt and left control swapped, for macOS muscle memory, in both the X
-  keymap and keyd
+- Left alt and left control swapped, for macOS muscle memory, in keyd
 
 ## Battery
 

@@ -100,5 +100,5 @@ test:
 # Update every flake input, rebuild, then reclaim space
 update:
     nix flake update
-    sudo nixos-rebuild switch --flake . -L 2>&1 | tee /tmp/nixos-upgrade.log
+    just rebuild "flake update"
     just clean

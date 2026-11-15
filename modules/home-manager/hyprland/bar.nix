@@ -94,6 +94,7 @@ let
     state=$(cat "$state_file" 2>/dev/null || true)
     case "$state" in
       recording) printf '{"text":"●","class":"recording","tooltip":"dictating"}\n' ;;
+      transcribing) printf '{"text":"●","class":"transcribing","tooltip":"transcribing"}\n' ;;
       ready)
         age=$(( $(date +%s) - $(${pkgs.coreutils}/bin/stat -c %Y "$state_file") ))
         if [ "$age" -lt 3 ]; then
@@ -108,16 +109,23 @@ let
 
   weatherScript = pkgs.writeShellScript "bar-weather" ''
     set -eu
-    city=$(quick-settings-get location.city 2>/dev/null || echo "New York")
-    state=$(quick-settings-get location.state 2>/dev/null || echo "NY")
+    city=$(quick-settings-get location.city 2>/dev/null || true)
+    state=$(quick-settings-get location.state 2>/dev/null || true)
     units=$(quick-settings-get location.units 2>/dev/null || echo "imperial")
     case "$units" in
       metric) flag="m" ;;
       *)      flag="u" ;;
     esac
+    # empty place makes wttr.in geolocate by IP
+    place=""
+    if [ -n "$city" ]; then
+      place="$city"
+      [ -n "$state" ] && place="$city,$state"
+      place=$(${pkgs.jq}/bin/jq -rn --arg v "$place" '$v|@uri')
+    fi
     # main text: temp only (stable width); tooltip carries the condition
-    temp=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$city,$state?format=%t&$flag" || true)
-    cond=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$city,$state?format=%C&$flag" || true)
+    temp=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$place?format=%t&$flag" || true)
+    cond=$(${pkgs.curl}/bin/curl -s --max-time 5 "https://wttr.in/$place?format=%C&$flag" || true)
     if [ -z "$temp" ]; then
       printf '{"text":"WX --","class":"offline"}\n'
       exit 0
@@ -300,6 +308,9 @@ in
         }
         #custom-dictate.recording {
           color: ${ds.colors.text.error};
+        }
+        #custom-dictate.transcribing {
+          color: ${ds.colors.text.warn};
         }
         #custom-dictate.ready {
           color: ${ds.colors.text.success};

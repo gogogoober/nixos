@@ -1,5 +1,5 @@
 # Reusable design tokens. Import this directory anywhere and read
-# .colors, .fonts, or .structure. Not yet wired into any consumer
+# .colors, .fonts, or .structure.
 {
   colors = import ./colors.nix;
   fonts = import ./fonts.nix;

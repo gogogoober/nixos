@@ -48,7 +48,7 @@ in
       max-jobs = 1; # One build at a time, still uses every core
     };
 
-    # Let interactive work preempt Nix builds and the weekly auto-upgrade
+    # Let interactive work preempt Nix builds
     nix.daemonCPUSchedPolicy = "idle";
     nix.daemonIOSchedClass = "idle";
     nix.daemonIOSchedPriority = 7;
@@ -81,21 +81,6 @@ in
     # nix-collect-garbage has no keep-newest-N flag, so prune the profile first
     systemd.services.nix-gc.serviceConfig.ExecStartPre =
       "${config.nix.package}/bin/nix-env --delete-generations +${toString generationsKept} -p /nix/var/nix/profiles/system";
-
-    system.autoUpgrade = {
-      enable = true;
-      flake = inputs.self.outPath;
-      flags = [
-        "--recreate-lock-file" # Deprecated, but the only in-place update for a store-path flake
-        "-L"
-      ];
-      dates = "Mon 09:00";
-      randomizedDelaySec = "45min";
-      persistent = true;
-    };
-
-    # Skipped weeks wait for the next Monday
-    systemd.services.nixos-upgrade.unitConfig.ConditionACPower = true;
 
     nixpkgs.config.allowUnfree = true;
     nixpkgs.overlays = import ../../overlays { inherit inputs; };

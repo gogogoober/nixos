@@ -45,7 +45,6 @@
   services.fprintd.enable = false;
 
   # macOS muscle memory
-  services.xserver.xkb.options = "ctrl:swap_lalt_lctl";
   services.keyd = {
     enable = true;
     keyboards.default = {
